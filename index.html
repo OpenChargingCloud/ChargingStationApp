@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<style>
+  textarea { vertical-align: bottom; }
+  #output { overflow: auto; }
+  #output > p { overflow-wrap: break-word; }
+  #output span { color: blue; }
+  #output span.error { color: red; }
+</style>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' gap: 'unsafe-inline';
+                                                        script-src * 'self' 'unsafe-inline';
+                                                        object-src *; style-src 'self' data: 'unsafe-inline';
+                                                        img-src 'self' data:;
+                                                        media-src 'self' data:;
+                                                        font-src 'self' data:;
+                                                        connect-src * 'unsafe-inline'">
+  </head>
+
+  <body>
+
+    <h1>WebSocket Test2</h1>
+
+    We are using Node.js <span id="node-version"></span>,
+    Chromium <span id="chrome-version"></span>,
+    and Electron <span id="electron-version"></span>.
+    <br />
+    
+    <textarea cols=60 rows=6></textarea>
+    <button>send</button>
+    <div id=output></div>
+
+    <!-- You can also require other files to run in this process -->
+
+    <script src="./renderer.js"></script>
+
+    <script>
+      // http://www.websocket.org/echo.html
+  
+      var button = document.querySelector("button"),
+          output = document.querySelector("#output"),
+          textarea = document.querySelector("textarea"),
+          // wsUri = "ws://echo.websocket.org/",
+          wsUri = "ws://127.0.0.1:8000/webServices/ocpp/CP3211",
+          websocket = new WebSocket(wsUri);
+  
+      button.addEventListener("click", onClickButton);
+  
+      websocket.onopen = function (e) {
+          writeToScreen("CONNECTED");
+          doSend("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
+      };
+  
+      websocket.onclose = function (e) {
+          writeToScreen("DISCONNECTED");
+      };
+  
+      websocket.onmessage = function (e) {
+          writeToScreen("<span>RESPONSE: " + e.data + "</span>");
+      };
+  
+      websocket.onerror = function (e) {
+          writeToScreen("<span class=error>ERROR:</span> " + e.data);
+      };
+  
+      function doSend(message) {
+          writeToScreen("SENT: " + message);
+          websocket.send(message);
+      }
+  
+      function writeToScreen(message) {
+          output.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
+      }
+  
+      function onClickButton() {
+          var text = textarea.value;
+  
+          text && doSend(text);
+          textarea.value = "";
+          textarea.focus();
+      }
+  </script>
+
+  </body>
+</html>

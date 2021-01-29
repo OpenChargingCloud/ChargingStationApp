@@ -1,0 +1,10 @@
+*~
+.vscode
+node_modules
+dist
+src/css/*.css
+src/css/*.css.map
+!src/css/fontawesome-all.min.css
+src/js/*.js
+src/js/*.js.map
+.DS_Store

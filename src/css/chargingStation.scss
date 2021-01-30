@@ -1,0 +1,84 @@
+
+#commands {
+
+    padding:      10px 20px;
+    font-family:  Arial;
+
+    .command {
+
+        padding:          10px 12px;
+        border-radius:    8px;
+        margin:           10px 20px;
+        background-color: rgb(214, 214, 214);
+
+        .description {
+          margin-bottom:      8px;
+          font-weight:        bold;
+        }
+
+        .properties {
+
+            display:          table;
+            width:            calc(100% - 22px);
+            margin-left:      10px;
+
+            .collection {
+
+                // display:          flex;
+                // flex-direction:   column;
+                margin-left:      20px;
+
+                .properties {
+                    display: block;
+                }
+
+            }
+
+            .row {
+
+                display: table-row;
+
+                .key {
+                    display:        table-cell;
+                    padding-right:  20px;
+                    white-space:    nowrap;
+                }
+
+                .value {
+
+                    display: table-cell;
+
+                    input {
+                        border:           0;
+                        border-radius:    4px;
+                        margin-bottom:    2px;
+                        padding:          4px 6px;
+                    }
+
+                }
+
+            }
+
+        }
+
+        .commandButton {
+            border:             0;
+            border-radius:      4px;
+            background-color:   #afafaf;
+            padding:            4px 8px;
+            margin-top:         8px;
+        }
+
+    }
+
+  }
+
+  textarea { vertical-align: bottom; }
+
+  #output {
+     overflow: auto;
+     span { color: blue; }
+     span.error { color: red; }
+  }
+  #output > p { overflow-wrap: break-word; }
+ 

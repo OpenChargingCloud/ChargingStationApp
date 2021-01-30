@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Open Charging Cloud - Charging Station</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' gap: 'unsafe-inline';
+                                                        script-src * 'self' 'unsafe-inline';
+                                                        object-src *; style-src 'self' data: 'unsafe-inline';
+                                                        img-src 'self' data:;
+                                                        media-src 'self' data:;
+                                                        font-src 'self' data:;
+                                                        connect-src * 'unsafe-inline'">
+    <link rel="stylesheet" href="css/chargingStation.css" type="text/css" />
+  </head>
+
+  <body>
+
+    <h1>Open Charging Cloud - Charging Station</h1>
+
+<!--     We are using Node.js <span id="node-version"></span>,
+    Chromium <span id="chrome-version"></span>,
+    and Electron <span id="electron-version"></span>. -->
+    <br />
+    
+    <textarea cols=60 rows=6></textarea>
+    <button>send</button>
+    <div id=output></div>
+
+    <div id="commands">
+
+        <div id="BootNotificationRequest" class="command">
+            <div class="description">Boot Notification Request</div>
+            <div class="properties">
+                <div class="row"><div class="key">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div></div>
+                <div class="row"><div class="key">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div></div>
+                <div class="row"><div class="key">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div></div>
+                <div class="row"><div class="key">Charge Box Serial Number</div>  <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"   type="text"></div></div>
+                <div class="row"><div class="key">Firmware Version</div>          <div class="value"><input id="BootNotificationRequest_FirmwareVersion"         type="text"></div></div>
+                <div class="row"><div class="key">ICCId</div>                     <div class="value"><input id="BootNotificationRequest_ICCId"                   type="text"></div></div>
+                <div class="row"><div class="key">IMSI</div>                      <div class="value"><input id="BootNotificationRequest_IMSI"                    type="text"></div></div>
+                <div class="row"><div class="key">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div></div>
+                <div class="row"><div class="key">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div></div>
+            </div>
+            <button id="BootNotificationRequestButton" class="commandButton">send</button>
+        </div>
+
+        <div id="HeartbeatRequest" class="command">
+            <div class="description">Heartbeat Request</div>
+            <button id="HeartbeatRequestButton" class="commandButton">send</button>
+        </div>
+
+
+        <div id="AuthorizeRequest" class="command">
+            <div class="description">Authorize Request</div>
+            <div class="properties">
+                <div class="row"><div class="key">IdTag</div><div class="value"><input id="AuthorizeRequest_IdTag" type="text"></div></div>
+            </div>
+            <button id="AuthorizeRequestButton" class="commandButton">send</button>
+        </div>
+
+        <div id="StartTransactionRequest" class="command">
+            <div class="description">Start Transaction Request</div>
+            <div class="properties">
+                <div class="row"><div class="key">ConnectorId</div>  <div class="value"><input id="StartTransactionRequest_ConnectorId"   type="text"></div></div>
+                <div class="row"><div class="key">IdTag</div>        <div class="value"><input id="StartTransactionRequest_IdTag"         type="text"></div></div>
+                <div class="row"><div class="key">Timestamp</div>    <div class="value"><input id="StartTransactionRequest_Timestamp"     type="text"></div></div>
+                <div class="row"><div class="key">MeterStart</div>   <div class="value"><input id="StartTransactionRequest_MeterStart"    type="text"></div></div>
+                <div class="row"><div class="key">ReservationId</div><div class="value"><input id="StartTransactionRequest_ReservationId" type="text"></div></div>
+            </div>
+            <button id="StartTransactionRequestButton" class="commandButton">send</button>
+        </div>
+        
+        <div id="StatusNotificationRequest" class="command">
+            <div class="description">Status Notification Request</div>
+            <div class="properties">
+                <div class="row"><div class="key">ConnectorId</div>    <div class="value"><input id="StatusNotificationRequest_ConnectorId"     type="text"></div></div>
+                <div class="row"><div class="key">Status</div>         <div class="value"><input id="StatusNotificationRequest_Status"          type="text"></div></div>
+                <div class="row"><div class="key">ErrorCode</div>      <div class="value"><input id="StatusNotificationRequest_ErrorCode"       type="text"></div></div>
+                <div class="row"><div class="key">Info</div>           <div class="value"><input id="StatusNotificationRequest_Info"            type="text"></div></div>
+                <div class="row"><div class="key">Timestamp</div>      <div class="value"><input id="StatusNotificationRequest_Timestamp"       type="text"></div></div>
+                <div class="row"><div class="key">VendorId</div>       <div class="value"><input id="StatusNotificationRequest_VendorId"        type="text"></div></div>
+                <div class="row"><div class="key">VendorErrorCode</div><div class="value"><input id="StatusNotificationRequest_VendorErrorCode" type="text"></div></div>
+            </div>
+            <button id="StatusNotificationRequestButton" class="commandButton">send</button>
+        </div>
+        
+        <div id="MeterValuesRequest" class="command">
+            <div class="description">Meter Values Request</div>
+            <div class="properties">
+
+                <div class="row"><div class="key">ConnectorId</div>  <div class="value"><input id="MeterValuesRequest_ConnectorId"    type="text"></div></div>
+                <div class="row"><div class="key">TransactionId</div><div class="value"><input id="MeterValuesRequest_TransactionId"  type="text"></div></div>
+
+                <div class="row"><div class="key">Sampled Values</div></div>
+                <div id="MeterValuesRequest_SampledValues" class="collection">
+                    <div id="MeterValuesRequest_SampledValue1" class="properties">
+                        <div class="row"><div class="key">Value</div>    <div class="value"><input id="MeterValuesRequest_SampledValue1_Value"     type="text"></div></div>
+                        <div class="row"><div class="key">Context</div>  <div class="value"><input id="MeterValuesRequest_SampledValue1_Context"   type="text"></div></div>
+                        <div class="row"><div class="key">Format</div>   <div class="value"><input id="MeterValuesRequest_SampledValue1_Format"    type="text"></div></div>
+                        <div class="row"><div class="key">Measurand</div><div class="value"><input id="MeterValuesRequest_SampledValue1_Measurand" type="text"></div></div>
+                        <div class="row"><div class="key">Phase</div>    <div class="value"><input id="MeterValuesRequest_SampledValue1_Phase"     type="text"></div></div>
+                        <div class="row"><div class="key">Location</div> <div class="value"><input id="MeterValuesRequest_SampledValue1_Location"  type="text"></div></div>
+                        <div class="row"><div class="key">Unit</div>     <div class="value"><input id="MeterValuesRequest_SampledValue1_Unit"      type="text"></div></div>
+                    </div>
+                </div>
+
+            </div>
+            <button id="MeterValuesRequestButton" class="commandButton">send</button>
+        </div>
+        
+        <div id="StopTransactionRequest" class="command">
+            <div class="description">Stop Transaction Request</div>
+            <div class="properties">
+
+                <div class="row"><div class="key">TransactionId</div><div class="value"><input id="StopTransactionRequest_TransactionId" type="text"></div></div>
+                <div class="row"><div class="key">IdTag</div>        <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
+                <div class="row"><div class="key">Timestamp</div>    <div class="value"><input id="StopTransactionRequest_Timestamp"     type="text"></div></div>
+                <div class="row"><div class="key">MeterStop</div>    <div class="value"><input id="StopTransactionRequest_MeterStop"     type="text"></div></div>
+                <div class="row"><div class="key">Reason</div>       <div class="value"><input id="StopTransactionRequest_Reason"        type="text"></div></div>
+
+                <div class="row"><div class="key">Transaction Data</div></div>
+                <div id="StopTransactionRequest_TransactionData" class="collection">
+                    <div id="StopTransactionRequest_TransactionData1" class="properties">
+
+                        <div class="row"><div class="key">Charge Point Vendor</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
+
+                        <div class="row"><div class="key">Sampled Value</div></div>
+                        <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
+                            <div id="StopTransactionRequest_TransactionData1_SampledValue1" class="properties">
+                                <div class="row"><div class="key">Value</div>    <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Value"     type="text"></div></div>
+                                <div class="row"><div class="key">Context</div>  <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Context"   type="text"></div></div>
+                                <div class="row"><div class="key">Format</div>   <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Format"    type="text"></div></div>
+                                <div class="row"><div class="key">Measurand</div><div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Measurand" type="text"></div></div>
+                                <div class="row"><div class="key">Phase</div>    <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Phase"     type="text"></div></div>
+                                <div class="row"><div class="key">Location</div> <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Location"  type="text"></div></div>
+                                <div class="row"><div class="key">Unit</div>     <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Unit"      type="text"></div></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <button id="StopTransactionRequestButton" class="commandButton">send</button>
+        </div>
+        
+
+        <div id="DataTransferRequest" class="command">
+            <div class="description">Data Transfer Request</div>
+            <div class="properties">
+                <div class="row"><div class="key">VendorId</div> <div class="value"><input id="DataTransferRequest_VendorId"  type="text"></div></div>
+                <div class="row"><div class="key">MessageId</div><div class="value"><input id="DataTransferRequest_MessageId" type="text"></div></div>
+                <div class="row"><div class="key">Data</div>     <div class="value"><input id="DataTransferRequest_Data"      type="text"></div></div>
+            </div>
+            <button id="DataTransferRequestButton" class="commandButton">send</button>
+        </div>        
+
+        <div id="DiagnosticsStatusNotificationRequest" class="command">
+            <div class="description">Diagnostics Status Notification Request</div>
+            <div class="properties">
+                <div class="row">
+                    <div class="key">Status</div>
+                    <div class="value">
+                        <select id="DiagnosticsStatusNotificationRequest_Status">
+                            <option>Idle</option>
+                            <option>Uploaded</option>
+                            <option>UploadFailed</option>
+                            <option>Uploading</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button id="DiagnosticsStatusNotificationRequestButton" class="commandButton">send</button>
+        </div>        
+
+        <div id="FirmwareStatusNotificationRequest" class="command">
+            <div class="description">Firmware Status Notification Request</div>
+            <div class="properties">
+                <div class="row">
+                    <div class="key">Status</div>
+                    <div class="value">
+                        <select id="FirmwareStatusStatusNotificationRequest_Status">
+                            <option>Downloaded</option>
+                            <option>DownloadFailed</option>
+                            <option>Downloading</option>
+                            <option>Idle</option>
+                            <option>InstallationFailed</option>
+                            <option>Installing</option>
+                            <option>Installed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button id="FirmwareStatusNotificationRequestButton" class="commandButton">send</button>
+        </div>        
+
+    </div>
+
+
+
+    <!-- You can also require other files to run in this process -->
+
+    <script src="./renderer.js"></script>
+
+    <script>
+      // http://www.websocket.org/echo.html
+  
+      var button = document.querySelector("button"),
+          output = document.querySelector("#output"),
+          textarea = document.querySelector("textarea"),
+          // wsUri = "ws://echo.websocket.org/",
+          wsUri = "ws://127.0.0.1:8000/webServices/ocpp/CP3211",
+          websocket = new WebSocket(wsUri);
+  
+      button.addEventListener("click", onClickButton);
+  
+      websocket.onopen = function (e) {
+          writeToScreen("CONNECTED");
+          doSend("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
+      };
+  
+      websocket.onclose = function (e) {
+          writeToScreen("DISCONNECTED");
+      };
+  
+      websocket.onmessage = function (e) {
+          writeToScreen("<span>RESPONSE: " + e.data + "</span>");
+      };
+  
+      websocket.onerror = function (e) {
+          writeToScreen("<span class=error>ERROR:</span> " + e.data);
+      };
+  
+      function doSend(message) {
+          writeToScreen("SENT: " + message);
+          websocket.send(message);
+      }
+  
+      function writeToScreen(message) {
+          output.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
+      }
+  
+      function onClickButton() {
+          var text = textarea.value;
+  
+          text && doSend(text);
+          textarea.value = "";
+          textarea.focus();
+      }
+  </script>
+
+  </body>
+</html>

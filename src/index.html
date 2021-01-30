@@ -77,8 +77,39 @@
             <div class="description">Status Notification Request</div>
             <div class="properties">
                 <div class="row"><div class="key">ConnectorId</div>    <div class="value"><input id="StatusNotificationRequest_ConnectorId"     type="text"></div></div>
-                <div class="row"><div class="key">Status</div>         <div class="value"><input id="StatusNotificationRequest_Status"          type="text"></div></div>
-                <div class="row"><div class="key">ErrorCode</div>      <div class="value"><input id="StatusNotificationRequest_ErrorCode"       type="text"></div></div>
+                <div class="row"><div class="key">Status</div>         <div class="value">
+                    <select id="StatusNotificationRequest_Status">
+                        <option>Available</option>
+                        <option>Preparing</option>
+                        <option>Charging</option>
+                        <option>SuspendedEVSE</option>
+                        <option>SuspendedEV</option>
+                        <option>Finishing</option>
+                        <option>Reserved</option>
+                        <option>Unavailable</option>
+                        <option>Faulted</option>
+                    </select>
+                </div></div>
+                <div class="row"><div class="key">ErrorCode</div>      <div class="value">
+                    <select id="StatusNotificationRequest_ErrorCode">
+                        <option>ConnectorLockFailure</option>
+                        <option>EVCommunicationError</option>
+                        <option>GroundFailure</option>
+                        <option>HighTemperature</option>
+                        <option>InternalError</option>
+                        <option>LocalListConflict</option>
+                        <option>NoError</option>
+                        <option>OtherError</option>
+                        <option>OverCurrentFailure</option>
+                        <option>PowerMeterFailure</option>
+                        <option>PowerSwitchFailure</option>
+                        <option>ReaderFailure</option>
+                        <option>ResetFailure</option>
+                        <option>UnderVoltage</option>
+                        <option>OverVoltage</option>
+                        <option>WeakSignal</option>
+                    </select>
+                </div></div>
                 <div class="row"><div class="key">Info</div>           <div class="value"><input id="StatusNotificationRequest_Info"            type="text"></div></div>
                 <div class="row"><div class="key">Timestamp</div>      <div class="value"><input id="StatusNotificationRequest_Timestamp"       type="text"></div></div>
                 <div class="row"><div class="key">VendorId</div>       <div class="value"><input id="StatusNotificationRequest_VendorId"        type="text"></div></div>
@@ -94,16 +125,24 @@
                 <div class="row"><div class="key">ConnectorId</div>  <div class="value"><input id="MeterValuesRequest_ConnectorId"    type="text"></div></div>
                 <div class="row"><div class="key">TransactionId</div><div class="value"><input id="MeterValuesRequest_TransactionId"  type="text"></div></div>
 
-                <div class="row"><div class="key">Sampled Values</div></div>
-                <div id="MeterValuesRequest_SampledValues" class="collection">
-                    <div id="MeterValuesRequest_SampledValue1" class="properties">
-                        <div class="row"><div class="key">Value</div>    <div class="value"><input id="MeterValuesRequest_SampledValue1_Value"     type="text"></div></div>
-                        <div class="row"><div class="key">Context</div>  <div class="value"><input id="MeterValuesRequest_SampledValue1_Context"   type="text"></div></div>
-                        <div class="row"><div class="key">Format</div>   <div class="value"><input id="MeterValuesRequest_SampledValue1_Format"    type="text"></div></div>
-                        <div class="row"><div class="key">Measurand</div><div class="value"><input id="MeterValuesRequest_SampledValue1_Measurand" type="text"></div></div>
-                        <div class="row"><div class="key">Phase</div>    <div class="value"><input id="MeterValuesRequest_SampledValue1_Phase"     type="text"></div></div>
-                        <div class="row"><div class="key">Location</div> <div class="value"><input id="MeterValuesRequest_SampledValue1_Location"  type="text"></div></div>
-                        <div class="row"><div class="key">Unit</div>     <div class="value"><input id="MeterValuesRequest_SampledValue1_Unit"      type="text"></div></div>
+                <div id="MeterValuesRequest_MeterValues" class="collection">
+                    <div id="MeterValuesRequest_MeterValue1" class="properties">                
+
+                        <div class="row"><div class="key">Timestamp</div><div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
+
+                        <div class="row"><div class="key">Sampled Values</div></div>
+                        <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
+                            <div id="MeterValuesRequest_MeterValue1_SampledValue1" class="properties">
+                                <div class="row"><div class="key">Value</div>    <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value"     type="text"></div></div>
+                                <div class="row"><div class="key">Context</div>  <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Context"   type="text"></div></div>
+                                <div class="row"><div class="key">Format</div>   <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Format"    type="text"></div></div>
+                                <div class="row"><div class="key">Measurand</div><div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand" type="text"></div></div>
+                                <div class="row"><div class="key">Phase</div>    <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Phase"     type="text"></div></div>
+                                <div class="row"><div class="key">Location</div> <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Location"  type="text"></div></div>
+                                <div class="row"><div class="key">Unit</div>     <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Unit"      type="text"></div></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -125,7 +164,7 @@
                 <div id="StopTransactionRequest_TransactionData" class="collection">
                     <div id="StopTransactionRequest_TransactionData1" class="properties">
 
-                        <div class="row"><div class="key">Charge Point Vendor</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
+                        <div class="row"><div class="key">Timestamp</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
 
                         <div class="row"><div class="key">Sampled Value</div></div>
                         <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
@@ -208,12 +247,12 @@
     <script>
       // http://www.websocket.org/echo.html
   
-      var button = document.querySelector("button"),
-          output = document.querySelector("#output"),
-          textarea = document.querySelector("textarea"),
-          // wsUri = "ws://echo.websocket.org/",
-          wsUri = "ws://127.0.0.1:8000/webServices/ocpp/CP3211",
-          websocket = new WebSocket(wsUri);
+      var button     = document.querySelector("button");
+      var output     = document.querySelector("#output");
+      var textarea   = document.querySelector("textarea");
+          // wsUri   = "ws://echo.websocket.org/",
+      var wsUri      = "ws://127.0.0.1:8000/webServices/ocpp/CP3211";
+      var websocket  = new WebSocket(wsUri);
   
       button.addEventListener("click", onClickButton);
   
@@ -244,12 +283,193 @@
       }
   
       function onClickButton() {
+
           var text = textarea.value;
   
           text && doSend(text);
           textarea.value = "";
           textarea.focus();
+
       }
+
+
+      function doSendRequest(command, request) {
+
+          var message = JSON.stringify([ 2,
+                                         "19223201",
+                                         command,
+                                         request != null ? request : {} ]);
+
+          writeToScreen("SENT: " + message);
+          websocket.send(message);
+
+      }
+
+
+      var bootNotificationRequestButton = document.querySelector("#BootNotificationRequestButton");
+      bootNotificationRequestButton.addEventListener("click", SendBootNotificationRequest);
+
+      function SendBootNotificationRequest()
+      {
+
+        var bootNotificationRequestDiv  = document.querySelector("#BootNotificationRequest");
+        var properties                  = bootNotificationRequestDiv.querySelector(".properties");
+        var ChargePointVendor           = properties.querySelector("#BootNotificationRequest_ChargePointVendor").value;
+        var ChargePointModel            = properties.querySelector("#BootNotificationRequest_ChargePointModel").value;
+        var ChargePointSerialNumber     = properties.querySelector("#BootNotificationRequest_ChargePointSerialNumber").value;
+        var ChargeBoxSerialNumber       = properties.querySelector("#BootNotificationRequest_ChargeBoxSerialNumber").value;
+        var FirmwareVersion             = properties.querySelector("#BootNotificationRequest_FirmwareVersion").value;
+        var ICCId                       = properties.querySelector("#BootNotificationRequest_ICCId").value;
+        var IMSI                        = properties.querySelector("#BootNotificationRequest_IMSI").value;
+        var MeterType                   = properties.querySelector("#BootNotificationRequest_MeterType").value;
+        var MeterSerialNumber           = properties.querySelector("#BootNotificationRequest_MeterSerialNumber").value;
+
+        doSendRequest("BootNotification",
+                      {
+                          "chargePointVendor":        ChargePointVendor,
+                          "chargePointModel":         ChargePointModel,
+                          "chargePointSerialNumber":  ChargePointSerialNumber,
+                          "chargeBoxSerialNumber":    ChargeBoxSerialNumber,
+                          "firmwareVersion":          FirmwareVersion,
+                          "iccid":                    ICCId,
+                          "imsi":                     IMSI,
+                          "meterType":                MeterType,
+                          "meterSerialNumber":        MeterSerialNumber
+                      });
+
+      }
+
+
+      var heartbeatRequestButton = document.querySelector("#HeartbeatRequestButton");
+      heartbeatRequestButton.addEventListener("click", SendHeartbeatRequest);
+
+      function SendHeartbeatRequest()
+      {
+        doSendRequest("Heartbeat", null);
+      }
+
+
+
+      var authorizeRequestButton = document.querySelector("#AuthorizeRequestButton");
+      authorizeRequestButton.addEventListener("click", SendAuthorizeRequest);
+
+      function SendAuthorizeRequest()
+      {
+
+        var authorizeRequestDiv  = document.querySelector("#AuthorizeRequest");
+        var properties           = authorizeRequestDiv.querySelector(".properties");
+        var IdTag                = properties.querySelector("#AuthorizeRequest_IdTag").value;
+
+        doSendRequest("Authorize",
+                      {
+                          "idTag": IdTag
+                      });
+
+      }
+
+
+      var startTransactionRequestButton = document.querySelector("#StartTransactionRequestButton");
+      startTransactionRequestButton.addEventListener("click", SendStartTransactionRequest);
+
+      function SendStartTransactionRequest()
+      {
+
+        var startTransactionRequestDiv  = document.querySelector("#StartTransactionRequest");
+        var properties                  = startTransactionRequestDiv.querySelector(".properties");
+        var ConnectorId                 = properties.querySelector("#StartTransactionRequest_ConnectorId").value;
+        var IdTag                       = properties.querySelector("#StartTransactionRequest_IdTag").value;
+        var Timestamp                   = properties.querySelector("#StartTransactionRequest_Timestamp").value;
+        var MeterStart                  = properties.querySelector("#StartTransactionRequest_MeterStart").value;
+        var ReservationId               = properties.querySelector("#StartTransactionRequest_ReservationId").value;
+
+        doSendRequest("StartTransaction",
+                      {
+                          "connectorId":    parseInt(ConnectorId),
+                          "idTag":          IdTag,
+                          "timestamp":      Timestamp != "" ? Timestamp : new Date().toISOString(),
+                          "meterStart":     parseInt(MeterStart),
+                          "reservationId":  parseInt(ReservationId)
+                      });
+
+      }
+
+
+      var StatusNotificationRequestButton = document.querySelector("#StatusNotificationRequestButton");
+      StatusNotificationRequestButton.addEventListener("click", SendStatusNotificationRequest);
+
+      function SendStatusNotificationRequest()
+      {
+
+        var StatusNotificationRequestDiv  = document.querySelector("#StatusNotificationRequest");
+        var properties                    = StatusNotificationRequestDiv.querySelector(".properties");
+        var ConnectorId                   = properties.querySelector("#StatusNotificationRequest_ConnectorId").value;
+        var Status                        = properties.querySelector("#StatusNotificationRequest_Status").value;
+        var ErrorCode                     = properties.querySelector("#StatusNotificationRequest_ErrorCode").value;
+        var Info                          = properties.querySelector("#StatusNotificationRequest_Info").value;
+        var Timestamp                     = properties.querySelector("#StatusNotificationRequest_Timestamp").value;
+        var VendorId                      = properties.querySelector("#StatusNotificationRequest_VendorId").value;
+        var VendorErrorCode               = properties.querySelector("#StatusNotificationRequest_VendorErrorCode").value;
+
+        doSendRequest("StatusNotification",
+                      {
+                          "connectorId":      parseInt(ConnectorId),
+                          "status":           Status,
+                          "errorCode":        ErrorCode,
+                          "info":             Info,
+                          "timestamp":        Timestamp != "" ? Timestamp : new Date().toISOString(),
+                          "vendorId":         VendorId,
+                          "vendorErrorCode":  VendorErrorCode
+                      });
+
+      }
+
+      
+      var MeterValuesRequestButton = document.querySelector("#MeterValuesRequestButton");
+      MeterValuesRequestButton.addEventListener("click", SendMeterValuesRequest);
+
+      function SendMeterValuesRequest()
+      {
+
+        var MeterValuesRequestDiv  = document.querySelector("#MeterValuesRequest");
+        var properties             = MeterValuesRequestDiv.querySelector(".properties");
+        var ConnectorId            = properties.querySelector("#MeterValuesRequest_ConnectorId").value;
+        var TransactionId          = properties.querySelector("#MeterValuesRequest_TransactionId").value;
+
+        var Timestamp              = properties.querySelector("#MeterValuesRequest_MeterValue1_Timestamp").value;
+        var SampledValues          = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValues");
+
+        var Value                  = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Value").value;
+        var Context                = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Context").value;
+        var Format                 = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Format").value;
+        var Measurand              = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Measurand").value;
+        var Phase                  = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Phase").value;
+        var Location               = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Location").value;
+        var Unit                   = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Unit").value;
+
+        doSendRequest("MeterValues",
+                      {
+                          "connectorId":      ConnectorId,
+                          "transactionId":    TransactionId,
+                          "meterValue":       [
+                              {
+                                  "timestamp":    Timestamp,
+                                  "sampledValue": [
+                                      {
+                                          "value":      Value,
+                                          "context":    Context,
+                                          "format":     Format,
+                                          "measurand":  Measurand,
+                                          "phase":      Phase,
+                                          "location":   Location,
+                                          "unit":       Unit
+                                      }
+                                  ]
+                              }
+                          ]
+                      });
+
+      }
+
   </script>
 
   </body>

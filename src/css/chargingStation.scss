@@ -19,7 +19,7 @@
         .properties {
 
             display:          table;
-            width:            calc(100% - 22px);
+            width:            calc(100% - 14px);
             margin-left:      10px;
 
             .collection {
@@ -46,14 +46,24 @@
 
                 .value {
 
-                    display: table-cell;
+                    display:  table-cell;
+                    width:    100%;
 
                     input {
                         border:           0;
                         border-radius:    4px;
                         margin-bottom:    2px;
-                        padding:          4px 6px;
+                        padding:          4px 6px 4px 10px;
+                        width:            calc(100% - 16px);
                     }
+
+                    select {
+                      border:           0;
+                      border-radius:    4px;
+                      margin-bottom:    2px;
+                      padding:          4px 6px;
+                      width:            100%;
+                  }
 
                 }
 

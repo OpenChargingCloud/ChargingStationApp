@@ -133,13 +133,100 @@
                         <div class="row"><div class="key">Sampled Values</div></div>
                         <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
                             <div id="MeterValuesRequest_MeterValue1_SampledValue1" class="properties">
-                                <div class="row"><div class="key">Value</div>    <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value"     type="text"></div></div>
-                                <div class="row"><div class="key">Context</div>  <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Context"   type="text"></div></div>
-                                <div class="row"><div class="key">Format</div>   <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Format"    type="text"></div></div>
-                                <div class="row"><div class="key">Measurand</div><div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand" type="text"></div></div>
-                                <div class="row"><div class="key">Phase</div>    <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Phase"     type="text"></div></div>
-                                <div class="row"><div class="key">Location</div> <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Location"  type="text"></div></div>
-                                <div class="row"><div class="key">Unit</div>     <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Unit"      type="text"></div></div>
+                                <div class="row"><div class="key">Value</div>  <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value" type="text"></div></div>
+                                <div class="row"><div class="key">Context</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Context">
+                                        <option>-</option>
+                                        <option>Interruption.Begin</option>
+                                        <option>Interruption.End</option>
+                                        <option>Sample.Clock</option>
+                                        <option>Sample.Periodic</option>
+                                        <option>Transaction.Begin</option>
+                                        <option>Transaction.End</option>
+                                        <option>Trigger</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Format</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Format">
+                                        <option>-</option>
+                                        <option>Raw</option>
+                                        <option>SignedData</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Measurand</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand">
+                                        <option>-</option>
+                                        <option>Energy.Active.Export.Register</option>
+                                        <option>Energy.Active.Import.Register</option>
+                                        <option>Energy.Reactive.Export.Register</option>
+                                        <option>Energy.Reactive.Import.Register</option>
+                                        <option>Energy.Active.Export.Interval</option>
+                                        <option>Energy.Active.Import.Interval</option>
+                                        <option>Energy.Reactive.Export.Interval</option>
+                                        <option>Energy.Reactive.Import.Interval</option>
+                                        <option>Power.Active.Export</option>
+                                        <option>Power.Active.Import</option>
+                                        <option>Power.Offered</option>
+                                        <option>Power.Reactive.Export</option>
+                                        <option>Power.Reactive.Import</option>
+                                        <option>Power.Factor</option>
+                                        <option>Current.Import</option>
+                                        <option>Current.Export</option>
+                                        <option>Current.Offered</option>
+                                        <option>Voltage</option>
+                                        <option>Frequency</option>
+                                        <option>Temperature</option>
+                                        <option>SoC</option>
+                                        <option>RPM</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Phase</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Phase">
+                                        <option>-</option>
+                                        <option>L1</option>
+                                        <option>L2</option>
+                                        <option>L3</option>
+                                        <option>N</option>
+                                        <option>L1-N</option>
+                                        <option>L2-N</option>
+                                        <option>L3-N</option>
+                                        <option>L1-L2</option>
+                                        <option>L2-L3</option>
+                                        <option>L3-L1</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Location</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Location">
+                                        <option>-</option>
+                                        <option>Cable</option>
+                                        <option>EV</option>
+                                        <option>Inlet</option>
+                                        <option>Outlet</option>
+                                        <option>Body</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Unit</div><div class="value">
+                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Unit">
+                                        <option>-</option>
+                                        <option>Wh</option>
+                                        <option>kWh</option>
+                                        <option>varh</option>
+                                        <option>kvarh</option>
+                                        <option>W</option>
+                                        <option>kW</option>
+                                        <option>VA</option>
+                                        <option>kVA</option>
+                                        <option>var</option>
+                                        <option>kvar</option>
+                                        <option>A</option>
+                                        <option>V</option>
+                                        <option>K</option>
+                                        <option>Celsius</option>
+                                        <option>Fahrenheit</option>
+                                        <option>Percent</option>
+                                    </select>
+                                </div></div>
                             </div>
                         </div>
 
@@ -158,7 +245,22 @@
                 <div class="row"><div class="key">IdTag</div>        <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
                 <div class="row"><div class="key">Timestamp</div>    <div class="value"><input id="StopTransactionRequest_Timestamp"     type="text"></div></div>
                 <div class="row"><div class="key">MeterStop</div>    <div class="value"><input id="StopTransactionRequest_MeterStop"     type="text"></div></div>
-                <div class="row"><div class="key">Reason</div>       <div class="value"><input id="StopTransactionRequest_Reason"        type="text"></div></div>
+                <div class="row"><div class="key">Reason</div>       <div class="value">
+                    <select id="StopTransactionRequest_Reason">
+                        <option>-</option>
+                        <option>EmergencyStop</option>
+                        <option>EVDisconnected</option>
+                        <option>HardReset</option>
+                        <option>Local</option>
+                        <option>Other</option>
+                        <option>PowerLoss</option>
+                        <option>Reboot</option>
+                        <option>Remote</option>
+                        <option>SoftReset</option>
+                        <option>UnlockCommand</option>
+                        <option>DeAuthorized</option>
+                    </select>
+                </div></div>
 
                 <div class="row"><div class="key">Transaction Data</div></div>
                 <div id="StopTransactionRequest_TransactionData" class="collection">
@@ -169,13 +271,100 @@
                         <div class="row"><div class="key">Sampled Value</div></div>
                         <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
                             <div id="StopTransactionRequest_TransactionData1_SampledValue1" class="properties">
-                                <div class="row"><div class="key">Value</div>    <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Value"     type="text"></div></div>
-                                <div class="row"><div class="key">Context</div>  <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Context"   type="text"></div></div>
-                                <div class="row"><div class="key">Format</div>   <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Format"    type="text"></div></div>
-                                <div class="row"><div class="key">Measurand</div><div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Measurand" type="text"></div></div>
-                                <div class="row"><div class="key">Phase</div>    <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Phase"     type="text"></div></div>
-                                <div class="row"><div class="key">Location</div> <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Location"  type="text"></div></div>
-                                <div class="row"><div class="key">Unit</div>     <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Unit"      type="text"></div></div>
+                                <div class="row"><div class="key">Value</div>  <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Value" type="text"></div></div>
+                                <div class="row"><div class="key">Context</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Context">
+                                        <option>-</option>
+                                        <option>Interruption.Begin</option>
+                                        <option>Interruption.End</option>
+                                        <option>Sample.Clock</option>
+                                        <option>Sample.Periodic</option>
+                                        <option>Transaction.Begin</option>
+                                        <option>Transaction.End</option>
+                                        <option>Trigger</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Format</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Format">
+                                        <option>-</option>
+                                        <option>Raw</option>
+                                        <option>SignedData</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Measurand</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Measurand">
+                                        <option>-</option>
+                                        <option>Energy.Active.Export.Register</option>
+                                        <option>Energy.Active.Import.Register</option>
+                                        <option>Energy.Reactive.Export.Register</option>
+                                        <option>Energy.Reactive.Import.Register</option>
+                                        <option>Energy.Active.Export.Interval</option>
+                                        <option>Energy.Active.Import.Interval</option>
+                                        <option>Energy.Reactive.Export.Interval</option>
+                                        <option>Energy.Reactive.Import.Interval</option>
+                                        <option>Power.Active.Export</option>
+                                        <option>Power.Active.Import</option>
+                                        <option>Power.Offered</option>
+                                        <option>Power.Reactive.Export</option>
+                                        <option>Power.Reactive.Import</option>
+                                        <option>Power.Factor</option>
+                                        <option>Current.Import</option>
+                                        <option>Current.Export</option>
+                                        <option>Current.Offered</option>
+                                        <option>Voltage</option>
+                                        <option>Frequency</option>
+                                        <option>Temperature</option>
+                                        <option>SoC</option>
+                                        <option>RPM</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Phase</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Phase">
+                                        <option>-</option>
+                                        <option>L1</option>
+                                        <option>L2</option>
+                                        <option>L3</option>
+                                        <option>N</option>
+                                        <option>L1-N</option>
+                                        <option>L2-N</option>
+                                        <option>L3-N</option>
+                                        <option>L1-L2</option>
+                                        <option>L2-L3</option>
+                                        <option>L3-L1</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Location</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Location">
+                                        <option>-</option>
+                                        <option>Cable</option>
+                                        <option>EV</option>
+                                        <option>Inlet</option>
+                                        <option>Outlet</option>
+                                        <option>Body</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key">Unit</div><div class="value">
+                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Unit">
+                                        <option>-</option>
+                                        <option>Wh</option>
+                                        <option>kWh</option>
+                                        <option>varh</option>
+                                        <option>kvarh</option>
+                                        <option>W</option>
+                                        <option>kW</option>
+                                        <option>VA</option>
+                                        <option>kVA</option>
+                                        <option>var</option>
+                                        <option>kvar</option>
+                                        <option>A</option>
+                                        <option>V</option>
+                                        <option>K</option>
+                                        <option>Celsius</option>
+                                        <option>Fahrenheit</option>
+                                        <option>Percent</option>
+                                    </select>
+                                </div></div>
                             </div>
                         </div>
 
@@ -185,7 +374,7 @@
             </div>
             <button id="StopTransactionRequestButton" class="commandButton">send</button>
         </div>
-        
+
 
         <div id="DataTransferRequest" class="command">
             <div class="description">Data Transfer Request</div>
@@ -221,7 +410,7 @@
                 <div class="row">
                     <div class="key">Status</div>
                     <div class="value">
-                        <select id="FirmwareStatusStatusNotificationRequest_Status">
+                        <select id="FirmwareStatusNotificationRequest_Status">
                             <option>Downloaded</option>
                             <option>DownloadFailed</option>
                             <option>Downloading</option>
@@ -306,8 +495,28 @@
       }
 
 
-      var bootNotificationRequestButton = document.querySelector("#BootNotificationRequestButton");
+      var bootNotificationRequestButton               = document.querySelector("#BootNotificationRequestButton");
+      var heartbeatRequestButton                      = document.querySelector("#HeartbeatRequestButton");
+      var authorizeRequestButton                      = document.querySelector("#AuthorizeRequestButton");
+      var startTransactionRequestButton               = document.querySelector("#StartTransactionRequestButton");
+      var StatusNotificationRequestButton             = document.querySelector("#StatusNotificationRequestButton");
+      var MeterValuesRequestButton                    = document.querySelector("#MeterValuesRequestButton");
+      var StopTransactionRequestButton                = document.querySelector("#StopTransactionRequestButton");
+      var DataTransferRequestButton                   = document.querySelector("#DataTransferRequestButton");
+      var DiagnosticsStatusNotificationRequestButton  = document.querySelector("#DiagnosticsStatusNotificationRequestButton");
+      var FirmwareStatusNotificationRequestButton     = document.querySelector("#FirmwareStatusNotificationRequestButton");
+
       bootNotificationRequestButton.addEventListener("click", SendBootNotificationRequest);
+      heartbeatRequestButton.addEventListener("click", SendHeartbeatRequest);
+      authorizeRequestButton.addEventListener("click", SendAuthorizeRequest);
+      startTransactionRequestButton.addEventListener("click", SendStartTransactionRequest);
+      StatusNotificationRequestButton.addEventListener("click", SendStatusNotificationRequest);
+      MeterValuesRequestButton.addEventListener("click", SendMeterValuesRequest);
+      StopTransactionRequestButton.addEventListener("click", SendStopTransactionRequest);
+      DataTransferRequestButton.addEventListener("click", SendDataTransferRequest);
+      DiagnosticsStatusNotificationRequestButton.addEventListener("click", SendDiagnosticsStatusNotificationRequest);
+      FirmwareStatusNotificationRequestButton.addEventListener("click", SendFirmwareStatusNotificationRequest);
+
 
       function SendBootNotificationRequest()
       {
@@ -328,30 +537,21 @@
                       {
                           "chargePointVendor":        ChargePointVendor,
                           "chargePointModel":         ChargePointModel,
-                          "chargePointSerialNumber":  ChargePointSerialNumber,
-                          "chargeBoxSerialNumber":    ChargeBoxSerialNumber,
-                          "firmwareVersion":          FirmwareVersion,
-                          "iccid":                    ICCId,
-                          "imsi":                     IMSI,
-                          "meterType":                MeterType,
-                          "meterSerialNumber":        MeterSerialNumber
+                          "chargePointSerialNumber":  ChargePointSerialNumber != "" ? ChargePointSerialNumber : null,
+                          "chargeBoxSerialNumber":    ChargeBoxSerialNumber   != "" ? ChargeBoxSerialNumber   : null,
+                          "firmwareVersion":          FirmwareVersion         != "" ? FirmwareVersion         : null,
+                          "iccid":                    ICCId                   != "" ? ICCId                   : null,
+                          "imsi":                     IMSI                    != "" ? IMSI                    : null,
+                          "meterType":                MeterType               != "" ? MeterType               : null,
+                          "meterSerialNumber":        MeterSerialNumbe        != "" ? MeterSerialNumbe        : null
                       });
 
       }
-
-
-      var heartbeatRequestButton = document.querySelector("#HeartbeatRequestButton");
-      heartbeatRequestButton.addEventListener("click", SendHeartbeatRequest);
 
       function SendHeartbeatRequest()
       {
         doSendRequest("Heartbeat", null);
       }
-
-
-
-      var authorizeRequestButton = document.querySelector("#AuthorizeRequestButton");
-      authorizeRequestButton.addEventListener("click", SendAuthorizeRequest);
 
       function SendAuthorizeRequest()
       {
@@ -366,10 +566,6 @@
                       });
 
       }
-
-
-      var startTransactionRequestButton = document.querySelector("#StartTransactionRequestButton");
-      startTransactionRequestButton.addEventListener("click", SendStartTransactionRequest);
 
       function SendStartTransactionRequest()
       {
@@ -388,14 +584,10 @@
                           "idTag":          IdTag,
                           "timestamp":      Timestamp != "" ? Timestamp : new Date().toISOString(),
                           "meterStart":     parseInt(MeterStart),
-                          "reservationId":  parseInt(ReservationId)
+                          "reservationId":  ReservationId != "" ? parseInt(ReservationId) : null
                       });
 
       }
-
-
-      var StatusNotificationRequestButton = document.querySelector("#StatusNotificationRequestButton");
-      StatusNotificationRequestButton.addEventListener("click", SendStatusNotificationRequest);
 
       function SendStatusNotificationRequest()
       {
@@ -423,10 +615,6 @@
 
       }
 
-      
-      var MeterValuesRequestButton = document.querySelector("#MeterValuesRequestButton");
-      MeterValuesRequestButton.addEventListener("click", SendMeterValuesRequest);
-
       function SendMeterValuesRequest()
       {
 
@@ -448,20 +636,20 @@
 
         doSendRequest("MeterValues",
                       {
-                          "connectorId":      ConnectorId,
-                          "transactionId":    TransactionId,
-                          "meterValue":       [
+                          "connectorId":    parseInt(ConnectorId),
+                          "transactionId":  TransactionId != "" ? parseInt(TransactionId) : null,
+                          "meterValue":     [
                               {
-                                  "timestamp":    Timestamp,
+                                  "timestamp":    Timestamp != "" ? Timestamp : new Date().toISOString(),
                                   "sampledValue": [
                                       {
                                           "value":      Value,
-                                          "context":    Context,
-                                          "format":     Format,
-                                          "measurand":  Measurand,
-                                          "phase":      Phase,
-                                          "location":   Location,
-                                          "unit":       Unit
+                                          "context":    Context   != "-" ? Context   : null,
+                                          "format":     Format    != "-" ? Format    : null,
+                                          "measurand":  Measurand != "-" ? Measurand : null,
+                                          "phase":      Phase     != "-" ? Phase     : null,
+                                          "location":   Location  != "-" ? Location  : null,
+                                          "unit":       Uni       != "-" ? Uni       : null
                                       }
                                   ]
                               }
@@ -469,6 +657,100 @@
                       });
 
       }
+
+      function SendStopTransactionRequest()
+      {
+
+        var StopTransactionRequestDiv  = document.querySelector("#StopTransactionRequest");
+        var properties                 = StopTransactionRequestDiv.querySelector(".properties");
+        var TransactionId              = properties.querySelector("#StopTransactionRequest_TransactionId").value;
+        var IdTag                      = properties.querySelector("#StopTransactionRequest_IdTag").value;
+        var Timestamp                  = properties.querySelector("#StopTransactionRequest_Timestamp").value;
+        var MeterStop                  = properties.querySelector("#StopTransactionRequest_MeterStop").value;
+        var Reason                     = properties.querySelector("#StopTransactionRequest_Reason").value;
+        
+        var Timestamp                  = properties.querySelector("#StopTransactionRequest_TransactionData1_Timestamp").value;
+        var SampledValues              = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValues");
+        
+        var Value                      = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Value").value;
+        var Context                    = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Context").value;
+        var Format                     = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Format").value;
+        var Measurand                  = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Measurand").value;
+        var Phase                      = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Phase").value;
+        var Location                   = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Location").value;
+        var Unit                       = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Unit").value;
+
+        doSendRequest("StopTransaction",
+                      {
+                          "connectorId":      parseInt(ConnectorId),
+                          "transactionId":    TransactionId != "" ? parseInt(TransactionId) : null,
+                          "meterValue":       [
+                              {
+                                  "timestamp":    Timestamp != "" ? Timestamp : new Date().toISOString(),
+                                  "sampledValue": [
+                                      {
+                                          "value":      Value,
+                                          "context":    Context   != "-" ? Context   : null,
+                                          "format":     Format    != "-" ? Format    : null,
+                                          "measurand":  Measurand != "-" ? Measurand : null,
+                                          "phase":      Phase     != "-" ? Phase     : null,
+                                          "location":   Location  != "-" ? Location  : null,
+                                          "unit":       Uni       != "-" ? Uni       : null
+                                      }
+                                  ]
+                              }
+                          ]
+                      });
+
+      }
+
+      function SendDataTransferRequest()
+      {
+
+        var dataTransferRequestDiv  = document.querySelector("#DataTransferRequest");
+        var properties              = dataTransferRequestDiv.querySelector(".properties");
+        var VendorId                = properties.querySelector("#DataTransferRequest_VendorId").value;
+        var MessageId               = properties.querySelector("#DataTransferRequest_MessageId").value;
+        var Data                    = properties.querySelector("#DataTransferRequest_Data").value;
+
+        doSendRequest("DataTransfer",
+                      {
+                          "vendorId":   VendorId,
+                          "messageId":  MessageId,
+                          "data":       Data
+                      });
+
+      }
+
+      function SendDiagnosticsStatusNotificationRequest()
+      {
+
+        var DiagnosticsStatusNotificationRequestDiv  = document.querySelector("#DiagnosticsStatusNotificationRequest");
+        var properties                               = DiagnosticsStatusNotificationRequestDiv.querySelector(".properties");
+        var Status                                   = properties.querySelector("#DiagnosticsStatusNotificationRequest_Status").value;
+
+        doSendRequest("DiagnosticsStatusNotification",
+                      {
+                          "status": Status
+                      });
+
+      }
+
+      function SendFirmwareStatusNotificationRequest()
+      {
+
+        var FirmwareStatusNotificationRequestDiv  = document.querySelector("#FirmwareStatusNotificationRequest");
+        var properties                            = FirmwareStatusNotificationRequestDiv.querySelector(".properties");
+        var Status                                = properties.querySelector("#FirmwareStatusNotificationRequest_Status").value;
+
+        doSendRequest("FirmwareStatusNotification",
+                      {
+                          "status": Status
+                      });
+
+      }
+
+
 
   </script>
 

@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 
+///<reference path="OCPPv1_6.ts" />
+
 class chargingStationApp {
 
     //#region Data
+
+    private readonly proxyOCPPv1_6:                                      OCPPv1_6;
 
     private readonly commandsDiv:                                        HTMLDivElement;
     private readonly bootNotificationRequestDiv:                         HTMLDivElement;     
@@ -57,40 +61,19 @@ class chargingStationApp {
     private readonly button:                                             HTMLButtonElement;
     private readonly output:                                             HTMLDivElement;
     private readonly textarea:                                           HTMLTextAreaElement;
-    private readonly websocket:                                          WebSocket;
 
     //#endregion
 
     constructor()
     {
 
-        this.button     = document.querySelector("button")!;
+        this.proxyOCPPv1_6  = new OCPPv1_6((t) => this.writeToScreen(t));
+
+        this.button     = document.querySelector("button")  as HTMLButtonElement;
         this.output     = document.querySelector("#output") as HTMLDivElement;
         this.textarea   = document.querySelector("textarea")!;
-            // wsUri    = "ws://echo.websocket.org/",
-        var wsUri       = "ws://127.0.0.1:8000/webServices/ocpp/CP3211";
-        this.websocket  = new WebSocket(wsUri);
-    
-        //button.addEventListener("click", this.onClickButton);
-        this.button.onclick = () => this.onClickButton;
-    
-        this.websocket.onopen = (e) => {
-            this.writeToScreen("CONNECTED");
-            this.doSend("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
-        };
-    
-        this.websocket.onclose = (e) => {
-            this.writeToScreen("DISCONNECTED");
-        };
-    
-        this.websocket.onmessage = (e) => {
-            this.writeToScreen("<span>RESPONSE: " + e.data + "</span>");
-        };
-    
-        this.websocket.onerror = (e) => {
-            this.writeToScreen("<span class=error>ERROR:</span> " + (e as any).data);
-        };
 
+        this.button.onclick = () => this.onClickButton;
 
         this.commandsDiv                                             = document.querySelector("#commands")                                      as HTMLDivElement;
         this.bootNotificationRequestDiv                              = this.commandsDiv.querySelector("#BootNotificationRequest")               as HTMLDivElement;
@@ -115,16 +98,16 @@ class chargingStationApp {
         this.sendDiagnosticsStatusNotificationRequestButton          = this.diagnosticsStatusNotificationRequestDiv.querySelector("#DiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
         this.sendFirmwareStatusNotificationRequestButton             = this.firmwareStatusNotificationRequestDiv.   querySelector("#FirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
 
-        this.sendBootNotificationRequestButton.onclick               = () => this.SendBootNotificationRequest();
-        this.sendHeartbeatRequestButton.onclick                      = () => this.SendHeartbeatRequest();
-        this.sendAuthorizeRequestButton.onclick                      = () => this.SendAuthorizeRequest();
-        this.sendStartTransactionRequestButton.onclick               = () => this.SendStartTransactionRequest();
-        this.sendStatusNotificationRequestButton.onclick             = () => this.SendStatusNotificationRequest();
-        this.sendMeterValuesRequestButton.onclick                    = () => this.SendMeterValuesRequest();
-        this.sendStopTransactionRequestButton.onclick                = () => this.SendStopTransactionRequest();
-        this.sendDataTransferRequestButton.onclick                   = () => this.SendDataTransferRequest();
-        this.sendDiagnosticsStatusNotificationRequestButton.onclick  = () => this.SendDiagnosticsStatusNotificationRequest();
-        this.sendFirmwareStatusNotificationRequestButton.onclick     = () => this.SendFirmwareStatusNotificationRequest();
+        this.sendBootNotificationRequestButton.onclick               = () => this.proxyOCPPv1_6.SendBootNotificationRequest();
+        this.sendHeartbeatRequestButton.onclick                      = () => this.proxyOCPPv1_6.SendHeartbeatRequest();
+        this.sendAuthorizeRequestButton.onclick                      = () => this.proxyOCPPv1_6.SendAuthorizeRequest();
+        this.sendStartTransactionRequestButton.onclick               = () => this.proxyOCPPv1_6.SendStartTransactionRequest();
+        this.sendStatusNotificationRequestButton.onclick             = () => this.proxyOCPPv1_6.SendStatusNotificationRequest();
+        this.sendMeterValuesRequestButton.onclick                    = () => this.proxyOCPPv1_6.SendMeterValuesRequest();
+        this.sendStopTransactionRequestButton.onclick                = () => this.proxyOCPPv1_6.SendStopTransactionRequest();
+        this.sendDataTransferRequestButton.onclick                   = () => this.proxyOCPPv1_6.SendDataTransferRequest();
+        this.sendDiagnosticsStatusNotificationRequestButton.onclick  = () => this.proxyOCPPv1_6.SendDiagnosticsStatusNotificationRequest();
+        this.sendFirmwareStatusNotificationRequestButton.onclick     = () => this.proxyOCPPv1_6.SendFirmwareStatusNotificationRequest();
 
         this.buttonsDiv                                              = document.querySelector("#buttons")                                               as HTMLDivElement;
         this.showBootNotificationRequestButton                       = this.buttonsDiv.querySelector("#ShowBootNotificationRequestButton")              as HTMLButtonElement;
@@ -161,275 +144,18 @@ class chargingStationApp {
 
     }
 
-
-
-
-    private doSend(message: string) {
-        this.writeToScreen("SENT: " + message);
-        this.websocket.send(message);
-    }
-
     private writeToScreen(message: string) {
-        this.output.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
+        this.output?.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
     }
 
     private onClickButton() {
 
-        var text = this.textarea.value;
+        const text = this.textarea.value;
 
-        text && this.doSend(text);
+        text && this.proxyOCPPv1_6.sendRAWRequest(text);
         this.textarea.value = "";
         this.textarea.focus();
 
     }
-
-    private sendRequest(command: string, request: any) {
-
-        var message = JSON.stringify([ 2,
-                                       "19223201",
-                                       command,
-                                       request != null ? request : {} ]);
-
-        this.writeToScreen("SENT: " + message);
-        this.websocket.send(message);
-
-    }
-
-
-    private SendBootNotificationRequest()
-    {
-
-      var bootNotificationRequestDiv  = document.querySelector("#BootNotificationRequest");
-      var properties                  = bootNotificationRequestDiv?.querySelector(".properties")                      as HTMLDivElement;
-      var ChargePointVendor           = (properties.querySelector("#BootNotificationRequest_ChargePointVendor")       as HTMLInputElement).value;
-      var ChargePointModel            = (properties.querySelector("#BootNotificationRequest_ChargePointModel")        as HTMLInputElement).value;
-      var ChargePointSerialNumber     = (properties.querySelector("#BootNotificationRequest_ChargePointSerialNumber") as HTMLInputElement).value;
-      var ChargeBoxSerialNumber       = (properties.querySelector("#BootNotificationRequest_ChargeBoxSerialNumber")   as HTMLInputElement).value;
-      var FirmwareVersion             = (properties.querySelector("#BootNotificationRequest_FirmwareVersion")         as HTMLInputElement).value;
-      var ICCId                       = (properties.querySelector("#BootNotificationRequest_ICCId")                   as HTMLInputElement).value;
-      var IMSI                        = (properties.querySelector("#BootNotificationRequest_IMSI")                    as HTMLInputElement).value;
-      var MeterType                   = (properties.querySelector("#BootNotificationRequest_MeterType")               as HTMLInputElement).value;
-      var MeterSerialNumber           = (properties.querySelector("#BootNotificationRequest_MeterSerialNumber")       as HTMLInputElement).value;
-
-      this.sendRequest("BootNotification",
-                       {
-                           "chargePointVendor":        ChargePointVendor,
-                           "chargePointModel":         ChargePointModel,
-                           "chargePointSerialNumber":  ChargePointSerialNumber != "" ? ChargePointSerialNumber : null,
-                           "chargeBoxSerialNumber":    ChargeBoxSerialNumber   != "" ? ChargeBoxSerialNumber   : null,
-                           "firmwareVersion":          FirmwareVersion         != "" ? FirmwareVersion         : null,
-                           "iccid":                    ICCId                   != "" ? ICCId                   : null,
-                           "imsi":                     IMSI                    != "" ? IMSI                    : null,
-                           "meterType":                MeterType               != "" ? MeterType               : null,
-                           "meterSerialNumber":        MeterSerialNumber       != "" ? MeterSerialNumber       : null
-                       });
-
-    }
-
-    private SendHeartbeatRequest()
-    {
-        this.sendRequest("Heartbeat", null);
-    }
-
-    private SendAuthorizeRequest()
-    {
-
-      var authorizeRequestDiv  = document.querySelector("#AuthorizeRequest");
-      var properties           = authorizeRequestDiv?.querySelector(".properties")    as HTMLDivElement;
-      var IdTag                = (properties.querySelector("#AuthorizeRequest_IdTag") as HTMLInputElement).value;
-
-      this.sendRequest("Authorize",
-                       {
-                           "idTag": IdTag
-                       });
-
-    }
-
-    private SendStartTransactionRequest()
-    {
-
-      var startTransactionRequestDiv  = document.querySelector("#StartTransactionRequest");
-      var properties                  = startTransactionRequestDiv?.querySelector(".properties")            as HTMLDivElement;
-      var ConnectorId                 = (properties.querySelector("#StartTransactionRequest_ConnectorId")   as HTMLInputElement).value;
-      var IdTag                       = (properties.querySelector("#StartTransactionRequest_IdTag")         as HTMLInputElement).value;
-      var Timestamp                   = (properties.querySelector("#StartTransactionRequest_Timestamp")     as HTMLInputElement).value;
-      var MeterStart                  = (properties.querySelector("#StartTransactionRequest_MeterStart")    as HTMLInputElement).value;
-      var ReservationId               = (properties.querySelector("#StartTransactionRequest_ReservationId") as HTMLInputElement).value;
-
-      this.sendRequest("StartTransaction",
-                       {
-                           "connectorId":    parseInt(ConnectorId),
-                           "idTag":          IdTag,
-                           "timestamp":      Timestamp != "" ? Timestamp : new Date().toISOString(),
-                           "meterStart":     parseInt(MeterStart),
-                           "reservationId":  ReservationId != "" ? parseInt(ReservationId) : null
-                       });
-
-    }
-
-    private SendStatusNotificationRequest()
-    {
-
-      var StatusNotificationRequestDiv  = document.querySelector("#StatusNotificationRequest");
-      var properties                    = StatusNotificationRequestDiv?.querySelector(".properties")              as HTMLDivElement;
-      var ConnectorId                   = (properties.querySelector("#StatusNotificationRequest_ConnectorId")     as HTMLInputElement).value;
-      var Status                        = (properties.querySelector("#StatusNotificationRequest_Status")          as HTMLInputElement).value;
-      var ErrorCode                     = (properties.querySelector("#StatusNotificationRequest_ErrorCode")       as HTMLInputElement).value;
-      var Info                          = (properties.querySelector("#StatusNotificationRequest_Info")            as HTMLInputElement).value;
-      var Timestamp                     = (properties.querySelector("#StatusNotificationRequest_Timestamp")       as HTMLInputElement).value;
-      var VendorId                      = (properties.querySelector("#StatusNotificationRequest_VendorId")        as HTMLInputElement).value;
-      var VendorErrorCode               = (properties.querySelector("#StatusNotificationRequest_VendorErrorCode") as HTMLInputElement).value;
-
-      this.sendRequest("StatusNotification",
-                       {
-                           "connectorId":      parseInt(ConnectorId),
-                           "status":           Status,
-                           "errorCode":        ErrorCode,
-                           "info":             Info,
-                           "timestamp":        Timestamp != "" ? Timestamp : new Date().toISOString(),
-                           "vendorId":         VendorId,
-                           "vendorErrorCode":  VendorErrorCode
-                       });
-
-    }
-
-    private SendMeterValuesRequest()
-    {
-
-      var MeterValuesRequestDiv  = document.querySelector("#MeterValuesRequest");
-      var properties             = MeterValuesRequestDiv?.querySelector(".properties")                                  as HTMLDivElement;
-      var ConnectorId            = (properties.querySelector("#MeterValuesRequest_ConnectorId")                         as HTMLInputElement).value;
-      var TransactionId          = (properties.querySelector("#MeterValuesRequest_TransactionId")                       as HTMLInputElement).value;
-
-      var Timestamp              = (properties.querySelector("#MeterValuesRequest_MeterValue1_Timestamp")               as HTMLInputElement).value;
-      var SampledValues          =  properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValues");
-
-      var Value                  = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Value")     as HTMLInputElement).value;
-      var Context                = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Context")   as HTMLSelectElement).value;
-      var Format                 = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Format")    as HTMLSelectElement).value;
-      var Measurand              = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Measurand") as HTMLSelectElement).value;
-      var Phase                  = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Phase")     as HTMLSelectElement).value;
-      var Location               = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Location")  as HTMLSelectElement).value;
-      var Unit                   = (properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Unit")      as HTMLSelectElement).value;
-
-      this.sendRequest("MeterValues",
-                       {
-                           "connectorId":    parseInt(ConnectorId),
-                           "transactionId":  TransactionId != "" ? parseInt(TransactionId) : null,
-                           "meterValue":     [
-                               {
-                                   "timestamp":    Timestamp != "" ? Timestamp : new Date().toISOString(),
-                                   "sampledValue": [
-                                       {
-                                           "value":      Value,
-                                           "context":    Context   != "-" ? Context   : null,
-                                           "format":     Format    != "-" ? Format    : null,
-                                           "measurand":  Measurand != "-" ? Measurand : null,
-                                           "phase":      Phase     != "-" ? Phase     : null,
-                                           "location":   Location  != "-" ? Location  : null,
-                                           "unit":       Unit      != "-" ? Unit      : null
-                                       }
-                                   ]
-                               }
-                           ]
-                       });
-
-    }
-
-    private SendStopTransactionRequest()
-    {
-
-      var StopTransactionRequestDiv  = document.querySelector("#StopTransactionRequest");
-      var properties                 = StopTransactionRequestDiv?.querySelector(".properties")                                       as HTMLDivElement;
-      var TransactionId              = (properties.querySelector("#StopTransactionRequest_TransactionId")                            as HTMLInputElement).value;
-      var IdTag                      = (properties.querySelector("#StopTransactionRequest_IdTag")                                    as HTMLInputElement).value;
-      var Timestamp                  = (properties.querySelector("#StopTransactionRequest_Timestamp")                                as HTMLInputElement).value;
-      var MeterStop                  = (properties.querySelector("#StopTransactionRequest_MeterStop")                                as HTMLInputElement).value;
-      var Reason                     = (properties.querySelector("#StopTransactionRequest_Reason")                                   as HTMLSelectElement).value;
-      
-      var Timestamp1                 = (properties.querySelector("#StopTransactionRequest_TransactionData1_Timestamp")               as HTMLInputElement).value;
-      var SampledValues              =  properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValues");
-      
-      var Value                      = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Value")     as HTMLSelectElement).value;
-      var Context                    = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Context")   as HTMLSelectElement).value;
-      var Format                     = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Format")    as HTMLSelectElement).value;
-      var Measurand                  = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Measurand") as HTMLSelectElement).value;
-      var Phase                      = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Phase")     as HTMLSelectElement).value;
-      var Location                   = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Location")  as HTMLSelectElement).value;
-      var Unit                       = (properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Unit")      as HTMLSelectElement).value;
-
-      this.sendRequest("StopTransaction",
-                       {
-                           "transactionId":    TransactionId != ""  ? parseInt(TransactionId) : null,
-                           "idTag":            IdTag,
-                           "timestamp":        Timestamp     != ""  ? Timestamp               : new Date().toISOString(),
-                           "meterStop":        MeterStop     != ""  ? parseInt(MeterStop)     : null,
-                           "reason":           Reason        != "-" ? Reason                  : null,
-                           "meterValue":       [
-                               {
-                                   "timestamp":    Timestamp1 != "" ? Timestamp1 : new Date().toISOString(),
-                                   "sampledValue": [
-                                       {
-                                           "value":      Value,
-                                           "context":    Context   != "-" ? Context   : null,
-                                           "format":     Format    != "-" ? Format    : null,
-                                           "measurand":  Measurand != "-" ? Measurand : null,
-                                           "phase":      Phase     != "-" ? Phase     : null,
-                                           "location":   Location  != "-" ? Location  : null,
-                                           "unit":       Unit      != "-" ? Unit      : null
-                                       }
-                                   ]
-                               }
-                           ]
-                       });
-
-    }
-
-    private SendDataTransferRequest()
-    {
-
-      var dataTransferRequestDiv  = document.querySelector("#DataTransferRequest");
-      var properties              = dataTransferRequestDiv?.querySelector(".properties")        as HTMLDivElement;
-      var VendorId                = (properties.querySelector("#DataTransferRequest_VendorId")  as HTMLInputElement).value;
-      var MessageId               = (properties.querySelector("#DataTransferRequest_MessageId") as HTMLInputElement).value;
-      var Data                    = (properties.querySelector("#DataTransferRequest_Data")      as HTMLInputElement).value;
-
-      this.sendRequest("DataTransfer",
-                       {
-                           "vendorId":   VendorId,
-                           "messageId":  MessageId,
-                           "data":       Data
-                       });
-
-    }
-
-    private SendDiagnosticsStatusNotificationRequest()
-    {
-
-      var DiagnosticsStatusNotificationRequestDiv  = document.querySelector("#DiagnosticsStatusNotificationRequest");
-      var properties                               = DiagnosticsStatusNotificationRequestDiv?.querySelector(".properties")     as HTMLDivElement;
-      var Status                                   = (properties.querySelector("#DiagnosticsStatusNotificationRequest_Status") as HTMLSelectElement).value;
-
-      this.sendRequest("DiagnosticsStatusNotification",
-                       {
-                           "status": Status
-                       });
-
-    }
-
-    private SendFirmwareStatusNotificationRequest()
-    {
-
-      var FirmwareStatusNotificationRequestDiv  = document.querySelector("#FirmwareStatusNotificationRequest");
-      var properties                            = FirmwareStatusNotificationRequestDiv?.querySelector(".properties")     as HTMLDivElement;
-      var Status                                = (properties.querySelector("#FirmwareStatusNotificationRequest_Status") as HTMLSelectElement).value;
-
-      this.sendRequest("FirmwareStatusNotification",
-                       {
-                           "status": Status
-                       });
-
-    }
-
 
  }

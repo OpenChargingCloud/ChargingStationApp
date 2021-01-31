@@ -28,9 +28,7 @@
 
         <div id="bottom">
             <div id="left">
-                <textarea cols=60 rows=6></textarea>
-                <button>send</button>
-                <div id=output></div>
+                <div id=logView></div>
             </div>
             <div id="right">
 
@@ -48,6 +46,8 @@
                     <button id="ShowDataTransferRequestButton">Data Transfer</button>
                     <button id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
                     <button id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
+
+                    <button id="ShowRAWRequestButton">RAW Request</button>
             
                 </div>
             
@@ -406,7 +406,7 @@
                             <div class="row"><div class="key">Data</div>      <div class="value"><input id="DataTransferRequest_Data"      type="text"></div></div>
                         </div>
                         <button id="DataTransferRequestButton" class="commandButton">send</button>
-                    </div>        
+                    </div>
             
                     <div id="DiagnosticsStatusNotificationRequest" class="command">
                         <div class="description">Diagnostics Status Notification Request</div>
@@ -424,7 +424,7 @@
                             </div>
                         </div>
                         <button id="DiagnosticsStatusNotificationRequestButton" class="commandButton">send</button>
-                    </div>        
+                    </div>
             
                     <div id="FirmwareStatusNotificationRequest" class="command">
                         <div class="description">Firmware Status Notification Request</div>
@@ -445,7 +445,20 @@
                             </div>
                         </div>
                         <button id="FirmwareStatusNotificationRequestButton" class="commandButton">send</button>
-                    </div>        
+                    </div>
+
+                    <div id="RAWRequest" class="command">
+                        <div class="description">RAW Request</div>
+                        <div class="properties">
+                            <div class="row">
+                                <!-- <div class="key"></div> -->
+                                <div class="value">
+                                    <textarea id="RAWRequest_Text" cols=60 rows=6></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="RAWRequestButton" class="commandButton">send</button>
+                    </div>
             
                 </div>
 

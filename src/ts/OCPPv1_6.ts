@@ -34,6 +34,7 @@ class OCPPv1_6 {
     private readonly dataTransferRequestDiv:                             HTMLDivElement;
     private readonly diagnosticsStatusNotificationRequestDiv:            HTMLDivElement;
     private readonly firmwareStatusNotificationRequestDiv:               HTMLDivElement;
+    private readonly rawRequestDiv:                                      HTMLDivElement;
 
     private readonly buttonsDiv:                                         HTMLDivElement;
     private readonly showBootNotificationRequestButton:                  HTMLButtonElement;     
@@ -46,6 +47,7 @@ class OCPPv1_6 {
     private readonly showDataTransferRequestButton:                      HTMLButtonElement;
     private readonly showDiagnosticsStatusNotificationRequestButton:     HTMLButtonElement;
     private readonly showFirmwareStatusNotificationRequestButton:        HTMLButtonElement;
+    private readonly showRAWRequestButton:                               HTMLButtonElement;
 
     private readonly sendBootNotificationRequestButton:                  HTMLButtonElement;
     private readonly sendHeartbeatRequestButton:                         HTMLButtonElement;
@@ -57,12 +59,15 @@ class OCPPv1_6 {
     private readonly sendDataTransferRequestButton:                      HTMLButtonElement;
     private readonly sendDiagnosticsStatusNotificationRequestButton:     HTMLButtonElement;
     private readonly sendFirmwareStatusNotificationRequestButton:        HTMLButtonElement;
+    private readonly sendRAWRequestButton:                               HTMLButtonElement;
 
     private readonly websocket:                                          WebSocket;
 
     private readonly WriteToScreen:                                      WriteToScreenDelegate;
 
     //#endregion
+
+    //#region Constructor
 
     constructor(WriteToScreen:  WriteToScreenDelegate,
                 wsUri?:         string)
@@ -75,7 +80,7 @@ class OCPPv1_6 {
     
         this.websocket.onopen = (e) => {
             this.WriteToScreen("CONNECTED");
-            this.sendRAWRequest("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
+            //this.sendRAWRequest("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
         };
     
         this.websocket.onclose = (e) => {
@@ -102,6 +107,7 @@ class OCPPv1_6 {
         this.dataTransferRequestDiv                                  = this.commandsDiv.querySelector("#DataTransferRequest")                   as HTMLDivElement;
         this.diagnosticsStatusNotificationRequestDiv                 = this.commandsDiv.querySelector("#DiagnosticsStatusNotificationRequest")  as HTMLDivElement;
         this.firmwareStatusNotificationRequestDiv                    = this.commandsDiv.querySelector("#FirmwareStatusNotificationRequest")     as HTMLDivElement;
+        this.rawRequestDiv                                           = this.commandsDiv.querySelector("#RAWRequest")                            as HTMLDivElement;
 
         this.sendBootNotificationRequestButton                       = this.bootNotificationRequestDiv.             querySelector("#BootNotificationRequestButton")              as HTMLButtonElement;
         this.sendHeartbeatRequestButton                              = this.heartbeatRequestDiv.                    querySelector("#HeartbeatRequestButton")                     as HTMLButtonElement;
@@ -113,6 +119,7 @@ class OCPPv1_6 {
         this.sendDataTransferRequestButton                           = this.dataTransferRequestDiv.                 querySelector("#DataTransferRequestButton")                  as HTMLButtonElement;
         this.sendDiagnosticsStatusNotificationRequestButton          = this.diagnosticsStatusNotificationRequestDiv.querySelector("#DiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
         this.sendFirmwareStatusNotificationRequestButton             = this.firmwareStatusNotificationRequestDiv.   querySelector("#FirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
+        this.sendRAWRequestButton                                    = this.rawRequestDiv.                          querySelector("#RAWRequestButton")                           as HTMLButtonElement;
 
         this.sendBootNotificationRequestButton.onclick               = () => this.SendBootNotificationRequest();
         this.sendHeartbeatRequestButton.onclick                      = () => this.SendHeartbeatRequest();
@@ -124,6 +131,7 @@ class OCPPv1_6 {
         this.sendDataTransferRequestButton.onclick                   = () => this.SendDataTransferRequest();
         this.sendDiagnosticsStatusNotificationRequestButton.onclick  = () => this.SendDiagnosticsStatusNotificationRequest();
         this.sendFirmwareStatusNotificationRequestButton.onclick     = () => this.SendFirmwareStatusNotificationRequest();
+        this.sendRAWRequestButton.onclick                            = () => this.SendRAWRequest();
 
         this.buttonsDiv                                              = document.querySelector("#buttons")                                               as HTMLDivElement;
         this.showBootNotificationRequestButton                       = this.buttonsDiv.querySelector("#ShowBootNotificationRequestButton")              as HTMLButtonElement;
@@ -136,6 +144,7 @@ class OCPPv1_6 {
         this.showDataTransferRequestButton                           = this.buttonsDiv.querySelector("#ShowDataTransferRequestButton")                  as HTMLButtonElement;
         this.showDiagnosticsStatusNotificationRequestButton          = this.buttonsDiv.querySelector("#ShowDiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
         this.showFirmwareStatusNotificationRequestButton             = this.buttonsDiv.querySelector("#ShowFirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
+        this.showRAWRequestButton                                    = this.buttonsDiv.querySelector("#ShowRAWRequestButton")                           as HTMLButtonElement;
 
         this.showBootNotificationRequestButton.onclick               = () => this.showDialog(this.bootNotificationRequestDiv);
         this.showHeartbeatRequestButton.onclick                      = () => this.showDialog(this.heartbeatRequestDiv);
@@ -147,8 +156,11 @@ class OCPPv1_6 {
         this.showDataTransferRequestButton.onclick                   = () => this.showDialog(this.dataTransferRequestDiv);
         this.showDiagnosticsStatusNotificationRequestButton.onclick  = () => this.showDialog(this.diagnosticsStatusNotificationRequestDiv);
         this.showFirmwareStatusNotificationRequestButton.onclick     = () => this.showDialog(this.firmwareStatusNotificationRequestDiv);
+        this.showRAWRequestButton.onclick                            = () => this.showDialog(this.rawRequestDiv);
 
     }
+
+    //#endregion
 
 
     private showDialog(dialogDiv: HTMLDivElement) {
@@ -159,9 +171,6 @@ class OCPPv1_6 {
         dialogDiv.style.display = "block";
 
     }
-
-
-
 
     public sendRAWRequest(message: string) {
         this.WriteToScreen("SENT: " + message);
@@ -416,5 +425,15 @@ class OCPPv1_6 {
 
     }
 
+    public SendRAWRequest(RequestDivElement?: HTMLDivElement)
+    {
 
- }
+      const RAWRequestDiv  = RequestDivElement ?? document.querySelector("#RAWRequest");
+      const properties     = RAWRequestDiv?.querySelector(".properties")    as HTMLDivElement;
+      const Request        = (properties?.querySelector("#RAWRequest_Text") as HTMLTextAreaElement)?.value;
+
+      this.sendRAWRequest(Request);
+
+    }
+
+}

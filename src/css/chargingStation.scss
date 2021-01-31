@@ -3,6 +3,8 @@ html {
 
     body {
 
+        font-family: Arial, Helvetica, sans-serif;
+
         #frame {
 
             display:            flex;
@@ -21,14 +23,23 @@ html {
 
                     width: 50%;
 
-                    textarea { vertical-align: bottom; }
+                    #logView {
 
-                    #output {
                         overflow: auto;
-                        span { color: blue; }
-                        span.error { color: red; }
+
+                        span {
+                            color: blue;
+                        }
+
+                        span.error {
+                            color: red;
+                        }
+
                     }
-                    #output > p { overflow-wrap: break-word; }
+
+                    #logView > p {
+                        overflow-wrap: break-word;
+                    }
 
                 }
 
@@ -64,8 +75,6 @@ html {
 
                                 .collection {
 
-                                    // display:          flex;
-                                    // flex-direction:   column;
                                     margin-left:        20px;
 
                                     .properties {
@@ -103,6 +112,15 @@ html {
                                             margin-bottom:      2px;
                                             padding:            4px 6px;
                                             width:              100%;
+                                        }
+
+                                        textarea {
+                                            border:             0;
+                                            border-radius:      4px;
+                                            margin-bottom:      2px;
+                                            padding:            4px 6px 4px 10px;
+                                            width:              calc(100% - 16px);
+                                            resize:             vertical;
                                         }
 
                                     }

@@ -14,13 +14,14 @@
                                                         font-src 'self' data:;
                                                         connect-src * 'unsafe-inline'">
     <link rel="stylesheet" href="css/chargingStation.css" type="text/css" />
+    <script type="text/javascript" src="ts/chargingStationApp.js"></script>
   </head>
 
   <body>
 
-    <h1>Open Charging Cloud - Charging Station</h1>
+    <h2>Charging Station</h2>
 
-<!--     We are using Node.js <span id="node-version"></span>,
+<!-- We are using Node.js <span id="node-version"></span>,
     Chromium <span id="chrome-version"></span>,
     and Electron <span id="electron-version"></span>. -->
     <br />
@@ -28,6 +29,23 @@
     <textarea cols=60 rows=6></textarea>
     <button>send</button>
     <div id=output></div>
+
+    <div id="buttons">
+        
+        <button id="ShowBootNotificationRequestButton">Boot Notification</button>
+        <button id="ShowHeartbeatRequestButton">Heartbeat</button>
+
+        <button id="ShowAuthorizeRequestButton">Authorize</button>
+        <button id="ShowStartTransactionRequestButton">Start Transaction</button>
+        <button id="ShowStatusNotificationRequestButton">Status Notification</button>
+        <button id="ShowMeterValuesRequestButton">Meter Values</button>
+        <button id="ShowStopTransactionRequestButton">Stop Transaction</button>
+
+        <button id="ShowDataTransferRequestButton">Data Transfer</button>
+        <button id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
+        <button id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
+
+    </div>
 
     <div id="commands">
 
@@ -427,332 +445,13 @@
 
     </div>
 
-
-
     <!-- You can also require other files to run in this process -->
-
     <script src="./renderer.js"></script>
 
     <script>
       // http://www.websocket.org/echo.html
-  
-      var button     = document.querySelector("button");
-      var output     = document.querySelector("#output");
-      var textarea   = document.querySelector("textarea");
-          // wsUri   = "ws://echo.websocket.org/",
-      var wsUri      = "ws://127.0.0.1:8000/webServices/ocpp/CP3211";
-      var websocket  = new WebSocket(wsUri);
-  
-      button.addEventListener("click", onClickButton);
-  
-      websocket.onopen = function (e) {
-          writeToScreen("CONNECTED");
-          doSend("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
-      };
-  
-      websocket.onclose = function (e) {
-          writeToScreen("DISCONNECTED");
-      };
-  
-      websocket.onmessage = function (e) {
-          writeToScreen("<span>RESPONSE: " + e.data + "</span>");
-      };
-  
-      websocket.onerror = function (e) {
-          writeToScreen("<span class=error>ERROR:</span> " + e.data);
-      };
-  
-      function doSend(message) {
-          writeToScreen("SENT: " + message);
-          websocket.send(message);
-      }
-  
-      function writeToScreen(message) {
-          output.insertAdjacentHTML("afterbegin", "<p>" + message + "</p>");
-      }
-  
-      function onClickButton() {
-
-          var text = textarea.value;
-  
-          text && doSend(text);
-          textarea.value = "";
-          textarea.focus();
-
-      }
-
-
-      function doSendRequest(command, request) {
-
-          var message = JSON.stringify([ 2,
-                                         "19223201",
-                                         command,
-                                         request != null ? request : {} ]);
-
-          writeToScreen("SENT: " + message);
-          websocket.send(message);
-
-      }
-
-
-      var bootNotificationRequestButton               = document.querySelector("#BootNotificationRequestButton");
-      var heartbeatRequestButton                      = document.querySelector("#HeartbeatRequestButton");
-      var authorizeRequestButton                      = document.querySelector("#AuthorizeRequestButton");
-      var startTransactionRequestButton               = document.querySelector("#StartTransactionRequestButton");
-      var StatusNotificationRequestButton             = document.querySelector("#StatusNotificationRequestButton");
-      var MeterValuesRequestButton                    = document.querySelector("#MeterValuesRequestButton");
-      var StopTransactionRequestButton                = document.querySelector("#StopTransactionRequestButton");
-      var DataTransferRequestButton                   = document.querySelector("#DataTransferRequestButton");
-      var DiagnosticsStatusNotificationRequestButton  = document.querySelector("#DiagnosticsStatusNotificationRequestButton");
-      var FirmwareStatusNotificationRequestButton     = document.querySelector("#FirmwareStatusNotificationRequestButton");
-
-      bootNotificationRequestButton.addEventListener("click", SendBootNotificationRequest);
-      heartbeatRequestButton.addEventListener("click", SendHeartbeatRequest);
-      authorizeRequestButton.addEventListener("click", SendAuthorizeRequest);
-      startTransactionRequestButton.addEventListener("click", SendStartTransactionRequest);
-      StatusNotificationRequestButton.addEventListener("click", SendStatusNotificationRequest);
-      MeterValuesRequestButton.addEventListener("click", SendMeterValuesRequest);
-      StopTransactionRequestButton.addEventListener("click", SendStopTransactionRequest);
-      DataTransferRequestButton.addEventListener("click", SendDataTransferRequest);
-      DiagnosticsStatusNotificationRequestButton.addEventListener("click", SendDiagnosticsStatusNotificationRequest);
-      FirmwareStatusNotificationRequestButton.addEventListener("click", SendFirmwareStatusNotificationRequest);
-
-
-      function SendBootNotificationRequest()
-      {
-
-        var bootNotificationRequestDiv  = document.querySelector("#BootNotificationRequest");
-        var properties                  = bootNotificationRequestDiv.querySelector(".properties");
-        var ChargePointVendor           = properties.querySelector("#BootNotificationRequest_ChargePointVendor").value;
-        var ChargePointModel            = properties.querySelector("#BootNotificationRequest_ChargePointModel").value;
-        var ChargePointSerialNumber     = properties.querySelector("#BootNotificationRequest_ChargePointSerialNumber").value;
-        var ChargeBoxSerialNumber       = properties.querySelector("#BootNotificationRequest_ChargeBoxSerialNumber").value;
-        var FirmwareVersion             = properties.querySelector("#BootNotificationRequest_FirmwareVersion").value;
-        var ICCId                       = properties.querySelector("#BootNotificationRequest_ICCId").value;
-        var IMSI                        = properties.querySelector("#BootNotificationRequest_IMSI").value;
-        var MeterType                   = properties.querySelector("#BootNotificationRequest_MeterType").value;
-        var MeterSerialNumber           = properties.querySelector("#BootNotificationRequest_MeterSerialNumber").value;
-
-        doSendRequest("BootNotification",
-                      {
-                          "chargePointVendor":        ChargePointVendor,
-                          "chargePointModel":         ChargePointModel,
-                          "chargePointSerialNumber":  ChargePointSerialNumber != "" ? ChargePointSerialNumber : null,
-                          "chargeBoxSerialNumber":    ChargeBoxSerialNumber   != "" ? ChargeBoxSerialNumber   : null,
-                          "firmwareVersion":          FirmwareVersion         != "" ? FirmwareVersion         : null,
-                          "iccid":                    ICCId                   != "" ? ICCId                   : null,
-                          "imsi":                     IMSI                    != "" ? IMSI                    : null,
-                          "meterType":                MeterType               != "" ? MeterType               : null,
-                          "meterSerialNumber":        MeterSerialNumbe        != "" ? MeterSerialNumbe        : null
-                      });
-
-      }
-
-      function SendHeartbeatRequest()
-      {
-        doSendRequest("Heartbeat", null);
-      }
-
-      function SendAuthorizeRequest()
-      {
-
-        var authorizeRequestDiv  = document.querySelector("#AuthorizeRequest");
-        var properties           = authorizeRequestDiv.querySelector(".properties");
-        var IdTag                = properties.querySelector("#AuthorizeRequest_IdTag").value;
-
-        doSendRequest("Authorize",
-                      {
-                          "idTag": IdTag
-                      });
-
-      }
-
-      function SendStartTransactionRequest()
-      {
-
-        var startTransactionRequestDiv  = document.querySelector("#StartTransactionRequest");
-        var properties                  = startTransactionRequestDiv.querySelector(".properties");
-        var ConnectorId                 = properties.querySelector("#StartTransactionRequest_ConnectorId").value;
-        var IdTag                       = properties.querySelector("#StartTransactionRequest_IdTag").value;
-        var Timestamp                   = properties.querySelector("#StartTransactionRequest_Timestamp").value;
-        var MeterStart                  = properties.querySelector("#StartTransactionRequest_MeterStart").value;
-        var ReservationId               = properties.querySelector("#StartTransactionRequest_ReservationId").value;
-
-        doSendRequest("StartTransaction",
-                      {
-                          "connectorId":    parseInt(ConnectorId),
-                          "idTag":          IdTag,
-                          "timestamp":      Timestamp != "" ? Timestamp : new Date().toISOString(),
-                          "meterStart":     parseInt(MeterStart),
-                          "reservationId":  ReservationId != "" ? parseInt(ReservationId) : null
-                      });
-
-      }
-
-      function SendStatusNotificationRequest()
-      {
-
-        var StatusNotificationRequestDiv  = document.querySelector("#StatusNotificationRequest");
-        var properties                    = StatusNotificationRequestDiv.querySelector(".properties");
-        var ConnectorId                   = properties.querySelector("#StatusNotificationRequest_ConnectorId").value;
-        var Status                        = properties.querySelector("#StatusNotificationRequest_Status").value;
-        var ErrorCode                     = properties.querySelector("#StatusNotificationRequest_ErrorCode").value;
-        var Info                          = properties.querySelector("#StatusNotificationRequest_Info").value;
-        var Timestamp                     = properties.querySelector("#StatusNotificationRequest_Timestamp").value;
-        var VendorId                      = properties.querySelector("#StatusNotificationRequest_VendorId").value;
-        var VendorErrorCode               = properties.querySelector("#StatusNotificationRequest_VendorErrorCode").value;
-
-        doSendRequest("StatusNotification",
-                      {
-                          "connectorId":      parseInt(ConnectorId),
-                          "status":           Status,
-                          "errorCode":        ErrorCode,
-                          "info":             Info,
-                          "timestamp":        Timestamp != "" ? Timestamp : new Date().toISOString(),
-                          "vendorId":         VendorId,
-                          "vendorErrorCode":  VendorErrorCode
-                      });
-
-      }
-
-      function SendMeterValuesRequest()
-      {
-
-        var MeterValuesRequestDiv  = document.querySelector("#MeterValuesRequest");
-        var properties             = MeterValuesRequestDiv.querySelector(".properties");
-        var ConnectorId            = properties.querySelector("#MeterValuesRequest_ConnectorId").value;
-        var TransactionId          = properties.querySelector("#MeterValuesRequest_TransactionId").value;
-
-        var Timestamp              = properties.querySelector("#MeterValuesRequest_MeterValue1_Timestamp").value;
-        var SampledValues          = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValues");
-
-        var Value                  = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Value").value;
-        var Context                = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Context").value;
-        var Format                 = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Format").value;
-        var Measurand              = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Measurand").value;
-        var Phase                  = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Phase").value;
-        var Location               = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Location").value;
-        var Unit                   = properties.querySelector("#MeterValuesRequest_MeterValue1_SampledValue1_Unit").value;
-
-        doSendRequest("MeterValues",
-                      {
-                          "connectorId":    parseInt(ConnectorId),
-                          "transactionId":  TransactionId != "" ? parseInt(TransactionId) : null,
-                          "meterValue":     [
-                              {
-                                  "timestamp":    Timestamp != "" ? Timestamp : new Date().toISOString(),
-                                  "sampledValue": [
-                                      {
-                                          "value":      Value,
-                                          "context":    Context   != "-" ? Context   : null,
-                                          "format":     Format    != "-" ? Format    : null,
-                                          "measurand":  Measurand != "-" ? Measurand : null,
-                                          "phase":      Phase     != "-" ? Phase     : null,
-                                          "location":   Location  != "-" ? Location  : null,
-                                          "unit":       Uni       != "-" ? Uni       : null
-                                      }
-                                  ]
-                              }
-                          ]
-                      });
-
-      }
-
-      function SendStopTransactionRequest()
-      {
-
-        var StopTransactionRequestDiv  = document.querySelector("#StopTransactionRequest");
-        var properties                 = StopTransactionRequestDiv.querySelector(".properties");
-        var TransactionId              = properties.querySelector("#StopTransactionRequest_TransactionId").value;
-        var IdTag                      = properties.querySelector("#StopTransactionRequest_IdTag").value;
-        var Timestamp                  = properties.querySelector("#StopTransactionRequest_Timestamp").value;
-        var MeterStop                  = properties.querySelector("#StopTransactionRequest_MeterStop").value;
-        var Reason                     = properties.querySelector("#StopTransactionRequest_Reason").value;
-        
-        var Timestamp                  = properties.querySelector("#StopTransactionRequest_TransactionData1_Timestamp").value;
-        var SampledValues              = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValues");
-        
-        var Value                      = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Value").value;
-        var Context                    = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Context").value;
-        var Format                     = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Format").value;
-        var Measurand                  = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Measurand").value;
-        var Phase                      = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Phase").value;
-        var Location                   = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Location").value;
-        var Unit                       = properties.querySelector("#StopTransactionRequest_TransactionData1_SampledValue1_Unit").value;
-
-        doSendRequest("StopTransaction",
-                      {
-                          "connectorId":      parseInt(ConnectorId),
-                          "transactionId":    TransactionId != "" ? parseInt(TransactionId) : null,
-                          "meterValue":       [
-                              {
-                                  "timestamp":    Timestamp != "" ? Timestamp : new Date().toISOString(),
-                                  "sampledValue": [
-                                      {
-                                          "value":      Value,
-                                          "context":    Context   != "-" ? Context   : null,
-                                          "format":     Format    != "-" ? Format    : null,
-                                          "measurand":  Measurand != "-" ? Measurand : null,
-                                          "phase":      Phase     != "-" ? Phase     : null,
-                                          "location":   Location  != "-" ? Location  : null,
-                                          "unit":       Uni       != "-" ? Uni       : null
-                                      }
-                                  ]
-                              }
-                          ]
-                      });
-
-      }
-
-      function SendDataTransferRequest()
-      {
-
-        var dataTransferRequestDiv  = document.querySelector("#DataTransferRequest");
-        var properties              = dataTransferRequestDiv.querySelector(".properties");
-        var VendorId                = properties.querySelector("#DataTransferRequest_VendorId").value;
-        var MessageId               = properties.querySelector("#DataTransferRequest_MessageId").value;
-        var Data                    = properties.querySelector("#DataTransferRequest_Data").value;
-
-        doSendRequest("DataTransfer",
-                      {
-                          "vendorId":   VendorId,
-                          "messageId":  MessageId,
-                          "data":       Data
-                      });
-
-      }
-
-      function SendDiagnosticsStatusNotificationRequest()
-      {
-
-        var DiagnosticsStatusNotificationRequestDiv  = document.querySelector("#DiagnosticsStatusNotificationRequest");
-        var properties                               = DiagnosticsStatusNotificationRequestDiv.querySelector(".properties");
-        var Status                                   = properties.querySelector("#DiagnosticsStatusNotificationRequest_Status").value;
-
-        doSendRequest("DiagnosticsStatusNotification",
-                      {
-                          "status": Status
-                      });
-
-      }
-
-      function SendFirmwareStatusNotificationRequest()
-      {
-
-        var FirmwareStatusNotificationRequestDiv  = document.querySelector("#FirmwareStatusNotificationRequest");
-        var properties                            = FirmwareStatusNotificationRequestDiv.querySelector(".properties");
-        var Status                                = properties.querySelector("#FirmwareStatusNotificationRequest_Status").value;
-
-        doSendRequest("FirmwareStatusNotification",
-                      {
-                          "status": Status
-                      });
-
-      }
-
-
-
-  </script>
+      var app = new chargingStationApp();
+    </script>
 
   </body>
 </html>

@@ -1,94 +1,107 @@
 
-#commands {
+html {
 
-    padding:      10px 20px;
-    font-family:  Arial;
+    body {
 
-    .command {
-
-        padding:          10px 12px;
-        border-radius:    8px;
-        margin:           10px 20px;
-        background-color: rgb(214, 214, 214);
-
-        .description {
-          margin-bottom:      8px;
-          font-weight:        bold;
+        #buttons {
+            display:            flex;
+            flex-direction:     column;
         }
 
-        .properties {
+        #commands {
 
-            display:          table;
-            width:            calc(100% - 14px);
-            margin-left:      10px;
+            padding:            10px 20px;
+            font-family:        Arial;
 
-            .collection {
+            .command {
 
-                // display:          flex;
-                // flex-direction:   column;
-                margin-left:      20px;
+                display:            none;
+                padding:            10px 12px;
+                border-radius:      8px;
+                margin:             10px 20px;
+                background-color:   rgb(214, 214, 214);
+
+                .description {
+                    margin-bottom:      8px;
+                    font-weight:        bold;
+                }
 
                 .properties {
-                    display: block;
-                }
 
-            }
+                    display:            table;
+                    width:              calc(100% - 14px);
+                    margin-left:        10px;
 
-            .row {
+                    .collection {
 
-                display: table-row;
+                        // display:          flex;
+                        // flex-direction:   column;
+                        margin-left:        20px;
 
-                .key {
-                    display:        table-cell;
-                    padding-right:  20px;
-                    white-space:    nowrap;
-                }
+                        .properties {
+                            display:            block;
+                        }
 
-                .value {
-
-                    display:  table-cell;
-                    width:    100%;
-
-                    input {
-                        border:           0;
-                        border-radius:    4px;
-                        margin-bottom:    2px;
-                        padding:          4px 6px 4px 10px;
-                        width:            calc(100% - 16px);
                     }
 
-                    select {
-                      border:           0;
-                      border-radius:    4px;
-                      margin-bottom:    2px;
-                      padding:          4px 6px;
-                      width:            100%;
-                  }
+                    .row {
 
+                        display:            table-row;
+
+                        .key {
+                            display:            table-cell;
+                            padding-right:      20px;
+                            white-space:        nowrap;
+                        }
+
+                        .value {
+
+                            display:            table-cell;
+                            width:              100%;
+
+                            input {
+                                border:             0;
+                                border-radius:      4px;
+                                margin-bottom:      2px;
+                                padding:            4px 6px 4px 10px;
+                                width:              calc(100% - 16px);
+                            }
+
+                            select {
+                            border:             0;
+                            border-radius:      4px;
+                            margin-bottom:      2px;
+                            padding:            4px 6px;
+                            width:              100%;
+                        }
+
+                        }
+
+                    }
+
+                }
+
+                .commandButton {
+                    border:             0;
+                    border-radius:      4px;
+                    background-color:   #afafaf;
+                    padding:            4px 8px;
+                    margin-top:         8px;
                 }
 
             }
 
         }
 
-        .commandButton {
-            border:             0;
-            border-radius:      4px;
-            background-color:   #afafaf;
-            padding:            4px 8px;
-            margin-top:         8px;
+        textarea { vertical-align: bottom; }
+
+        #output {
+            overflow: auto;
+            span { color: blue; }
+            span.error { color: red; }
         }
+        #output > p { overflow-wrap: break-word; }
 
     }
 
-  }
-
-  textarea { vertical-align: bottom; }
-
-  #output {
-     overflow: auto;
-     span { color: blue; }
-     span.error { color: red; }
-  }
-  #output > p { overflow-wrap: break-word; }
- 
+}

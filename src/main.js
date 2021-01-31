@@ -3,6 +3,7 @@ const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
 function createWindow () {
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width:  1200,
@@ -18,6 +19,7 @@ function createWindow () {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
+  
 }
 
 // This method will be called when Electron has finished

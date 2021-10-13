@@ -20,6 +20,6 @@
   "author": "GraphDefined GmbH <achim.friedland@graphdefined.com>",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron": "^11.2.1"
+    "electron": "^15.1.2"
   }
 }

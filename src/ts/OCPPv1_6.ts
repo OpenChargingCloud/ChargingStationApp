@@ -75,9 +75,11 @@ class OCPPv1_6 {
 
         this.WriteToScreen = WriteToScreen;
 
-        // var wsUri    = "ws://echo.websocket.org/",
-        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211");
-    
+        //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:9900/CP001", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");
+        this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
+
         this.websocket.onopen = (e) => {
             this.WriteToScreen("CONNECTED");
             //this.sendRAWRequest("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");

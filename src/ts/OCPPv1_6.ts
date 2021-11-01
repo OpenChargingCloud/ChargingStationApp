@@ -65,6 +65,9 @@ class OCPPv1_6 {
 
     private readonly WriteToScreen:                                      WriteToScreenDelegate;
 
+
+    private requestId: number = 100000;
+
     //#endregion
 
     //#region Constructor
@@ -76,9 +79,15 @@ class OCPPv1_6 {
         this.WriteToScreen = WriteToScreen;
 
         //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
-        this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");
-        //this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
+
+        this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
+
+        //this.websocket  = new WebSocket(wsUri ?? "wss://encharge-broker-ppe1.envisioniot.com/ocpp-broker/ocpp", "ocpp1.6");   // Login/PW??!
+        //this.websocket  = new WebSocket(wsUri ?? "wss://ocpp.eu.ngrok.io", "ocpp1.6");   // Login/PW??!
+        //this.websocket  = new WebSocket(wsUri ?? "ws://ocppj.yaayum.com:8887/CP001", "ocpp1.6");   // Login/PW??!
+        //this.websocket  = new WebSocket(wsUri ?? "ws://as-csms-test.azurewebsites.net/OCPP16/1/1/CP001", "ocpp1.6");   // Login/PW??!
 
         this.websocket.onopen = (e) => {
             this.WriteToScreen("CONNECTED");
@@ -191,9 +200,10 @@ class OCPPv1_6 {
         }
 
         const message = JSON.stringify([ 2,
-                                       "19223201",
-                                       command,
-                                       request != null ? request : {} ]);
+                                         (this.requestId++).toString(),
+                                         command,
+                                         request != null ? request : {}
+                                       ]);
 
         this.WriteToScreen("SENT: " + message);
         this.websocket.send(message);

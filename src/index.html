@@ -33,26 +33,26 @@
             <div id="right">
 
                 <div id="buttons">
-        
+
                     <button id="ShowBootNotificationRequestButton">Boot Notification</button>
                     <button id="ShowHeartbeatRequestButton">Heartbeat</button>
-            
+
                     <button id="ShowAuthorizeRequestButton">Authorize</button>
                     <button id="ShowStartTransactionRequestButton">Start Transaction</button>
                     <button id="ShowStatusNotificationRequestButton">Status Notification</button>
                     <button id="ShowMeterValuesRequestButton">Meter Values</button>
                     <button id="ShowStopTransactionRequestButton">Stop Transaction</button>
-            
+
                     <button id="ShowDataTransferRequestButton">Data Transfer</button>
                     <button id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
                     <button id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
 
                     <button id="ShowRAWRequestButton">RAW Request</button>
-            
+
                 </div>
-            
+
                 <div id="commands">
-            
+
                     <div id="BootNotificationRequest" class="command">
                         <div class="description">Boot Notification Request</div>
                         <div class="properties">
@@ -68,13 +68,13 @@
                         </div>
                         <button id="BootNotificationRequestButton" class="commandButton">send</button>
                     </div>
-            
+
                     <div id="HeartbeatRequest" class="command">
                         <div class="description">Heartbeat Request</div>
                         <button id="HeartbeatRequestButton" class="commandButton">send</button>
                     </div>
-            
-            
+
+
                     <div id="AuthorizeRequest" class="command">
                         <div class="description">Authorize Request</div>
                         <div class="properties">
@@ -82,7 +82,7 @@
                         </div>
                         <button id="AuthorizeRequestButton" class="commandButton">send</button>
                     </div>
-            
+
                     <div id="StartTransactionRequest" class="command">
                         <div class="description">Start Transaction Request</div>
                         <div class="properties">
@@ -94,7 +94,7 @@
                         </div>
                         <button id="StartTransactionRequestButton" class="commandButton">send</button>
                     </div>
-                    
+
                     <div id="StatusNotificationRequest" class="command">
                         <div class="description">Status Notification Request</div>
                         <div class="properties">
@@ -139,19 +139,19 @@
                         </div>
                         <button id="StatusNotificationRequestButton" class="commandButton">send</button>
                     </div>
-                    
+
                     <div id="MeterValuesRequest" class="command">
                         <div class="description">Meter Values Request</div>
                         <div class="properties">
-            
+
                             <div class="row"><div class="key">Connector Id</div>  <div class="value"><input id="MeterValuesRequest_ConnectorId"    type="text"></div></div>
                             <div class="row"><div class="key">Transaction Id</div><div class="value"><input id="MeterValuesRequest_TransactionId"  type="text"></div></div>
-            
+
                             <div id="MeterValuesRequest_MeterValues" class="collection">
                                 <div id="MeterValuesRequest_MeterValue1" class="properties">                
-            
+
                                     <div class="row"><div class="key">Timestamp</div><div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
-            
+
                                     <div class="row"><div class="key">Sampled Values</div></div>
                                     <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
                                         <div id="MeterValuesRequest_MeterValue1_SampledValue1" class="properties">
@@ -251,18 +251,18 @@
                                             </div></div>
                                         </div>
                                     </div>
-            
+
                                 </div>
                             </div>
-            
+
                         </div>
                         <button id="MeterValuesRequestButton" class="commandButton">send</button>
                     </div>
-                    
+
                     <div id="StopTransactionRequest" class="command">
                         <div class="description">Stop Transaction Request</div>
                         <div class="properties">
-            
+
                             <div class="row"><div class="key">Transaction Id</div>  <div class="value"><input id="StopTransactionRequest_TransactionId" type="text"></div></div>
                             <div class="row"><div class="key">Id Tag</div>          <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
                             <div class="row"><div class="key">Timestamp</div>       <div class="value"><input id="StopTransactionRequest_Timestamp"     type="text"></div></div>
@@ -283,13 +283,13 @@
                                     <option>DeAuthorized</option>
                                 </select>
                             </div></div>
-            
+
                             <div class="row"><div class="key">Transaction Data</div></div>
                             <div id="StopTransactionRequest_TransactionData" class="collection">
                                 <div id="StopTransactionRequest_TransactionData1" class="properties">
-            
+
                                     <div class="row"><div class="key">Timestamp</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
-            
+
                                     <div class="row"><div class="key">Sampled Value</div></div>
                                     <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
                                         <div id="StopTransactionRequest_TransactionData1_SampledValue1" class="properties">
@@ -389,15 +389,15 @@
                                             </div></div>
                                         </div>
                                     </div>
-            
+
                                 </div>
                             </div>
-            
+
                         </div>
                         <button id="StopTransactionRequestButton" class="commandButton">send</button>
                     </div>
-            
-            
+
+
                     <div id="DataTransferRequest" class="command">
                         <div class="description">Data Transfer Request</div>
                         <div class="properties">
@@ -407,7 +407,7 @@
                         </div>
                         <button id="DataTransferRequestButton" class="commandButton">send</button>
                     </div>
-            
+
                     <div id="DiagnosticsStatusNotificationRequest" class="command">
                         <div class="description">Diagnostics Status Notification Request</div>
                         <div class="properties">
@@ -425,7 +425,7 @@
                         </div>
                         <button id="DiagnosticsStatusNotificationRequestButton" class="commandButton">send</button>
                     </div>
-            
+
                     <div id="FirmwareStatusNotificationRequest" class="command">
                         <div class="description">Firmware Status Notification Request</div>
                         <div class="properties">
@@ -467,15 +467,11 @@
 
     </div>
 
-    
 
 <!-- We are using Node.js <span id="node-version"></span>,
     Chromium <span id="chrome-version"></span>,
     and Electron <span id="electron-version"></span>. -->
     <br />
-    
-    
-
 
 
     <!-- You can also require other files to run in this process -->

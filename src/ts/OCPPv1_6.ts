@@ -75,8 +75,8 @@ class OCPPv1_6 {
 
         this.WriteToScreen = WriteToScreen;
 
-        //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
-        this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
+        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
 

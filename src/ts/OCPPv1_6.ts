@@ -16,7 +16,7 @@
  */
 
 interface WriteToScreenDelegate {
-    (message: string): void;
+    (message: string|Element): void;
 }
 
 class OCPPv1_6 {
@@ -78,13 +78,14 @@ class OCPPv1_6 {
 
         this.WriteToScreen = WriteToScreen;
 
+        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:9900/GD002", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");
 
-        this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
 
-        //this.websocket  = new WebSocket(wsUri ?? "wss://encharge-broker-ppe1.envisioniot.com/ocpp-broker/ocpp", "ocpp1.6");   // Login/PW??!
+        //this.websocket  = new WebSocket(wsUri ?? "wss://encharge-broker-ppe1.envisioniot.com/ocpp-broker/ocpp/OLI_001", "ocpp1.6");   // Login/PW??!
         //this.websocket  = new WebSocket(wsUri ?? "wss://ocpp.eu.ngrok.io", "ocpp1.6");   // Login/PW??!
         //this.websocket  = new WebSocket(wsUri ?? "ws://ocppj.yaayum.com:8887/CP001", "ocpp1.6");   // Login/PW??!
         //this.websocket  = new WebSocket(wsUri ?? "ws://as-csms-test.azurewebsites.net/OCPP16/1/1/CP001", "ocpp1.6");   // Login/PW??!
@@ -93,15 +94,173 @@ class OCPPv1_6 {
             this.WriteToScreen("CONNECTED");
             //this.sendRAWRequest("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
         };
-    
+
         this.websocket.onclose = (e) => {
             this.WriteToScreen("DISCONNECTED");
         };
-    
+
         this.websocket.onmessage = (e) => {
-            this.WriteToScreen("<span>RESPONSE: " + e.data + "</span>");
+
+            try
+            {
+
+                const message = JSON.parse(e.data);
+
+                switch (message[0])
+                {
+
+                    case 2:
+                        this.WriteToScreen("<span>COMMAND: " + e.data + "</span>");
+
+                        const commandView = document.createElement('div');
+                        commandView.className = "commandView";
+
+                        switch (message[2])
+                        {
+
+                            case "Reset": {
+
+                                //#region Reset variants
+
+                                const textView = document.createElement('div');
+                                textView.className = "description";
+
+                                switch (message[3]["type"])
+                                {
+
+                                    case "Soft":
+                                        textView.innerHTML = "Soft Reset Request";
+                                        break;
+
+                                    case "Hard":
+                                        textView.innerHTML = "Hard Reset Request";
+                                        break;
+
+                                }
+
+                                commandView.appendChild(textView);
+
+                                //#endregion
+
+                                //#region Accept or Reject
+
+                                const buttonsDiv        = document.createElement('div');
+                                buttonsDiv.className    = "buttons";
+
+                                const buttonAccept      = document.createElement("button");
+                                buttonAccept.innerHTML  = "Accept";
+                                buttonAccept.onclick    = () => {
+                                    buttonAccept.disabled = true;
+                                    buttonReject.disabled = true;
+                                    this.sendResponse(message[1], { "status": "Accepted" });
+                                }
+                                buttonsDiv.appendChild(buttonAccept);
+
+                                const buttonReject      = document.createElement("button");
+                                buttonReject.innerHTML  = "Reject";
+                                buttonReject.onclick    = () => {
+                                    buttonAccept.disabled = true;
+                                    buttonReject.disabled = true;
+                                    this.sendResponse(message[1], { "status": "Rejected" });
+                                }
+                                buttonsDiv.appendChild(buttonReject);
+
+                                commandView.appendChild(buttonsDiv);
+
+                                //#endregion
+
+                                }
+                                break;
+
+                            case "ChangeAvailability": {
+
+                                //#region Change Availability variants
+
+                                const textView = document.createElement('div');
+                                textView.className = "description";
+
+                                textView.innerHTML = "Set connector " + message[3]["connectorId"] + " ";
+
+                                switch (message[3]["type"])
+                                {
+
+                                    case "Inoperative":
+                                        textView.innerHTML += "inoperative";
+                                        break;
+
+                                    case "Operative":
+                                        textView.innerHTML += "operative";
+                                        break;
+
+                                }
+
+                                commandView.appendChild(textView);
+
+                                //#endregion
+
+                                //#region Accept, Reject or Schedule
+
+                                const buttonsDiv           = document.createElement('div');
+                                buttonsDiv.className       = "buttons";
+
+                                const buttonAccept         = document.createElement("button");
+                                buttonAccept.innerHTML     = "Accept";
+                                buttonAccept.onclick       = () => {
+                                    buttonAccept.disabled    = true;
+                                    buttonReject.disabled    = true;
+                                    buttonScheduled.disabled = true;
+                                    this.sendResponse(message[1], { "status": "Accepted" });
+                                }
+                                buttonsDiv.appendChild(buttonAccept);
+
+                                const buttonReject         = document.createElement("button");
+                                buttonReject.innerHTML     = "Reject";
+                                buttonReject.onclick       = () => {
+                                    buttonAccept.disabled    = true;
+                                    buttonReject.disabled    = true;
+                                    buttonScheduled.disabled = true;
+                                    this.sendResponse(message[1], { "status": "Rejected" });
+                                }
+                                buttonsDiv.appendChild(buttonReject);
+
+                                const buttonScheduled      = document.createElement("button");
+                                buttonScheduled.innerHTML  = "Schedule";
+                                buttonScheduled.onclick    = () => {
+                                    buttonAccept.disabled    = true;
+                                    buttonReject.disabled    = true;
+                                    buttonScheduled.disabled = true;
+                                    this.sendResponse(message[1], { "status": "Scheduled" });
+                                }
+                                buttonsDiv.appendChild(buttonScheduled);
+
+                                commandView.appendChild(buttonsDiv);
+
+                                //#endregion
+
+                                }
+                                break;
+
+
+                        }
+
+                        this.WriteToScreen(commandView);
+
+                        break;
+
+                    case 3:
+                        this.WriteToScreen("<span>RESPONSE: " + e.data + "</span>");
+                        break;
+
+                }
+
+            }
+            catch (ex)
+            {
+                this.WriteToScreen("<span>ERROR: " + e.data + " => " + ex + "</span>");
+            }
+
         };
-    
+
         this.websocket.onerror = (e) => {
             this.WriteToScreen("<span class=error>ERROR:</span> " + (e as any).data);
         };
@@ -206,6 +365,19 @@ class OCPPv1_6 {
                                        ]);
 
         this.WriteToScreen("SENT: " + message);
+        this.websocket.send(message);
+
+    }
+
+    public sendResponse(responseId: string,
+                        response:   any) {
+
+        const message = JSON.stringify([ 3,
+                                         responseId,
+                                         response
+                                       ]);
+
+        this.WriteToScreen("REPLY: " + message);
         this.websocket.send(message);
 
     }

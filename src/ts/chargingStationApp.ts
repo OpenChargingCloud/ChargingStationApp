@@ -35,10 +35,16 @@ class chargingStationApp {
 
     }
 
-    private writeToScreen(message: string) {
+    private writeToScreen(message: string|Element) {
 
-        this.LogView.insertAdjacentHTML("afterbegin",
-                                       "<p>" + message + "</p>");
+        if (typeof message === 'string')
+            this.LogView.insertAdjacentHTML("afterbegin",
+                                            "<p>" + message + "</p>");
+
+        else
+            this.LogView.insertAdjacentElement("afterbegin",
+                                               document.createElement('p').
+                                                        appendChild(message));
 
     }
 

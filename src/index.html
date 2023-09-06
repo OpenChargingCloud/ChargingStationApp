@@ -34,12 +34,17 @@
 
                 <div id="CSMS">
                     <div class="properties">
-                        <div class="row"><div class="key">URL</div><div class="value"><input id="CSMS_URL" type="text"></div></div>
+                        <div class="row"><div class="key">URL</div><div class="value"><input id="CSMS_URL" type="text" value="ws://127.0.0.1:9920/GD001"></div></div>
+                        <!-- ws://127.0.0.1:9920/GD001 -->
+                        <!-- wss://api3.ocpp.charging.cloud/GD001 -->
+                        <!-- HTTP Basic Auth does no longer work without TLS! -->
+                        <!-- wss://user1:pass1@api3.ocpp.charging.cloud/GD001 -->
+
                         <div class="row"><div class="key">OCPP Version</div><div class="value">
                             <select id="selectedOCPPVersion">
-                                <option>OCPP v1.6</option>
-                                <option>OCPP v2.0.1</option>
-                                <option selected>OCPP v2.1</option>
+                                <option value="OCPPv1_6">OCPP v1.6</option>
+                                <option value="OCPPv2_0_1">OCPP v2.0.1</option>
+                                <option value="OCPPv2_1" selected>OCPP v2.1</option>
                             </select>
                         </div></div>
                         <div class="row"><div class="key"><button id="connectButton">Connect</button></div></div>
@@ -70,8 +75,10 @@
                     <div id="commands">
 
                         <div id="BootNotificationRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+
                             <div class="description">Boot Notification Request</div>
-                            <div class="properties">
+
+                            <div class="properties OCPPv1_6">
                                 <div class="row"><div class="key">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div></div>
                                 <div class="row"><div class="key">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div></div>
                                 <div class="row"><div class="key">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div></div>
@@ -82,12 +89,33 @@
                                 <div class="row"><div class="key">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div></div>
                                 <div class="row"><div class="key">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div></div>
                             </div>
+
+                            <div class="properties OCPPv2_0_1 OCPPv2_1">
+                                <div class="row"><div class="key">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div></div>
+                                <div class="row"><div class="key">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div></div>
+                                <div class="row"><div class="key">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div></div>
+                                <div class="row"><div class="key">Charge Box Serial Number</div>  <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"   type="text"></div></div>
+                                <div class="row"><div class="key">Firmware Version</div>          <div class="value"><input id="BootNotificationRequest_FirmwareVersion"         type="text"></div></div>
+                                <div class="row"><div class="key">ICCId</div>                     <div class="value"><input id="BootNotificationRequest_ICCId"                   type="text"></div></div>
+                                <div class="row"><div class="key">IMSI</div>                      <div class="value"><input id="BootNotificationRequest_IMSI"                    type="text"></div></div>
+                                <div class="row"><div class="key">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div></div>
+                                <div class="row"><div class="key">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div></div>
+                            </div>
+
                             <button id="BootNotificationRequestButton" class="commandButton">send</button>
+
                         </div>
 
                         <div id="HeartbeatRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+
                             <div class="description">Heartbeat Request</div>
+
+                            <div class="properties OCPPv2_0_1 OCPPv2_1">
+                                <div class="row"><div class="key">Custom Data</div><div class="value"><input id="HeartbeatRequest_CustomData" type="text"></div></div>
+                            </div>
+
                             <button id="HeartbeatRequestButton" class="commandButton">send</button>
+
                         </div>
 
 

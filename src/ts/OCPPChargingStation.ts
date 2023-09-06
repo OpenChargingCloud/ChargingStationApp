@@ -23,8 +23,15 @@ class OCPPChargingStation {
 
     //#region Data
 
+    private          websocket?:                                         WebSocket;
+
+    private readonly csmsDiv:                                            HTMLDivElement;
+    private readonly csmsURL:                                            HTMLInputElement;
+    private readonly csmsOCPPVersion:                                    HTMLSelectElement;
+    private readonly csmsConnectButton:                                  HTMLButtonElement;
+
     private readonly commandsDiv:                                        HTMLDivElement;
-    private readonly bootNotificationRequestDiv:                         HTMLDivElement;     
+    private readonly bootNotificationRequestDiv:                         HTMLDivElement;
     private readonly heartbeatRequestDiv:                                HTMLDivElement;
     private readonly authorizeRequestDiv:                                HTMLDivElement;
     private readonly startTransactionRequestDiv:                         HTMLDivElement;
@@ -36,8 +43,10 @@ class OCPPChargingStation {
     private readonly firmwareStatusNotificationRequestDiv:               HTMLDivElement;
     private readonly rawRequestDiv:                                      HTMLDivElement;
 
+    private readonly controlDiv:                                         HTMLDivElement;
+
     private readonly buttonsDiv:                                         HTMLDivElement;
-    private readonly showBootNotificationRequestButton:                  HTMLButtonElement;     
+    private readonly showBootNotificationRequestButton:                  HTMLButtonElement;
     private readonly showHeartbeatRequestButton:                         HTMLButtonElement;
     private readonly showAuthorizeRequestButton:                         HTMLButtonElement;
     private readonly showStartTransactionRequestButton:                  HTMLButtonElement;
@@ -61,8 +70,6 @@ class OCPPChargingStation {
     private readonly sendFirmwareStatusNotificationRequestButton:        HTMLButtonElement;
     private readonly sendRAWRequestButton:                               HTMLButtonElement;
 
-    private readonly websocket:                                          WebSocket;
-
     private readonly WriteToScreen:                                      WriteToScreenDelegate;
 
 
@@ -72,203 +79,50 @@ class OCPPChargingStation {
 
     //#region Constructor
 
-    constructor(WriteToScreen:  WriteToScreenDelegate,
-                wsUri?:         string)
+    constructor(WriteToScreen: WriteToScreenDelegate)
     {
 
         this.WriteToScreen = WriteToScreen;
 
-        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:9900/GD003", "ocpp1.6");
-        //this.websocket  = new WebSocket(wsUri ?? "wss://api3.ocpp.charging.cloud/GD003", "ocpp1.6");
+        //#region Data
 
-        //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
-        //this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
-        //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");
+        // CSMS on the top
+        this.csmsDiv                                                 = document.querySelector("#CSMS")                                                  as HTMLDivElement;
+        this.csmsURL                                                 = this.csmsDiv.querySelector("#CSMS_URL")                                          as HTMLInputElement;
+        this.csmsOCPPVersion                                         = this.csmsDiv.querySelector("#selectedOCPPVersion")                               as HTMLSelectElement;
+        this.csmsConnectButton                                       = this.csmsDiv.querySelector("#connectButton")                                     as HTMLButtonElement;
 
-        //this.websocket  = new WebSocket(wsUri ?? "ws://35.190.199.146:8080/stationServer/websocket/OLI_001", "ocpp1.6");
+        // Control on the bottom
+        this.controlDiv                                              = document.querySelector("#control")                                               as HTMLDivElement;
 
-        //this.websocket  = new WebSocket(wsUri ?? "wss://encharge-broker-ppe1.envisioniot.com/ocpp-broker/ocpp/OLI_001", "ocpp1.6");   // Login/PW??!
-        //this.websocket  = new WebSocket(wsUri ?? "wss://ocpp.eu.ngrok.io", "ocpp1.6");   // Login/PW??!
-        //this.websocket  = new WebSocket(wsUri ?? "ws://ocppj.yaayum.com:8887/CP001", "ocpp1.6");   // Login/PW??!
-        //this.websocket  = new WebSocket(wsUri ?? "ws://as-csms-test.azurewebsites.net/OCPP16/1/1/CP001", "ocpp1.6");   // Login/PW??!
+        // Buttons on the left
+        this.buttonsDiv                                              = this.controlDiv.querySelector("#buttons")                                        as HTMLDivElement;
+        this.showBootNotificationRequestButton                       = this.buttonsDiv.querySelector("#ShowBootNotificationRequestButton")              as HTMLButtonElement;
+        this.showHeartbeatRequestButton                              = this.buttonsDiv.querySelector("#ShowHeartbeatRequestButton")                     as HTMLButtonElement;
+        this.showAuthorizeRequestButton                              = this.buttonsDiv.querySelector("#ShowAuthorizeRequestButton")                     as HTMLButtonElement;
+        this.showStartTransactionRequestButton                       = this.buttonsDiv.querySelector("#ShowStartTransactionRequestButton")              as HTMLButtonElement;
+        this.showStatusNotificationRequestButton                     = this.buttonsDiv.querySelector("#ShowStatusNotificationRequestButton")            as HTMLButtonElement;
+        this.showMeterValuesRequestButton                            = this.buttonsDiv.querySelector("#ShowMeterValuesRequestButton")                   as HTMLButtonElement;
+        this.showStopTransactionRequestButton                        = this.buttonsDiv.querySelector("#ShowStopTransactionRequestButton")               as HTMLButtonElement;
+        this.showDataTransferRequestButton                           = this.buttonsDiv.querySelector("#ShowDataTransferRequestButton")                  as HTMLButtonElement;
+        this.showDiagnosticsStatusNotificationRequestButton          = this.buttonsDiv.querySelector("#ShowDiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
+        this.showFirmwareStatusNotificationRequestButton             = this.buttonsDiv.querySelector("#ShowFirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
+        this.showRAWRequestButton                                    = this.buttonsDiv.querySelector("#ShowRAWRequestButton")                           as HTMLButtonElement;
 
-        this.websocket.onopen = (e) => {
-            this.WriteToScreen("CONNECTED");
-            //this.sendRAWRequest("Grundlegende Vorgaben zur Rechnungsstellung an öffentliche Auftraggeber macht die Richtlinie 2010/45/EU. Sie wird in Bezug auf elektronische Rechnungen ergänzt durch die vom Europäischen Parlament am 11. März 2014 beschlossene Richtlinie 2014/55/EU. Diese gibt den Mitgliedstaaten vor, öffentliche Auftraggeber und Vergabestellen zur Annahme und Verarbeitung elektronischer Rechnungen zu verpflichten. Anschließend wird eine neue europäische Norm für die elektronische Rechnungsstellung in Europa eingeführt: 36 Monate nach Inkrafttreten der Richtlinie soll ein semantisches Datenmodell für die elektronische Rechnungsstellung vorliegen, das die verschiedenen nationalen Standards in Einklang bringt. Nach weiteren 18 Monaten wird die Umsetzung zwingend vorgeschrieben --- Seit dem 1. Juli 2011 sind in Deutschland gemäß Steuervereinfachungsgesetz 2011[5], mit dem die Richtlinie 2010/45/EU[6] umgesetzt wurde, elektronische Rechnungen und klassische Papierrechnungen durch Änderung des § 14 des Umsatzsteuergesetzes gleichgestellt, um Geschäftsprozesse einfacher und effizienter zu machen. Als nationale Umsetzung der Richtlinie 2014/55/EU trat im Mai 2017 der neue § 4a des E-Government-Gesetzes in Kraft, der die Bundesregierung ermächtigt, Vorgaben über die Ausgestaltung elektronischer Rechnungen durch Rechtsverordnung zu erlassen.[7] Davon machte sie mit der E-Rechnungsverordnung (ERechV)[8] Gebrauch, die überwiegend im November 2018 in Kraft (§ 11 ERechV) getreten ist und seit ihrem Inkrafttreten für die Rechnungsstellung an öffentliche Auftraggebern anzuwenden ist. Die Verordnung macht durch einen Verweis auf den kurz zuvor verkündeten[9] Datenaustauschstandard XRechnung detaillierte Vorgaben über die technische Ausgestaltung elektronischer Rechnungen.");
-        };
+        this.showBootNotificationRequestButton.onclick               = () => this.showDialog(this.bootNotificationRequestDiv);
+        this.showHeartbeatRequestButton.onclick                      = () => this.showDialog(this.heartbeatRequestDiv);
+        this.showAuthorizeRequestButton.onclick                      = () => this.showDialog(this.authorizeRequestDiv);
+        this.showStartTransactionRequestButton.onclick               = () => this.showDialog(this.startTransactionRequestDiv);
+        this.showStatusNotificationRequestButton.onclick             = () => this.showDialog(this.statusNotificationRequestDiv);
+        this.showMeterValuesRequestButton.onclick                    = () => this.showDialog(this.meterValuesRequestDiv);
+        this.showStopTransactionRequestButton.onclick                = () => this.showDialog(this.stopTransactionRequestDiv);
+        this.showDataTransferRequestButton.onclick                   = () => this.showDialog(this.dataTransferRequestDiv);
+        this.showDiagnosticsStatusNotificationRequestButton.onclick  = () => this.showDialog(this.diagnosticsStatusNotificationRequestDiv);
+        this.showFirmwareStatusNotificationRequestButton.onclick     = () => this.showDialog(this.firmwareStatusNotificationRequestDiv);
+        this.showRAWRequestButton.onclick                            = () => this.showDialog(this.rawRequestDiv);
 
-        this.websocket.onclose = (e) => {
-            this.WriteToScreen("DISCONNECTED");
-        };
-
-        this.websocket.onmessage = (e) => {
-
-            try
-            {
-
-                const message = JSON.parse(e.data);
-
-                switch (message[0])
-                {
-
-                    case 2:
-                        this.WriteToScreen("<span>COMMAND: " + e.data + "</span>");
-
-                        const commandView = document.createElement('div');
-                        commandView.className = "commandView";
-
-                        switch (message[2])
-                        {
-
-                            case "Reset": {
-
-                                //#region Reset variants
-
-                                const textView = document.createElement('div');
-                                textView.className = "description";
-
-                                switch (message[3]["type"])
-                                {
-
-                                    case "Soft":
-                                        textView.innerHTML = "Soft Reset Request";
-                                        break;
-
-                                    case "Hard":
-                                        textView.innerHTML = "Hard Reset Request";
-                                        break;
-
-                                }
-
-                                commandView.appendChild(textView);
-
-                                //#endregion
-
-                                //#region Accept or Reject
-
-                                const buttonsDiv        = document.createElement('div');
-                                buttonsDiv.className    = "buttons";
-
-                                const buttonAccept      = document.createElement("button");
-                                buttonAccept.innerHTML  = "Accept";
-                                buttonAccept.onclick    = () => {
-                                    buttonAccept.disabled = true;
-                                    buttonReject.disabled = true;
-                                    this.sendResponse(message[1], { "status": "Accepted" });
-                                }
-                                buttonsDiv.appendChild(buttonAccept);
-
-                                const buttonReject      = document.createElement("button");
-                                buttonReject.innerHTML  = "Reject";
-                                buttonReject.onclick    = () => {
-                                    buttonAccept.disabled = true;
-                                    buttonReject.disabled = true;
-                                    this.sendResponse(message[1], { "status": "Rejected" });
-                                }
-                                buttonsDiv.appendChild(buttonReject);
-
-                                commandView.appendChild(buttonsDiv);
-
-                                //#endregion
-
-                                }
-                                break;
-
-                            case "ChangeAvailability": {
-
-                                //#region Change Availability variants
-
-                                const textView = document.createElement('div');
-                                textView.className = "description";
-
-                                textView.innerHTML = "Set connector " + message[3]["connectorId"] + " ";
-
-                                switch (message[3]["type"])
-                                {
-
-                                    case "Inoperative":
-                                        textView.innerHTML += "inoperative";
-                                        break;
-
-                                    case "Operative":
-                                        textView.innerHTML += "operative";
-                                        break;
-
-                                }
-
-                                commandView.appendChild(textView);
-
-                                //#endregion
-
-                                //#region Accept, Reject or Schedule
-
-                                const buttonsDiv           = document.createElement('div');
-                                buttonsDiv.className       = "buttons";
-
-                                const buttonAccept         = document.createElement("button");
-                                buttonAccept.innerHTML     = "Accept";
-                                buttonAccept.onclick       = () => {
-                                    buttonAccept.disabled    = true;
-                                    buttonReject.disabled    = true;
-                                    buttonScheduled.disabled = true;
-                                    this.sendResponse(message[1], { "status": "Accepted" });
-                                }
-                                buttonsDiv.appendChild(buttonAccept);
-
-                                const buttonReject         = document.createElement("button");
-                                buttonReject.innerHTML     = "Reject";
-                                buttonReject.onclick       = () => {
-                                    buttonAccept.disabled    = true;
-                                    buttonReject.disabled    = true;
-                                    buttonScheduled.disabled = true;
-                                    this.sendResponse(message[1], { "status": "Rejected" });
-                                }
-                                buttonsDiv.appendChild(buttonReject);
-
-                                const buttonScheduled      = document.createElement("button");
-                                buttonScheduled.innerHTML  = "Schedule";
-                                buttonScheduled.onclick    = () => {
-                                    buttonAccept.disabled    = true;
-                                    buttonReject.disabled    = true;
-                                    buttonScheduled.disabled = true;
-                                    this.sendResponse(message[1], { "status": "Scheduled" });
-                                }
-                                buttonsDiv.appendChild(buttonScheduled);
-
-                                commandView.appendChild(buttonsDiv);
-
-                                //#endregion
-
-                                }
-                                break;
-
-
-                        }
-
-                        this.WriteToScreen(commandView);
-
-                        break;
-
-                    case 3:
-                        this.WriteToScreen("<span>RESPONSE: " + e.data + "</span>");
-                        break;
-
-                }
-
-            }
-            catch (ex)
-            {
-                this.WriteToScreen("<span>ERROR: " + e.data + " => " + ex + "</span>");
-            }
-
-        };
-
-        this.websocket.onerror = (e) => {
-            this.WriteToScreen("<span class=error>ERROR:</span> " + (e as any).data);
-        };
-
-
-        this.commandsDiv                                             = document.querySelector("#commands")                                      as HTMLDivElement;
+        // Commands on the right
+        this.commandsDiv                                             = this.controlDiv. querySelector("#commands")                              as HTMLDivElement;
         this.bootNotificationRequestDiv                              = this.commandsDiv.querySelector("#BootNotificationRequest")               as HTMLDivElement;
         this.heartbeatRequestDiv                                     = this.commandsDiv.querySelector("#HeartbeatRequest")                      as HTMLDivElement;
         this.authorizeRequestDiv                                     = this.commandsDiv.querySelector("#AuthorizeRequest")                      as HTMLDivElement;
@@ -305,30 +159,345 @@ class OCPPChargingStation {
         this.sendFirmwareStatusNotificationRequestButton.onclick     = () => this.SendFirmwareStatusNotificationRequest();
         this.sendRAWRequestButton.onclick                            = () => this.SendRAWRequest();
 
-        this.buttonsDiv                                              = document.querySelector("#buttons")                                               as HTMLDivElement;
-        this.showBootNotificationRequestButton                       = this.buttonsDiv.querySelector("#ShowBootNotificationRequestButton")              as HTMLButtonElement;
-        this.showHeartbeatRequestButton                              = this.buttonsDiv.querySelector("#ShowHeartbeatRequestButton")                     as HTMLButtonElement;
-        this.showAuthorizeRequestButton                              = this.buttonsDiv.querySelector("#ShowAuthorizeRequestButton")                     as HTMLButtonElement;
-        this.showStartTransactionRequestButton                       = this.buttonsDiv.querySelector("#ShowStartTransactionRequestButton")              as HTMLButtonElement;
-        this.showStatusNotificationRequestButton                     = this.buttonsDiv.querySelector("#ShowStatusNotificationRequestButton")            as HTMLButtonElement;
-        this.showMeterValuesRequestButton                            = this.buttonsDiv.querySelector("#ShowMeterValuesRequestButton")                   as HTMLButtonElement;
-        this.showStopTransactionRequestButton                        = this.buttonsDiv.querySelector("#ShowStopTransactionRequestButton")               as HTMLButtonElement;
-        this.showDataTransferRequestButton                           = this.buttonsDiv.querySelector("#ShowDataTransferRequestButton")                  as HTMLButtonElement;
-        this.showDiagnosticsStatusNotificationRequestButton          = this.buttonsDiv.querySelector("#ShowDiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
-        this.showFirmwareStatusNotificationRequestButton             = this.buttonsDiv.querySelector("#ShowFirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
-        this.showRAWRequestButton                                    = this.buttonsDiv.querySelector("#ShowRAWRequestButton")                           as HTMLButtonElement;
+        //#endregion
 
-        this.showBootNotificationRequestButton.onclick               = () => this.showDialog(this.bootNotificationRequestDiv);
-        this.showHeartbeatRequestButton.onclick                      = () => this.showDialog(this.heartbeatRequestDiv);
-        this.showAuthorizeRequestButton.onclick                      = () => this.showDialog(this.authorizeRequestDiv);
-        this.showStartTransactionRequestButton.onclick               = () => this.showDialog(this.startTransactionRequestDiv);
-        this.showStatusNotificationRequestButton.onclick             = () => this.showDialog(this.statusNotificationRequestDiv);
-        this.showMeterValuesRequestButton.onclick                    = () => this.showDialog(this.meterValuesRequestDiv);
-        this.showStopTransactionRequestButton.onclick                = () => this.showDialog(this.stopTransactionRequestDiv);
-        this.showDataTransferRequestButton.onclick                   = () => this.showDialog(this.dataTransferRequestDiv);
-        this.showDiagnosticsStatusNotificationRequestButton.onclick  = () => this.showDialog(this.diagnosticsStatusNotificationRequestDiv);
-        this.showFirmwareStatusNotificationRequestButton.onclick     = () => this.showDialog(this.firmwareStatusNotificationRequestDiv);
-        this.showRAWRequestButton.onclick                            = () => this.showDialog(this.rawRequestDiv);
+        //#region Handle OCPP version selector
+
+        this.csmsOCPPVersion.onchange = (e) => {
+
+            for (const child of this.buttonsDiv.children as any as HTMLElement[]) {
+
+                child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+                                          ? 'block'
+                                          : 'none';
+
+            }
+
+            for (const child of this.commandsDiv.children as any as HTMLElement[]) {
+
+                if (child.classList.contains("properties"))
+                {
+                    child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+                                              ? 'block'
+                                              : 'none';
+                }
+
+            }
+
+        }
+
+        //#endregion
+
+        //#region Handle connect button
+
+        this.csmsConnectButton.onclick = (e) => {
+
+            if (!this.websocket ||
+                 this.websocket.readyState !== this.websocket.OPEN)
+            {
+
+                try
+                {
+
+                    this.websocket = new WebSocket(
+                                         this.csmsURL.value,
+                                         this.csmsOCPPVersion.value.toLowerCase().replace("v", "").replace("_", ".")
+                                     );
+
+                    this.websocket.onopen = (e) => {
+
+                        this.WriteToScreen("CONNECTED");
+
+                        this.csmsURL.readOnly                = true;
+                        this.controlDiv.style.pointerEvents  = 'auto';
+                        this.csmsConnectButton.textContent   = "Disconnect";
+
+                    };
+
+                    this.websocket.onerror = (e) => {
+
+                        // There is NO USEFUL error information!
+                        this.WriteToScreen("<span class=error>Websocket error!</span>");
+
+                        if (this.websocket?.readyState !== WebSocket.OPEN)
+                        {
+                            this.csmsURL.readOnly                = false;
+                            this.buttonsDiv.style.pointerEvents  = 'none';
+                            this.csmsConnectButton.textContent   = "Connect";
+                        }
+
+                    };
+
+                    this.websocket.onclose = (e) => {
+
+                        var reason = "Unknown reason";
+
+                        switch (e.code)
+                        {
+
+                            case 1000:
+                                reason = "Normal closure";
+                                break;
+
+                            case 1001:
+                                reason = "An endpoint is \"going away\", such as a server going down or a browser having navigated away from a page.";
+                                break;
+
+                            case 1002:
+                                reason = "An endpoint is terminating the connection due to a protocol error";
+                                break;
+
+                            case 1003:
+                                reason = "An endpoint is terminating the connection because it has received a type of data it cannot accept (e.g., an endpoint that understands only text data MAY send this if it receives a binary message).";
+                                break;
+
+                            case 1004:
+                                reason = "Reserved";
+                                break;
+
+                            case 1005:
+                                reason = "No status code was actually present.";
+                                break;
+
+                            case 1006:
+                                reason = "The connection was closed abnormally, e.g., without sending or receiving a Close control frame";
+                                break;
+
+                            case 1007:
+                                reason = "An endpoint is terminating the connection because it has received data within a message that was not consistent with the type of the message (e.g., non-UTF-8 [https://www.rfc-editor.org/rfc/rfc3629] data within a text message).";
+                                break;
+
+                            case 1008:
+                                reason = "An endpoint is terminating the connection because it has received a message that \"violates its policy\". This reason is given either if there is no other sutible reason, or if there is a need to hide specific details about the policy.";
+                                break;
+
+                            case 1009:
+                                reason = "An endpoint is terminating the connection because it has received a message that is too big for it to process.";
+                                break;
+
+                            case 1010:
+                                // Note that this status code is not used by the server, because it can fail the WebSocket handshake instead.
+                                reason = "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: " + e.reason;
+                                break;
+
+                            case 1011:
+                                reason = "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.";
+                                break;
+
+                            case 1015:
+                                reason = "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).";
+                                break;
+
+                        }
+
+                        this.WriteToScreen(`DISCONNECTED: ${e.code} ${e.reason.length > 0 ? e.reason : reason}`);
+
+                        if (this.websocket)
+                        {
+
+                            // Clean up event handlers
+                            this.websocket.onopen     = null;
+                            this.websocket.onclose    = null;
+                            this.websocket.onerror    = null;
+                            this.websocket.onmessage  = null;
+
+                            this.websocket            = undefined;
+
+                        }
+
+                        this.csmsURL.readOnly                = false;
+                        this.buttonsDiv.style.pointerEvents  = 'none';
+                        this.csmsConnectButton.textContent   = "Connect";
+
+                    };
+
+                    this.websocket.onmessage = (e) => {
+
+                        try
+                        {
+
+                            const message = JSON.parse(e.data);
+
+                            switch (message[0])
+                            {
+
+                                case 2:
+                                    this.WriteToScreen("<span>COMMAND: " + e.data + "</span>");
+
+                                    const commandView = document.createElement('div');
+                                    commandView.className = "commandView";
+
+                                    switch (message[2])
+                                    {
+
+                                        case "Reset": {
+
+                                            //#region Reset variants
+
+                                            const textView = document.createElement('div');
+                                            textView.className = "description";
+
+                                            switch (message[3]["type"])
+                                            {
+
+                                                case "Soft":
+                                                    textView.innerHTML = "Soft Reset Request";
+                                                    break;
+
+                                                case "Hard":
+                                                    textView.innerHTML = "Hard Reset Request";
+                                                    break;
+
+                                            }
+
+                                            commandView.appendChild(textView);
+
+                                            //#endregion
+
+                                            //#region Accept or Reject
+
+                                            const buttonsDiv        = document.createElement('div');
+                                            buttonsDiv.className    = "buttons";
+
+                                            const buttonAccept      = document.createElement("button");
+                                            buttonAccept.innerHTML  = "Accept";
+                                            buttonAccept.onclick    = () => {
+                                                buttonAccept.disabled = true;
+                                                buttonReject.disabled = true;
+                                                this.sendResponse(message[1], { "status": "Accepted" });
+                                            }
+                                            buttonsDiv.appendChild(buttonAccept);
+
+                                            const buttonReject      = document.createElement("button");
+                                            buttonReject.innerHTML  = "Reject";
+                                            buttonReject.onclick    = () => {
+                                                buttonAccept.disabled = true;
+                                                buttonReject.disabled = true;
+                                                this.sendResponse(message[1], { "status": "Rejected" });
+                                            }
+                                            buttonsDiv.appendChild(buttonReject);
+
+                                            commandView.appendChild(buttonsDiv);
+
+                                            //#endregion
+
+                                            }
+                                            break;
+
+                                        case "ChangeAvailability": {
+
+                                            //#region Change Availability variants
+
+                                            const textView = document.createElement('div');
+                                            textView.className = "description";
+
+                                            textView.innerHTML = "Set connector " + message[3]["connectorId"] + " ";
+
+                                            switch (message[3]["type"])
+                                            {
+
+                                                case "Inoperative":
+                                                    textView.innerHTML += "inoperative";
+                                                    break;
+
+                                                case "Operative":
+                                                    textView.innerHTML += "operative";
+                                                    break;
+
+                                            }
+
+                                            commandView.appendChild(textView);
+
+                                            //#endregion
+
+                                            //#region Accept, Reject or Schedule
+
+                                            const buttonsDiv           = document.createElement('div');
+                                            buttonsDiv.className       = "buttons";
+
+                                            const buttonAccept         = document.createElement("button");
+                                            buttonAccept.innerHTML     = "Accept";
+                                            buttonAccept.onclick       = () => {
+                                                buttonAccept.disabled    = true;
+                                                buttonReject.disabled    = true;
+                                                buttonScheduled.disabled = true;
+                                                this.sendResponse(message[1], { "status": "Accepted" });
+                                            }
+                                            buttonsDiv.appendChild(buttonAccept);
+
+                                            const buttonReject         = document.createElement("button");
+                                            buttonReject.innerHTML     = "Reject";
+                                            buttonReject.onclick       = () => {
+                                                buttonAccept.disabled    = true;
+                                                buttonReject.disabled    = true;
+                                                buttonScheduled.disabled = true;
+                                                this.sendResponse(message[1], { "status": "Rejected" });
+                                            }
+                                            buttonsDiv.appendChild(buttonReject);
+
+                                            const buttonScheduled      = document.createElement("button");
+                                            buttonScheduled.innerHTML  = "Schedule";
+                                            buttonScheduled.onclick    = () => {
+                                                buttonAccept.disabled    = true;
+                                                buttonReject.disabled    = true;
+                                                buttonScheduled.disabled = true;
+                                                this.sendResponse(message[1], { "status": "Scheduled" });
+                                            }
+                                            buttonsDiv.appendChild(buttonScheduled);
+
+                                            commandView.appendChild(buttonsDiv);
+
+                                            //#endregion
+
+                                            }
+                                            break;
+
+
+                                    }
+
+                                    this.WriteToScreen(commandView);
+
+                                    break;
+
+                                case 3:
+                                    this.WriteToScreen("<span>RESPONSE: " + e.data + "</span>");
+                                    break;
+
+                            }
+
+                        }
+                        catch (ex)
+                        {
+                            this.WriteToScreen("<span>ERROR: " + e.data + " => " + ex + "</span>");
+                        }
+
+                    };
+
+                }
+                catch (exception)
+                {
+
+                    this.WriteToScreen("<span class=error>Error creating WebSocket:</span> " + exception);
+
+                    this.csmsURL.readOnly                = false;
+                    this.buttonsDiv.style.pointerEvents  = 'none';
+                    this.csmsConnectButton.textContent   = "Connect";
+
+                }
+
+            }
+            else
+            {
+
+                this.websocket.close();
+
+
+
+            }
+
+        }
+
+        //#endregion
 
     }
 
@@ -345,42 +514,62 @@ class OCPPChargingStation {
     }
 
     public sendRAWRequest(message: string) {
-        this.WriteToScreen("SENT: " + message);
-        this.websocket.send(message);
+
+        if (this.websocket &&
+            this.websocket.readyState === WebSocket.OPEN)
+        {
+
+            this.WriteToScreen("SENT: " + message);
+            this.websocket.send(message);
+
+        }
+
     }
 
     public sendRequest(command: string, request: any) {
 
-        // Some central systems dislike null-values...
-        for (let key in request)
+        if (this.websocket &&
+            this.websocket.readyState === WebSocket.OPEN)
         {
-            if (request[key] == null)
+
+            // Some central systems dislike null-values...
+            for (let key in request)
             {
-                delete(request[key]);
+                if (request[key] == null)
+                {
+                    delete(request[key]);
+                }
             }
+
+            const message = JSON.stringify([ 2,
+                                            (this.requestId++).toString(),
+                                            command,
+                                            request != null ? request : {}
+                                        ]);
+
+            this.WriteToScreen("SENT: " + message);
+            this.websocket.send(message);
+
         }
-
-        const message = JSON.stringify([ 2,
-                                         (this.requestId++).toString(),
-                                         command,
-                                         request != null ? request : {}
-                                       ]);
-
-        this.WriteToScreen("SENT: " + message);
-        this.websocket.send(message);
 
     }
 
     public sendResponse(responseId: string,
                         response:   any) {
 
-        const message = JSON.stringify([ 3,
-                                         responseId,
-                                         response
-                                       ]);
+        if (this.websocket &&
+            this.websocket.readyState === WebSocket.OPEN)
+        {
 
-        this.WriteToScreen("REPLY: " + message);
-        this.websocket.send(message);
+            const message = JSON.stringify([ 3,
+                                            responseId,
+                                            response
+                                        ]);
+
+            this.WriteToScreen("REPLY: " + message);
+            this.websocket.send(message);
+
+        }
 
     }
 

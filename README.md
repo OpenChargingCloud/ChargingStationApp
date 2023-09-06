@@ -6,6 +6,8 @@ This project implements a set of **e-mobility charging stations** using [Electro
 - **OCPP v1.6 JSON WebSockets with Computer Science Extentions** (OCPP v1.6 WS/CSE) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud)
 - [OCPP v2.0.1](https://www.openchargealliance.org/protocols/ocpp-201/) as defined by the [Open Charge Alliance](https://www.openchargealliance.org) *(under development)*
 - **OCPP v2.0.1 with Computer Science Extentions** (OCPP v2.0.1/CSE) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud) *(under development)*
+- [OCPP v2.1 (Draft 0.4)](https://www.openchargealliance.org/protocols/) as defined by the [Open Charge Alliance](https://www.openchargealliance.org) *(under development)*
+- **OCPP v2.1 (Draft 0.4) with Computer Science Extentions** (OCPP v2.1/CSE) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud) *(under development)*
 - **WWCP Charging Station Protocol** (WWCP/CS) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud) *(under development)*
 
 ## License

@@ -137,10 +137,19 @@ html {
 
                         display:            flex;
                         flex-direction:     row;
+                        pointer-events:     none;
 
                         #buttons {
+
                             display:            flex;
                             flex-direction:     column;
+                            user-select:        none;
+
+                            button {
+                                padding:            3px 12px 2px 12px;
+                                margin-bottom:      2px;
+                            }
+
                         }
 
                         #commands {

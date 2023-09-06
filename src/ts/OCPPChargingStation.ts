@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2021 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of Chargy Desktop App <https://github.com/OpenChargingCloud/ChargingStation>
- *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
+ * Copyright 2014-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * This file is part of ChargingStation <https://github.com/OpenChargingCloud/ChargingStation>
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.gnu.org/licenses/agpl.html
- *
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ interface WriteToScreenDelegate {
     (message: string|Element): void;
 }
 
-class OCPPv1_6 {
+class OCPPChargingStation {
 
     //#region Data
 
@@ -78,7 +78,9 @@ class OCPPv1_6 {
 
         this.WriteToScreen = WriteToScreen;
 
-        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:9900/GD002", "ocpp1.6");
+        this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:9900/GD003", "ocpp1.6");
+        //this.websocket  = new WebSocket(wsUri ?? "wss://api3.ocpp.charging.cloud/GD003", "ocpp1.6");
+
         //this.websocket  = new WebSocket(wsUri ?? "ws://127.0.0.1:8000/webServices/ocpp/CP3211", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://OLI_001:1234@127.0.0.1:9900/CP001", "ocpp1.6");
         //this.websocket  = new WebSocket(wsUri ?? "ws://user1:pass1@janus1.graphdefined.com:8080/", "ocpp1.6");

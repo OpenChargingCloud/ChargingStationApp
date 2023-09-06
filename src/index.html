@@ -15,7 +15,7 @@
                                                         connect-src * 'unsafe-inline'">
     <link rel="stylesheet" href="css/chargingStation.css" type="text/css" />
     <script type="text/javascript" src="ts/chargingStationApp.js"></script>
-    <script type="text/javascript" src="ts/OCPPv1_6.js"></script>
+    <script type="text/javascript" src="ts/OCPPChargingStation.js"></script>
   </head>
 
   <body>
@@ -32,434 +32,452 @@
             </div>
             <div id="right">
 
-                <div id="buttons">
-
-                    <button id="ShowBootNotificationRequestButton">Boot Notification</button>
-                    <button id="ShowHeartbeatRequestButton">Heartbeat</button>
-
-                    <button id="ShowAuthorizeRequestButton">Authorize</button>
-                    <button id="ShowStartTransactionRequestButton">Start Transaction</button>
-                    <button id="ShowStatusNotificationRequestButton">Status Notification</button>
-                    <button id="ShowMeterValuesRequestButton">Meter Values</button>
-                    <button id="ShowStopTransactionRequestButton">Stop Transaction</button>
-
-                    <button id="ShowDataTransferRequestButton">Data Transfer</button>
-                    <button id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
-                    <button id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
-
-                    <button id="ShowRAWRequestButton">RAW Request</button>
-
+                <div id="CSMS">
+                    <div class="properties">
+                        <div class="row"><div class="key">URL</div><div class="value"><input id="CSMS_URL" type="text"></div></div>
+                        <div class="row"><div class="key">OCPP Version</div><div class="value">
+                            <select id="selectedOCPPVersion">
+                                <option>OCPP v1.6</option>
+                                <option>OCPP v2.0.1</option>
+                                <option selected>OCPP v2.1</option>
+                            </select>
+                        </div></div>
+                        <div class="row"><div class="key"><button id="connectButton">Connect</button></div></div>
+                    </div>
                 </div>
 
-                <div id="commands">
+                <div id="control">
 
-                    <div id="BootNotificationRequest" class="command">
-                        <div class="description">Boot Notification Request</div>
-                        <div class="properties">
-                            <div class="row"><div class="key">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div></div>
-                            <div class="row"><div class="key">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div></div>
-                            <div class="row"><div class="key">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div></div>
-                            <div class="row"><div class="key">Charge Box Serial Number</div>  <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"   type="text"></div></div>
-                            <div class="row"><div class="key">Firmware Version</div>          <div class="value"><input id="BootNotificationRequest_FirmwareVersion"         type="text"></div></div>
-                            <div class="row"><div class="key">ICCId</div>                     <div class="value"><input id="BootNotificationRequest_ICCId"                   type="text"></div></div>
-                            <div class="row"><div class="key">IMSI</div>                      <div class="value"><input id="BootNotificationRequest_IMSI"                    type="text"></div></div>
-                            <div class="row"><div class="key">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div></div>
-                            <div class="row"><div class="key">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div></div>
-                        </div>
-                        <button id="BootNotificationRequestButton" class="commandButton">send</button>
+                    <div id="buttons">
+
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowBootNotificationRequestButton">Boot Notification</button>
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowHeartbeatRequestButton">Heartbeat</button>
+
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowAuthorizeRequestButton">Authorize</button>
+                        <button class="OCPPv1_6"                     id="ShowStartTransactionRequestButton">Start Transaction</button>
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowStatusNotificationRequestButton">Status Notification</button>
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowMeterValuesRequestButton">Meter Values</button>
+                        <button class="OCPPv1_6"                     id="ShowStopTransactionRequestButton">Stop Transaction</button>
+
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowDataTransferRequestButton">Data Transfer</button>
+                        <button class="OCPPv1_6"                     id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
+                        <button class="OCPPv1_6"                     id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
+
+                        <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowRAWRequestButton">RAW Request</button>
+
                     </div>
 
-                    <div id="HeartbeatRequest" class="command">
-                        <div class="description">Heartbeat Request</div>
-                        <button id="HeartbeatRequestButton" class="commandButton">send</button>
-                    </div>
+                    <div id="commands">
 
-
-                    <div id="AuthorizeRequest" class="command">
-                        <div class="description">Authorize Request</div>
-                        <div class="properties">
-                            <div class="row"><div class="key">IdTag</div><div class="value"><input id="AuthorizeRequest_IdTag" type="text"></div></div>
-                        </div>
-                        <button id="AuthorizeRequestButton" class="commandButton">send</button>
-                    </div>
-
-                    <div id="StartTransactionRequest" class="command">
-                        <div class="description">Start Transaction Request</div>
-                        <div class="properties">
-                            <div class="row"><div class="key">Connector Id</div>     <div class="value"><input id="StartTransactionRequest_ConnectorId"   type="text"></div></div>
-                            <div class="row"><div class="key">Id Tag</div>           <div class="value"><input id="StartTransactionRequest_IdTag"         type="text"></div></div>
-                            <div class="row"><div class="key">Timestamp</div>        <div class="value"><input id="StartTransactionRequest_Timestamp"     type="text"></div></div>
-                            <div class="row"><div class="key">Meter Start Value</div><div class="value"><input id="StartTransactionRequest_MeterStart"    type="text"></div></div>
-                            <div class="row"><div class="key">Reservation Id</div>   <div class="value"><input id="StartTransactionRequest_ReservationId" type="text"></div></div>
-                        </div>
-                        <button id="StartTransactionRequestButton" class="commandButton">send</button>
-                    </div>
-
-                    <div id="StatusNotificationRequest" class="command">
-                        <div class="description">Status Notification Request</div>
-                        <div class="properties">
-                            <div class="row"><div class="key">Connector Id</div><div class="value"><input id="StatusNotificationRequest_ConnectorId"     type="text"></div></div>
-                            <div class="row"><div class="key">Status</div><div class="value">
-                                <select id="StatusNotificationRequest_Status">
-                                    <option>Available</option>
-                                    <option>Preparing</option>
-                                    <option>Charging</option>
-                                    <option>SuspendedEVSE</option>
-                                    <option>SuspendedEV</option>
-                                    <option>Finishing</option>
-                                    <option>Reserved</option>
-                                    <option>Unavailable</option>
-                                    <option>Faulted</option>
-                                </select>
-                            </div></div>
-                            <div class="row"><div class="key">Error Code</div><div class="value">
-                                <select id="StatusNotificationRequest_ErrorCode">
-                                    <option>ConnectorLockFailure</option>
-                                    <option>EVCommunicationError</option>
-                                    <option>GroundFailure</option>
-                                    <option>HighTemperature</option>
-                                    <option>InternalError</option>
-                                    <option>LocalListConflict</option>
-                                    <option>NoError</option>
-                                    <option>OtherError</option>
-                                    <option>OverCurrentFailure</option>
-                                    <option>PowerMeterFailure</option>
-                                    <option>PowerSwitchFailure</option>
-                                    <option>ReaderFailure</option>
-                                    <option>ResetFailure</option>
-                                    <option>UnderVoltage</option>
-                                    <option>OverVoltage</option>
-                                    <option>WeakSignal</option>
-                                </select>
-                            </div></div>
-                            <div class="row"><div class="key">Info</div>             <div class="value"><input id="StatusNotificationRequest_Info"            type="text"></div></div>
-                            <div class="row"><div class="key">Timestamp</div>        <div class="value"><input id="StatusNotificationRequest_Timestamp"       type="text"></div></div>
-                            <div class="row"><div class="key">Vendor Id</div>        <div class="value"><input id="StatusNotificationRequest_VendorId"        type="text"></div></div>
-                            <div class="row"><div class="key">Vendor Error Code</div><div class="value"><input id="StatusNotificationRequest_VendorErrorCode" type="text"></div></div>
-                        </div>
-                        <button id="StatusNotificationRequestButton" class="commandButton">send</button>
-                    </div>
-
-                    <div id="MeterValuesRequest" class="command">
-                        <div class="description">Meter Values Request</div>
-                        <div class="properties">
-
-                            <div class="row"><div class="key">Connector Id</div>  <div class="value"><input id="MeterValuesRequest_ConnectorId"    type="text"></div></div>
-                            <div class="row"><div class="key">Transaction Id</div><div class="value"><input id="MeterValuesRequest_TransactionId"  type="text"></div></div>
-
-                            <div id="MeterValuesRequest_MeterValues" class="collection">
-                                <div id="MeterValuesRequest_MeterValue1" class="properties">                
-
-                                    <div class="row"><div class="key">Timestamp</div><div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
-
-                                    <div class="row"><div class="key">Sampled Values</div></div>
-                                    <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
-                                        <div id="MeterValuesRequest_MeterValue1_SampledValue1" class="properties">
-                                            <div class="row"><div class="key">Value</div>  <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value" type="text"></div></div>
-                                            <div class="row"><div class="key">Context</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Context">
-                                                    <option>-</option>
-                                                    <option>Interruption.Begin</option>
-                                                    <option>Interruption.End</option>
-                                                    <option>Sample.Clock</option>
-                                                    <option>Sample.Periodic</option>
-                                                    <option>Transaction.Begin</option>
-                                                    <option>Transaction.End</option>
-                                                    <option>Trigger</option>
-                                                    <option>Other</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Format</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Format">
-                                                    <option>-</option>
-                                                    <option>Raw</option>
-                                                    <option>SignedData</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Measurand</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand">
-                                                    <option>-</option>
-                                                    <option>Energy.Active.Export.Register</option>
-                                                    <option>Energy.Active.Import.Register</option>
-                                                    <option>Energy.Reactive.Export.Register</option>
-                                                    <option>Energy.Reactive.Import.Register</option>
-                                                    <option>Energy.Active.Export.Interval</option>
-                                                    <option>Energy.Active.Import.Interval</option>
-                                                    <option>Energy.Reactive.Export.Interval</option>
-                                                    <option>Energy.Reactive.Import.Interval</option>
-                                                    <option>Power.Active.Export</option>
-                                                    <option>Power.Active.Import</option>
-                                                    <option>Power.Offered</option>
-                                                    <option>Power.Reactive.Export</option>
-                                                    <option>Power.Reactive.Import</option>
-                                                    <option>Power.Factor</option>
-                                                    <option>Current.Import</option>
-                                                    <option>Current.Export</option>
-                                                    <option>Current.Offered</option>
-                                                    <option>Voltage</option>
-                                                    <option>Frequency</option>
-                                                    <option>Temperature</option>
-                                                    <option>SoC</option>
-                                                    <option>RPM</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Phase</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Phase">
-                                                    <option>-</option>
-                                                    <option>L1</option>
-                                                    <option>L2</option>
-                                                    <option>L3</option>
-                                                    <option>N</option>
-                                                    <option>L1-N</option>
-                                                    <option>L2-N</option>
-                                                    <option>L3-N</option>
-                                                    <option>L1-L2</option>
-                                                    <option>L2-L3</option>
-                                                    <option>L3-L1</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Location</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Location">
-                                                    <option>-</option>
-                                                    <option>Cable</option>
-                                                    <option>EV</option>
-                                                    <option>Inlet</option>
-                                                    <option>Outlet</option>
-                                                    <option>Body</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Unit</div><div class="value">
-                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Unit">
-                                                    <option>-</option>
-                                                    <option>Wh</option>
-                                                    <option>kWh</option>
-                                                    <option>varh</option>
-                                                    <option>kvarh</option>
-                                                    <option>W</option>
-                                                    <option>kW</option>
-                                                    <option>VA</option>
-                                                    <option>kVA</option>
-                                                    <option>var</option>
-                                                    <option>kvar</option>
-                                                    <option>A</option>
-                                                    <option>V</option>
-                                                    <option>K</option>
-                                                    <option>Celsius</option>
-                                                    <option>Fahrenheit</option>
-                                                    <option>Percent</option>
-                                                </select>
-                                            </div></div>
-                                        </div>
-                                    </div>
-
-                                </div>
+                        <div id="BootNotificationRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Boot Notification Request</div>
+                            <div class="properties">
+                                <div class="row"><div class="key">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div></div>
+                                <div class="row"><div class="key">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div></div>
+                                <div class="row"><div class="key">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div></div>
+                                <div class="row"><div class="key">Charge Box Serial Number</div>  <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"   type="text"></div></div>
+                                <div class="row"><div class="key">Firmware Version</div>          <div class="value"><input id="BootNotificationRequest_FirmwareVersion"         type="text"></div></div>
+                                <div class="row"><div class="key">ICCId</div>                     <div class="value"><input id="BootNotificationRequest_ICCId"                   type="text"></div></div>
+                                <div class="row"><div class="key">IMSI</div>                      <div class="value"><input id="BootNotificationRequest_IMSI"                    type="text"></div></div>
+                                <div class="row"><div class="key">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div></div>
+                                <div class="row"><div class="key">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div></div>
                             </div>
-
+                            <button id="BootNotificationRequestButton" class="commandButton">send</button>
                         </div>
-                        <button id="MeterValuesRequestButton" class="commandButton">send</button>
-                    </div>
 
-                    <div id="StopTransactionRequest" class="command">
-                        <div class="description">Stop Transaction Request</div>
-                        <div class="properties">
+                        <div id="HeartbeatRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Heartbeat Request</div>
+                            <button id="HeartbeatRequestButton" class="commandButton">send</button>
+                        </div>
 
-                            <div class="row"><div class="key">Transaction Id</div>  <div class="value"><input id="StopTransactionRequest_TransactionId" type="text"></div></div>
-                            <div class="row"><div class="key">Id Tag</div>          <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
-                            <div class="row"><div class="key">Timestamp</div>       <div class="value"><input id="StopTransactionRequest_Timestamp"     type="text"></div></div>
-                            <div class="row"><div class="key">Meter Stop Value</div><div class="value"><input id="StopTransactionRequest_MeterStop"     type="text"></div></div>
-                            <div class="row"><div class="key">Reason</div>          <div class="value">
-                                <select id="StopTransactionRequest_Reason">
-                                    <option>-</option>
-                                    <option>EmergencyStop</option>
-                                    <option>EVDisconnected</option>
-                                    <option>HardReset</option>
-                                    <option>Local</option>
-                                    <option>Other</option>
-                                    <option>PowerLoss</option>
-                                    <option>Reboot</option>
-                                    <option>Remote</option>
-                                    <option>SoftReset</option>
-                                    <option>UnlockCommand</option>
-                                    <option>DeAuthorized</option>
-                                </select>
-                            </div></div>
 
-                            <div class="row"><div class="key">Transaction Data</div></div>
-                            <div id="StopTransactionRequest_TransactionData" class="collection">
-                                <div id="StopTransactionRequest_TransactionData1" class="properties">
-
-                                    <div class="row"><div class="key">Timestamp</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
-
-                                    <div class="row"><div class="key">Sampled Value</div></div>
-                                    <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
-                                        <div id="StopTransactionRequest_TransactionData1_SampledValue1" class="properties">
-                                            <div class="row"><div class="key">Value</div>  <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Value" type="text"></div></div>
-                                            <div class="row"><div class="key">Context</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Context">
-                                                    <option>-</option>
-                                                    <option>Interruption.Begin</option>
-                                                    <option>Interruption.End</option>
-                                                    <option>Sample.Clock</option>
-                                                    <option>Sample.Periodic</option>
-                                                    <option>Transaction.Begin</option>
-                                                    <option>Transaction.End</option>
-                                                    <option>Trigger</option>
-                                                    <option>Other</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Format</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Format">
-                                                    <option>-</option>
-                                                    <option>Raw</option>
-                                                    <option>SignedData</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Measurand</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Measurand">
-                                                    <option>-</option>
-                                                    <option>Energy.Active.Export.Register</option>
-                                                    <option>Energy.Active.Import.Register</option>
-                                                    <option>Energy.Reactive.Export.Register</option>
-                                                    <option>Energy.Reactive.Import.Register</option>
-                                                    <option>Energy.Active.Export.Interval</option>
-                                                    <option>Energy.Active.Import.Interval</option>
-                                                    <option>Energy.Reactive.Export.Interval</option>
-                                                    <option>Energy.Reactive.Import.Interval</option>
-                                                    <option>Power.Active.Export</option>
-                                                    <option>Power.Active.Import</option>
-                                                    <option>Power.Offered</option>
-                                                    <option>Power.Reactive.Export</option>
-                                                    <option>Power.Reactive.Import</option>
-                                                    <option>Power.Factor</option>
-                                                    <option>Current.Import</option>
-                                                    <option>Current.Export</option>
-                                                    <option>Current.Offered</option>
-                                                    <option>Voltage</option>
-                                                    <option>Frequency</option>
-                                                    <option>Temperature</option>
-                                                    <option>SoC</option>
-                                                    <option>RPM</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Phase</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Phase">
-                                                    <option>-</option>
-                                                    <option>L1</option>
-                                                    <option>L2</option>
-                                                    <option>L3</option>
-                                                    <option>N</option>
-                                                    <option>L1-N</option>
-                                                    <option>L2-N</option>
-                                                    <option>L3-N</option>
-                                                    <option>L1-L2</option>
-                                                    <option>L2-L3</option>
-                                                    <option>L3-L1</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Location</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Location">
-                                                    <option>-</option>
-                                                    <option>Cable</option>
-                                                    <option>EV</option>
-                                                    <option>Inlet</option>
-                                                    <option>Outlet</option>
-                                                    <option>Body</option>
-                                                </select>
-                                            </div></div>
-                                            <div class="row"><div class="key">Unit</div><div class="value">
-                                                <select id="StopTransactionRequest_TransactionData1_SampledValue1_Unit">
-                                                    <option>-</option>
-                                                    <option>Wh</option>
-                                                    <option>kWh</option>
-                                                    <option>varh</option>
-                                                    <option>kvarh</option>
-                                                    <option>W</option>
-                                                    <option>kW</option>
-                                                    <option>VA</option>
-                                                    <option>kVA</option>
-                                                    <option>var</option>
-                                                    <option>kvar</option>
-                                                    <option>A</option>
-                                                    <option>V</option>
-                                                    <option>K</option>
-                                                    <option>Celsius</option>
-                                                    <option>Fahrenheit</option>
-                                                    <option>Percent</option>
-                                                </select>
-                                            </div></div>
-                                        </div>
-                                    </div>
-
-                                </div>
+                        <div id="AuthorizeRequest" class="command OCPPv1_6">
+                            <div class="description">Authorize Request</div>
+                            <div class="properties">
+                                <div class="row"><div class="key">IdTag</div><div class="value"><input id="AuthorizeRequest_IdTag" type="text"></div></div>
                             </div>
-
+                            <button id="AuthorizeRequestButton" class="commandButton">send</button>
                         </div>
-                        <button id="StopTransactionRequestButton" class="commandButton">send</button>
-                    </div>
 
-
-                    <div id="DataTransferRequest" class="command">
-                        <div class="description">Data Transfer Request</div>
-                        <div class="properties">
-                            <div class="row"><div class="key">Vendor Id</div> <div class="value"><input id="DataTransferRequest_VendorId"  type="text"></div></div>
-                            <div class="row"><div class="key">Message Id</div><div class="value"><input id="DataTransferRequest_MessageId" type="text"></div></div>
-                            <div class="row"><div class="key">Data</div>      <div class="value"><input id="DataTransferRequest_Data"      type="text"></div></div>
+                        <div id="StartTransactionRequest" class="command OCPPv1_6">
+                            <div class="description">Start Transaction Request</div>
+                            <div class="properties">
+                                <div class="row"><div class="key">Connector Id</div>     <div class="value"><input id="StartTransactionRequest_ConnectorId"   type="text"></div></div>
+                                <div class="row"><div class="key">Id Tag</div>           <div class="value"><input id="StartTransactionRequest_IdTag"         type="text"></div></div>
+                                <div class="row"><div class="key">Timestamp</div>        <div class="value"><input id="StartTransactionRequest_Timestamp"     type="text"></div></div>
+                                <div class="row"><div class="key">Meter Start Value</div><div class="value"><input id="StartTransactionRequest_MeterStart"    type="text"></div></div>
+                                <div class="row"><div class="key">Reservation Id</div>   <div class="value"><input id="StartTransactionRequest_ReservationId" type="text"></div></div>
+                            </div>
+                            <button id="StartTransactionRequestButton" class="commandButton">send</button>
                         </div>
-                        <button id="DataTransferRequestButton" class="commandButton">send</button>
-                    </div>
 
-                    <div id="DiagnosticsStatusNotificationRequest" class="command">
-                        <div class="description">Diagnostics Status Notification Request</div>
-                        <div class="properties">
-                            <div class="row">
-                                <div class="key">Status</div>
-                                <div class="value">
-                                    <select id="DiagnosticsStatusNotificationRequest_Status">
-                                        <option>Idle</option>
-                                        <option>Uploaded</option>
-                                        <option>UploadFailed</option>
-                                        <option>Uploading</option>
+                        <div id="StatusNotificationRequest" class="command OCPPv1_6">
+                            <div class="description">Status Notification Request</div>
+                            <div class="properties">
+                                <div class="row"><div class="key">Connector Id</div><div class="value"><input id="StatusNotificationRequest_ConnectorId"     type="text"></div></div>
+                                <div class="row"><div class="key">Status</div><div class="value">
+                                    <select id="StatusNotificationRequest_Status">
+                                        <option>Available</option>
+                                        <option>Preparing</option>
+                                        <option>Charging</option>
+                                        <option>SuspendedEVSE</option>
+                                        <option>SuspendedEV</option>
+                                        <option>Finishing</option>
+                                        <option>Reserved</option>
+                                        <option>Unavailable</option>
+                                        <option>Faulted</option>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="DiagnosticsStatusNotificationRequestButton" class="commandButton">send</button>
-                    </div>
-
-                    <div id="FirmwareStatusNotificationRequest" class="command">
-                        <div class="description">Firmware Status Notification Request</div>
-                        <div class="properties">
-                            <div class="row">
-                                <div class="key">Status</div>
-                                <div class="value">
-                                    <select id="FirmwareStatusNotificationRequest_Status">
-                                        <option>Downloaded</option>
-                                        <option>DownloadFailed</option>
-                                        <option>Downloading</option>
-                                        <option>Idle</option>
-                                        <option>InstallationFailed</option>
-                                        <option>Installing</option>
-                                        <option>Installed</option>
+                                </div></div>
+                                <div class="row"><div class="key">Error Code</div><div class="value">
+                                    <select id="StatusNotificationRequest_ErrorCode">
+                                        <option>ConnectorLockFailure</option>
+                                        <option>EVCommunicationError</option>
+                                        <option>GroundFailure</option>
+                                        <option>HighTemperature</option>
+                                        <option>InternalError</option>
+                                        <option>LocalListConflict</option>
+                                        <option>NoError</option>
+                                        <option>OtherError</option>
+                                        <option>OverCurrentFailure</option>
+                                        <option>PowerMeterFailure</option>
+                                        <option>PowerSwitchFailure</option>
+                                        <option>ReaderFailure</option>
+                                        <option>ResetFailure</option>
+                                        <option>UnderVoltage</option>
+                                        <option>OverVoltage</option>
+                                        <option>WeakSignal</option>
                                     </select>
+                                </div></div>
+                                <div class="row"><div class="key">Info</div>             <div class="value"><input id="StatusNotificationRequest_Info"            type="text"></div></div>
+                                <div class="row"><div class="key">Timestamp</div>        <div class="value"><input id="StatusNotificationRequest_Timestamp"       type="text"></div></div>
+                                <div class="row"><div class="key">Vendor Id</div>        <div class="value"><input id="StatusNotificationRequest_VendorId"        type="text"></div></div>
+                                <div class="row"><div class="key">Vendor Error Code</div><div class="value"><input id="StatusNotificationRequest_VendorErrorCode" type="text"></div></div>
+                            </div>
+                            <button id="StatusNotificationRequestButton" class="commandButton">send</button>
+                        </div>
+
+                        <div id="MeterValuesRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Meter Values Request</div>
+                            <div class="properties">
+
+                                <div class="row"><div class="key">Connector Id</div>  <div class="value"><input id="MeterValuesRequest_ConnectorId"    type="text"></div></div>
+                                <div class="row"><div class="key">Transaction Id</div><div class="value"><input id="MeterValuesRequest_TransactionId"  type="text"></div></div>
+
+                                <div id="MeterValuesRequest_MeterValues" class="collection">
+                                    <div id="MeterValuesRequest_MeterValue1" class="properties">                
+
+                                        <div class="row"><div class="key">Timestamp</div><div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
+
+                                        <div class="row"><div class="key">Sampled Values</div></div>
+                                        <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
+                                            <div id="MeterValuesRequest_MeterValue1_SampledValue1" class="properties">
+                                                <div class="row"><div class="key">Value</div>  <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value" type="text"></div></div>
+                                                <div class="row"><div class="key">Context</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Context">
+                                                        <option>-</option>
+                                                        <option>Interruption.Begin</option>
+                                                        <option>Interruption.End</option>
+                                                        <option>Sample.Clock</option>
+                                                        <option>Sample.Periodic</option>
+                                                        <option>Transaction.Begin</option>
+                                                        <option>Transaction.End</option>
+                                                        <option>Trigger</option>
+                                                        <option>Other</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Format</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Format">
+                                                        <option>-</option>
+                                                        <option>Raw</option>
+                                                        <option>SignedData</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Measurand</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand">
+                                                        <option>-</option>
+                                                        <option>Energy.Active.Export.Register</option>
+                                                        <option>Energy.Active.Import.Register</option>
+                                                        <option>Energy.Reactive.Export.Register</option>
+                                                        <option>Energy.Reactive.Import.Register</option>
+                                                        <option>Energy.Active.Export.Interval</option>
+                                                        <option>Energy.Active.Import.Interval</option>
+                                                        <option>Energy.Reactive.Export.Interval</option>
+                                                        <option>Energy.Reactive.Import.Interval</option>
+                                                        <option>Power.Active.Export</option>
+                                                        <option>Power.Active.Import</option>
+                                                        <option>Power.Offered</option>
+                                                        <option>Power.Reactive.Export</option>
+                                                        <option>Power.Reactive.Import</option>
+                                                        <option>Power.Factor</option>
+                                                        <option>Current.Import</option>
+                                                        <option>Current.Export</option>
+                                                        <option>Current.Offered</option>
+                                                        <option>Voltage</option>
+                                                        <option>Frequency</option>
+                                                        <option>Temperature</option>
+                                                        <option>SoC</option>
+                                                        <option>RPM</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Phase</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Phase">
+                                                        <option>-</option>
+                                                        <option>L1</option>
+                                                        <option>L2</option>
+                                                        <option>L3</option>
+                                                        <option>N</option>
+                                                        <option>L1-N</option>
+                                                        <option>L2-N</option>
+                                                        <option>L3-N</option>
+                                                        <option>L1-L2</option>
+                                                        <option>L2-L3</option>
+                                                        <option>L3-L1</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Location</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Location">
+                                                        <option>-</option>
+                                                        <option>Cable</option>
+                                                        <option>EV</option>
+                                                        <option>Inlet</option>
+                                                        <option>Outlet</option>
+                                                        <option>Body</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Unit</div><div class="value">
+                                                    <select id="MeterValuesRequest_MeterValue1_SampledValue1_Unit">
+                                                        <option>-</option>
+                                                        <option>Wh</option>
+                                                        <option>kWh</option>
+                                                        <option>varh</option>
+                                                        <option>kvarh</option>
+                                                        <option>W</option>
+                                                        <option>kW</option>
+                                                        <option>VA</option>
+                                                        <option>kVA</option>
+                                                        <option>var</option>
+                                                        <option>kvar</option>
+                                                        <option>A</option>
+                                                        <option>V</option>
+                                                        <option>K</option>
+                                                        <option>Celsius</option>
+                                                        <option>Fahrenheit</option>
+                                                        <option>Percent</option>
+                                                    </select>
+                                                </div></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <button id="MeterValuesRequestButton" class="commandButton">send</button>
+                        </div>
+
+                        <div id="StopTransactionRequest" class="command OCPPv1_6">
+                            <div class="description">Stop Transaction Request</div>
+                            <div class="properties">
+
+                                <div class="row"><div class="key">Transaction Id</div>  <div class="value"><input id="StopTransactionRequest_TransactionId" type="text"></div></div>
+                                <div class="row"><div class="key">Id Tag</div>          <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
+                                <div class="row"><div class="key">Timestamp</div>       <div class="value"><input id="StopTransactionRequest_Timestamp"     type="text"></div></div>
+                                <div class="row"><div class="key">Meter Stop Value</div><div class="value"><input id="StopTransactionRequest_MeterStop"     type="text"></div></div>
+                                <div class="row"><div class="key">Reason</div>          <div class="value">
+                                    <select id="StopTransactionRequest_Reason">
+                                        <option>-</option>
+                                        <option>EmergencyStop</option>
+                                        <option>EVDisconnected</option>
+                                        <option>HardReset</option>
+                                        <option>Local</option>
+                                        <option>Other</option>
+                                        <option>PowerLoss</option>
+                                        <option>Reboot</option>
+                                        <option>Remote</option>
+                                        <option>SoftReset</option>
+                                        <option>UnlockCommand</option>
+                                        <option>DeAuthorized</option>
+                                    </select>
+                                </div></div>
+
+                                <div class="row"><div class="key">Transaction Data</div></div>
+                                <div id="StopTransactionRequest_TransactionData" class="collection">
+                                    <div id="StopTransactionRequest_TransactionData1" class="properties">
+
+                                        <div class="row"><div class="key">Timestamp</div><div class="value"><input id="StopTransactionRequest_TransactionData1_Timestamp" type="text"></div></div>
+
+                                        <div class="row"><div class="key">Sampled Value</div></div>
+                                        <div id="StopTransactionRequest_TransactionData1_SampledValues" class="collection">
+                                            <div id="StopTransactionRequest_TransactionData1_SampledValue1" class="properties">
+                                                <div class="row"><div class="key">Value</div>  <div class="value"><input id="StopTransactionRequest_TransactionData1_SampledValue1_Value" type="text"></div></div>
+                                                <div class="row"><div class="key">Context</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Context">
+                                                        <option>-</option>
+                                                        <option>Interruption.Begin</option>
+                                                        <option>Interruption.End</option>
+                                                        <option>Sample.Clock</option>
+                                                        <option>Sample.Periodic</option>
+                                                        <option>Transaction.Begin</option>
+                                                        <option>Transaction.End</option>
+                                                        <option>Trigger</option>
+                                                        <option>Other</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Format</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Format">
+                                                        <option>-</option>
+                                                        <option>Raw</option>
+                                                        <option>SignedData</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Measurand</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Measurand">
+                                                        <option>-</option>
+                                                        <option>Energy.Active.Export.Register</option>
+                                                        <option>Energy.Active.Import.Register</option>
+                                                        <option>Energy.Reactive.Export.Register</option>
+                                                        <option>Energy.Reactive.Import.Register</option>
+                                                        <option>Energy.Active.Export.Interval</option>
+                                                        <option>Energy.Active.Import.Interval</option>
+                                                        <option>Energy.Reactive.Export.Interval</option>
+                                                        <option>Energy.Reactive.Import.Interval</option>
+                                                        <option>Power.Active.Export</option>
+                                                        <option>Power.Active.Import</option>
+                                                        <option>Power.Offered</option>
+                                                        <option>Power.Reactive.Export</option>
+                                                        <option>Power.Reactive.Import</option>
+                                                        <option>Power.Factor</option>
+                                                        <option>Current.Import</option>
+                                                        <option>Current.Export</option>
+                                                        <option>Current.Offered</option>
+                                                        <option>Voltage</option>
+                                                        <option>Frequency</option>
+                                                        <option>Temperature</option>
+                                                        <option>SoC</option>
+                                                        <option>RPM</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Phase</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Phase">
+                                                        <option>-</option>
+                                                        <option>L1</option>
+                                                        <option>L2</option>
+                                                        <option>L3</option>
+                                                        <option>N</option>
+                                                        <option>L1-N</option>
+                                                        <option>L2-N</option>
+                                                        <option>L3-N</option>
+                                                        <option>L1-L2</option>
+                                                        <option>L2-L3</option>
+                                                        <option>L3-L1</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Location</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Location">
+                                                        <option>-</option>
+                                                        <option>Cable</option>
+                                                        <option>EV</option>
+                                                        <option>Inlet</option>
+                                                        <option>Outlet</option>
+                                                        <option>Body</option>
+                                                    </select>
+                                                </div></div>
+                                                <div class="row"><div class="key">Unit</div><div class="value">
+                                                    <select id="StopTransactionRequest_TransactionData1_SampledValue1_Unit">
+                                                        <option>-</option>
+                                                        <option>Wh</option>
+                                                        <option>kWh</option>
+                                                        <option>varh</option>
+                                                        <option>kvarh</option>
+                                                        <option>W</option>
+                                                        <option>kW</option>
+                                                        <option>VA</option>
+                                                        <option>kVA</option>
+                                                        <option>var</option>
+                                                        <option>kvar</option>
+                                                        <option>A</option>
+                                                        <option>V</option>
+                                                        <option>K</option>
+                                                        <option>Celsius</option>
+                                                        <option>Fahrenheit</option>
+                                                        <option>Percent</option>
+                                                    </select>
+                                                </div></div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <button id="StopTransactionRequestButton" class="commandButton">send</button>
+                        </div>
+
+
+                        <div id="DataTransferRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Data Transfer Request</div>
+                            <div class="properties">
+                                <div class="row"><div class="key">Vendor Id</div> <div class="value"><input id="DataTransferRequest_VendorId"  type="text"></div></div>
+                                <div class="row"><div class="key">Message Id</div><div class="value"><input id="DataTransferRequest_MessageId" type="text"></div></div>
+                                <div class="row"><div class="key">Data</div>      <div class="value"><input id="DataTransferRequest_Data"      type="text"></div></div>
+                            </div>
+                            <button id="DataTransferRequestButton" class="commandButton">send</button>
+                        </div>
+
+                        <div id="DiagnosticsStatusNotificationRequest" class="command OCPPv1_6">
+                            <div class="description">Diagnostics Status Notification Request</div>
+                            <div class="properties">
+                                <div class="row">
+                                    <div class="key">Status</div>
+                                    <div class="value">
+                                        <select id="DiagnosticsStatusNotificationRequest_Status">
+                                            <option>Idle</option>
+                                            <option>Uploaded</option>
+                                            <option>UploadFailed</option>
+                                            <option>Uploading</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
+                            <button id="DiagnosticsStatusNotificationRequestButton" class="commandButton">send</button>
                         </div>
-                        <button id="FirmwareStatusNotificationRequestButton" class="commandButton">send</button>
+
+                        <div id="FirmwareStatusNotificationRequest" class="command OCPPv1_6">
+                            <div class="description">Firmware Status Notification Request</div>
+                            <div class="properties">
+                                <div class="row">
+                                    <div class="key">Status</div>
+                                    <div class="value">
+                                        <select id="FirmwareStatusNotificationRequest_Status">
+                                            <option>Downloaded</option>
+                                            <option>DownloadFailed</option>
+                                            <option>Downloading</option>
+                                            <option>Idle</option>
+                                            <option>InstallationFailed</option>
+                                            <option>Installing</option>
+                                            <option>Installed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="FirmwareStatusNotificationRequestButton" class="commandButton">send</button>
+                        </div>
+
+                        <div id="RAWRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">RAW Request</div>
+                            <div class="properties">
+                                <div class="row">
+                                    <!-- <div class="key"></div> -->
+                                    <div class="value">
+                                        <textarea id="RAWRequest_Text" cols=60 rows=6></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="RAWRequestButton" class="commandButton">send</button>
+                        </div>
+                
                     </div>
 
-                    <div id="RAWRequest" class="command">
-                        <div class="description">RAW Request</div>
-                        <div class="properties">
-                            <div class="row">
-                                <!-- <div class="key"></div> -->
-                                <div class="value">
-                                    <textarea id="RAWRequest_Text" cols=60 rows=6></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="RAWRequestButton" class="commandButton">send</button>
-                    </div>
-            
                 </div>
 
             </div>

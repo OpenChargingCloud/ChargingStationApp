@@ -1,7 +1,7 @@
 {
   "name": "occ_chargingstation",
   "version": "1.0.0",
-  "description": "An e-mobility charging station test application",
+  "description": "An simple e-mobility charging station test application",
   "main": "src/main.js",
   "scripts": {
     "start": "electron ."
@@ -18,7 +18,7 @@
     "certification"
   ],
   "author": "GraphDefined GmbH <achim.friedland@graphdefined.com>",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "devDependencies": {
     "electron": "^19.0.9"
   }

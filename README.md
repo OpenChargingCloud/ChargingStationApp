@@ -10,4 +10,4 @@ This project implements a set of **e-mobility charging stations** using [Electro
 
 ## License
 
-[AGPL 3.0 (GNU Affero General Public License)](LICENSE)
+[Apache License 2.0 License)](LICENSE)

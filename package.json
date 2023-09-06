@@ -20,6 +20,6 @@
   "author": "GraphDefined GmbH <achim.friedland@graphdefined.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "electron": "^19.0.9"
+    "electron": "^26.1.0"
   }
 }

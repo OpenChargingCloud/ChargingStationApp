@@ -168,14 +168,14 @@ html {
                                 }
 
                                 .properties {
-                
+
                                     display:            table;
                                     width:              calc(100% - 14px);
                                     margin-left:        10px;
 
                                     .collection {
 
-                                        margin-left:        20px;
+                                        margin-left:        15px;
 
                                         .properties {
                                             display:            block;
@@ -192,6 +192,36 @@ html {
                                             padding-right:      20px;
                                             white-space:        nowrap;
                                         }
+
+                                        .subKey {
+                                            display:            table-cell;
+                                            padding-left:       15px;
+                                            padding-right:      20px;
+                                            white-space:        nowrap;
+                                        }
+
+                                        .subKey2 {
+                                            display:            table-cell;
+                                            padding-left:       30px;
+                                            padding-right:      20px;
+                                            white-space:        nowrap;
+                                        }
+
+                                        .subKey3 {
+                                            display:            table-cell;
+                                            padding-left:       45px;
+                                            padding-right:      20px;
+                                            white-space:        nowrap;
+                                        }
+
+                                        .M {
+                                            font-weight:        bold;
+                                        }
+
+                                        .O {
+                                            font-style:         italic;
+                                        }
+
 
                                         .value {
 

@@ -35,6 +35,7 @@ class OCPPChargingStation {
     private readonly heartbeatRequestDiv:                                HTMLDivElement;
     private readonly authorizeRequestDiv:                                HTMLDivElement;
     private readonly startTransactionRequestDiv:                         HTMLDivElement;
+    private readonly transactionEventRequestDiv:                         HTMLDivElement;
     private readonly statusNotificationRequestDiv:                       HTMLDivElement;
     private readonly meterValuesRequestDiv:                              HTMLDivElement;
     private readonly stopTransactionRequestDiv:                          HTMLDivElement;
@@ -50,6 +51,7 @@ class OCPPChargingStation {
     private readonly showHeartbeatRequestButton:                         HTMLButtonElement;
     private readonly showAuthorizeRequestButton:                         HTMLButtonElement;
     private readonly showStartTransactionRequestButton:                  HTMLButtonElement;
+    private readonly showTransactionEventRequestButton:                  HTMLButtonElement;
     private readonly showStatusNotificationRequestButton:                HTMLButtonElement;
     private readonly showMeterValuesRequestButton:                       HTMLButtonElement;
     private readonly showStopTransactionRequestButton:                   HTMLButtonElement;
@@ -62,6 +64,7 @@ class OCPPChargingStation {
     private readonly sendHeartbeatRequestButton:                         HTMLButtonElement;
     private readonly sendAuthorizeRequestButton:                         HTMLButtonElement;
     private readonly sendStartTransactionRequestButton:                  HTMLButtonElement;
+    private readonly sendTransactionEventRequestButton:                  HTMLButtonElement;
     private readonly sendStatusNotificationRequestButton:                HTMLButtonElement;
     private readonly sendMeterValuesRequestButton:                       HTMLButtonElement;
     private readonly sendStopTransactionRequestButton:                   HTMLButtonElement;
@@ -101,6 +104,7 @@ class OCPPChargingStation {
         this.showHeartbeatRequestButton                              = this.buttonsDiv.querySelector("#ShowHeartbeatRequestButton")                     as HTMLButtonElement;
         this.showAuthorizeRequestButton                              = this.buttonsDiv.querySelector("#ShowAuthorizeRequestButton")                     as HTMLButtonElement;
         this.showStartTransactionRequestButton                       = this.buttonsDiv.querySelector("#ShowStartTransactionRequestButton")              as HTMLButtonElement;
+        this.showTransactionEventRequestButton                       = this.buttonsDiv.querySelector("#ShowTransactionEventRequestButton")              as HTMLButtonElement;
         this.showStatusNotificationRequestButton                     = this.buttonsDiv.querySelector("#ShowStatusNotificationRequestButton")            as HTMLButtonElement;
         this.showMeterValuesRequestButton                            = this.buttonsDiv.querySelector("#ShowMeterValuesRequestButton")                   as HTMLButtonElement;
         this.showStopTransactionRequestButton                        = this.buttonsDiv.querySelector("#ShowStopTransactionRequestButton")               as HTMLButtonElement;
@@ -113,6 +117,7 @@ class OCPPChargingStation {
         this.showHeartbeatRequestButton.onclick                      = () => this.showDialog(this.heartbeatRequestDiv);
         this.showAuthorizeRequestButton.onclick                      = () => this.showDialog(this.authorizeRequestDiv);
         this.showStartTransactionRequestButton.onclick               = () => this.showDialog(this.startTransactionRequestDiv);
+        this.showTransactionEventRequestButton.onclick               = () => this.showDialog(this.transactionEventRequestDiv);
         this.showStatusNotificationRequestButton.onclick             = () => this.showDialog(this.statusNotificationRequestDiv);
         this.showMeterValuesRequestButton.onclick                    = () => this.showDialog(this.meterValuesRequestDiv);
         this.showStopTransactionRequestButton.onclick                = () => this.showDialog(this.stopTransactionRequestDiv);
@@ -127,6 +132,7 @@ class OCPPChargingStation {
         this.heartbeatRequestDiv                                     = this.commandsDiv.querySelector("#HeartbeatRequest")                      as HTMLDivElement;
         this.authorizeRequestDiv                                     = this.commandsDiv.querySelector("#AuthorizeRequest")                      as HTMLDivElement;
         this.startTransactionRequestDiv                              = this.commandsDiv.querySelector("#StartTransactionRequest")               as HTMLDivElement;
+        this.transactionEventRequestDiv                              = this.commandsDiv.querySelector("#TransactionEventRequest")               as HTMLDivElement;
         this.statusNotificationRequestDiv                            = this.commandsDiv.querySelector("#StatusNotificationRequest")             as HTMLDivElement;
         this.meterValuesRequestDiv                                   = this.commandsDiv.querySelector("#MeterValuesRequest")                    as HTMLDivElement;
         this.stopTransactionRequestDiv                               = this.commandsDiv.querySelector("#StopTransactionRequest")                as HTMLDivElement;
@@ -139,6 +145,7 @@ class OCPPChargingStation {
         this.sendHeartbeatRequestButton                              = this.heartbeatRequestDiv.                    querySelector("#HeartbeatRequestButton")                     as HTMLButtonElement;
         this.sendAuthorizeRequestButton                              = this.authorizeRequestDiv.                    querySelector("#AuthorizeRequestButton")                     as HTMLButtonElement;
         this.sendStartTransactionRequestButton                       = this.startTransactionRequestDiv.             querySelector("#StartTransactionRequestButton")              as HTMLButtonElement;
+        this.sendTransactionEventRequestButton                       = this.transactionEventRequestDiv.             querySelector("#TransactionEventRequestButton")              as HTMLButtonElement;
         this.sendStatusNotificationRequestButton                     = this.statusNotificationRequestDiv.           querySelector("#StatusNotificationRequestButton")            as HTMLButtonElement;
         this.sendMeterValuesRequestButton                            = this.meterValuesRequestDiv.                  querySelector("#MeterValuesRequestButton")                   as HTMLButtonElement;
         this.sendStopTransactionRequestButton                        = this.stopTransactionRequestDiv.              querySelector("#StopTransactionRequestButton")               as HTMLButtonElement;
@@ -151,6 +158,7 @@ class OCPPChargingStation {
         this.sendHeartbeatRequestButton.onclick                      = () => this.SendHeartbeatRequest();
         this.sendAuthorizeRequestButton.onclick                      = () => this.SendAuthorizeRequest();
         this.sendStartTransactionRequestButton.onclick               = () => this.SendStartTransactionRequest();
+        this.sendTransactionEventRequestButton.onclick               = () => this.SendTransactionEventRequest();
         this.sendStatusNotificationRequestButton.onclick             = () => this.SendStatusNotificationRequest();
         this.sendMeterValuesRequestButton.onclick                    = () => this.SendMeterValuesRequest();
         this.sendStopTransactionRequestButton.onclick                = () => this.SendStopTransactionRequest();
@@ -163,28 +171,9 @@ class OCPPChargingStation {
 
         //#region Handle OCPP version selector
 
-        this.csmsOCPPVersion.onchange = (e) => {
+        this.handleOCPPVersionChange();
 
-            for (const child of this.buttonsDiv.children as any as HTMLElement[]) {
-
-                child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
-                                          ? 'block'
-                                          : 'none';
-
-            }
-
-            for (const child of this.commandsDiv.children as any as HTMLElement[]) {
-
-                if (child.classList.contains("properties"))
-                {
-                    child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
-                                              ? 'block'
-                                              : 'none';
-                }
-
-            }
-
-        }
+        this.csmsOCPPVersion.onchange = (e) => this.handleOCPPVersionChange();
 
         //#endregion
 
@@ -504,6 +493,40 @@ class OCPPChargingStation {
     //#endregion
 
 
+    //#region Handle OCPP version change
+
+    private handleOCPPVersionChange()
+    {
+
+        for (const child of this.buttonsDiv.children as any as HTMLElement[]) {
+
+            child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+                                      ? 'block'
+                                      : 'none';
+
+        }
+
+        for (const child of Array.from(this.commandsDiv.querySelectorAll('div.command, div.properties, div.row')))
+        {
+
+            if (child.classList.contains("properties"))
+            {
+
+                let divElement = child as HTMLDivElement;
+
+                divElement.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+                                               ? 'block'
+                                               : 'none';
+
+            }
+
+        }
+
+    }
+
+    //#endregion
+
+
     private showDialog(dialogDiv: HTMLDivElement) {
 
         for (const dialog of Array.from(document.querySelectorAll<HTMLDivElement>("#commands .command")))
@@ -642,6 +665,29 @@ class OCPPChargingStation {
                            "meterStart":     parseInt(MeterStart),
                            "reservationId":  ReservationId != "" ? parseInt(ReservationId) : null
                        });
+
+    }
+
+    public SendTransactionEventRequest(RequestDivElement?: HTMLDivElement)
+    {
+
+      const transactionEventRequestDiv  = RequestDivElement ?? document.querySelector("#TransactionEventRequest");
+      const properties                  = transactionEventRequestDiv?.querySelector(".properties")             as HTMLDivElement;
+
+    //   const ConnectorId                 = (properties?.querySelector("#StartTransactionRequest_ConnectorId")   as HTMLInputElement)?.value;
+    //   const IdTag                       = (properties?.querySelector("#StartTransactionRequest_IdTag")         as HTMLInputElement)?.value;
+    //   const Timestamp                   = (properties?.querySelector("#StartTransactionRequest_Timestamp")     as HTMLInputElement)?.value;
+    //   const MeterStart                  = (properties?.querySelector("#StartTransactionRequest_MeterStart")    as HTMLInputElement)?.value;
+    //   const ReservationId               = (properties?.querySelector("#StartTransactionRequest_ReservationId") as HTMLInputElement)?.value;
+
+    //   this.sendRequest("TransactionEvent",
+    //                    {
+    //                        "connectorId":    parseInt(ConnectorId),
+    //                        "idTag":          IdTag,
+    //                        "timestamp":      Timestamp != "" ? Timestamp : new Date().toISOString(),
+    //                        "meterStart":     parseInt(MeterStart),
+    //                        "reservationId":  ReservationId != "" ? parseInt(ReservationId) : null
+    //                    });
 
     }
 

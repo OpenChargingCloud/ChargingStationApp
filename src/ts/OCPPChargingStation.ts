@@ -42,6 +42,9 @@ class OCPPChargingStation {
     private readonly dataTransferRequestDiv:                             HTMLDivElement;
     private readonly diagnosticsStatusNotificationRequestDiv:            HTMLDivElement;
     private readonly firmwareStatusNotificationRequestDiv:               HTMLDivElement;
+    private readonly signCertificateRequestDiv:                          HTMLDivElement;
+    private readonly securityEventNotificationRequestDiv:                HTMLDivElement;
+    private readonly notifyCustomerInformationRequestDiv:                HTMLDivElement;
     private readonly rawRequestDiv:                                      HTMLDivElement;
 
     private readonly controlDiv:                                         HTMLDivElement;
@@ -58,6 +61,9 @@ class OCPPChargingStation {
     private readonly showDataTransferRequestButton:                      HTMLButtonElement;
     private readonly showDiagnosticsStatusNotificationRequestButton:     HTMLButtonElement;
     private readonly showFirmwareStatusNotificationRequestButton:        HTMLButtonElement;
+    private readonly showSignCertificateRequestButton:                   HTMLButtonElement;
+    private readonly showSecurityEventNotificationRequestButton:         HTMLButtonElement;
+    private readonly showNotifyCustomerInformationRequestButton:         HTMLButtonElement;
     private readonly showRAWRequestButton:                               HTMLButtonElement;
 
     private readonly sendBootNotificationRequestButton:                  HTMLButtonElement;
@@ -71,6 +77,9 @@ class OCPPChargingStation {
     private readonly sendDataTransferRequestButton:                      HTMLButtonElement;
     private readonly sendDiagnosticsStatusNotificationRequestButton:     HTMLButtonElement;
     private readonly sendFirmwareStatusNotificationRequestButton:        HTMLButtonElement;
+    private readonly sendSignCertificateRequestButton:                   HTMLButtonElement;
+    private readonly sendSecurityEventNotificationRequestButton:         HTMLButtonElement;
+    private readonly sendNotifyCustomerInformationRequestButton:         HTMLButtonElement;
     private readonly sendRAWRequestButton:                               HTMLButtonElement;
 
     private readonly WriteToScreen:                                      WriteToScreenDelegate;
@@ -111,6 +120,9 @@ class OCPPChargingStation {
         this.showDataTransferRequestButton                           = this.buttonsDiv.querySelector("#ShowDataTransferRequestButton")                  as HTMLButtonElement;
         this.showDiagnosticsStatusNotificationRequestButton          = this.buttonsDiv.querySelector("#ShowDiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
         this.showFirmwareStatusNotificationRequestButton             = this.buttonsDiv.querySelector("#ShowFirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
+        this.showSignCertificateRequestButton                        = this.buttonsDiv.querySelector("#ShowSignCertificateRequestButton")               as HTMLButtonElement;
+        this.showSecurityEventNotificationRequestButton              = this.buttonsDiv.querySelector("#ShowSecurityEventNotificationRequestButton")     as HTMLButtonElement;
+        this.showNotifyCustomerInformationRequestButton              = this.buttonsDiv.querySelector("#ShowNotifyCustomerInformationRequestButton")     as HTMLButtonElement;
         this.showRAWRequestButton                                    = this.buttonsDiv.querySelector("#ShowRAWRequestButton")                           as HTMLButtonElement;
 
         this.showBootNotificationRequestButton.onclick               = () => this.showDialog(this.bootNotificationRequestDiv);
@@ -124,6 +136,9 @@ class OCPPChargingStation {
         this.showDataTransferRequestButton.onclick                   = () => this.showDialog(this.dataTransferRequestDiv);
         this.showDiagnosticsStatusNotificationRequestButton.onclick  = () => this.showDialog(this.diagnosticsStatusNotificationRequestDiv);
         this.showFirmwareStatusNotificationRequestButton.onclick     = () => this.showDialog(this.firmwareStatusNotificationRequestDiv);
+        this.showSignCertificateRequestButton.onclick                = () => this.showDialog(this.signCertificateRequestDiv);
+        this.showSecurityEventNotificationRequestButton.onclick      = () => this.showDialog(this.securityEventNotificationRequestDiv);
+        this.showNotifyCustomerInformationRequestButton.onclick      = () => this.showDialog(this.notifyCustomerInformationRequestDiv);
         this.showRAWRequestButton.onclick                            = () => this.showDialog(this.rawRequestDiv);
 
         // Commands on the right
@@ -139,10 +154,13 @@ class OCPPChargingStation {
         this.dataTransferRequestDiv                                  = this.commandsDiv.querySelector("#DataTransferRequest")                   as HTMLDivElement;
         this.diagnosticsStatusNotificationRequestDiv                 = this.commandsDiv.querySelector("#DiagnosticsStatusNotificationRequest")  as HTMLDivElement;
         this.firmwareStatusNotificationRequestDiv                    = this.commandsDiv.querySelector("#FirmwareStatusNotificationRequest")     as HTMLDivElement;
+        this.signCertificateRequestDiv                               = this.commandsDiv.querySelector("#SignCertificateRequest")                as HTMLDivElement;
+        this.securityEventNotificationRequestDiv                     = this.commandsDiv.querySelector("#SecurityEventNotificationRequest")      as HTMLDivElement;
+        this.notifyCustomerInformationRequestDiv                     = this.commandsDiv.querySelector("#NotifyCustomerInformationRequest")      as HTMLDivElement;
         this.rawRequestDiv                                           = this.commandsDiv.querySelector("#RAWRequest")                            as HTMLDivElement;
 
-        this.sendBootNotificationRequestButton                       = this.bootNotificationRequestDiv.             querySelector("#BootNotificationRequestButton")              as HTMLButtonElement;
-        this.sendHeartbeatRequestButton                              = this.heartbeatRequestDiv.                    querySelector("#HeartbeatRequestButton")                     as HTMLButtonElement;
+        this.sendBootNotificationRequestButton                       = this.bootNotificationRequestDiv.             querySelector(".commandButton")                              as HTMLButtonElement;
+        this.sendHeartbeatRequestButton                              = this.heartbeatRequestDiv.                    querySelector(".commandButton")                              as HTMLButtonElement;
         this.sendAuthorizeRequestButton                              = this.authorizeRequestDiv.                    querySelector("#AuthorizeRequestButton")                     as HTMLButtonElement;
         this.sendStartTransactionRequestButton                       = this.startTransactionRequestDiv.             querySelector("#StartTransactionRequestButton")              as HTMLButtonElement;
         this.sendTransactionEventRequestButton                       = this.transactionEventRequestDiv.             querySelector("#TransactionEventRequestButton")              as HTMLButtonElement;
@@ -152,6 +170,9 @@ class OCPPChargingStation {
         this.sendDataTransferRequestButton                           = this.dataTransferRequestDiv.                 querySelector("#DataTransferRequestButton")                  as HTMLButtonElement;
         this.sendDiagnosticsStatusNotificationRequestButton          = this.diagnosticsStatusNotificationRequestDiv.querySelector("#DiagnosticsStatusNotificationRequestButton") as HTMLButtonElement;
         this.sendFirmwareStatusNotificationRequestButton             = this.firmwareStatusNotificationRequestDiv.   querySelector("#FirmwareStatusNotificationRequestButton")    as HTMLButtonElement;
+        this.sendSignCertificateRequestButton                        = this.signCertificateRequestDiv.              querySelector("#SignCertificateRequestButton")               as HTMLButtonElement;
+        this.sendSecurityEventNotificationRequestButton              = this.securityEventNotificationRequestDiv.    querySelector("#SecurityEventNotificationRequestButton")     as HTMLButtonElement;
+        this.sendNotifyCustomerInformationRequestButton              = this.notifyCustomerInformationRequestDiv.    querySelector("#NotifyCustomerInformationRequestButton")     as HTMLButtonElement;
         this.sendRAWRequestButton                                    = this.rawRequestDiv.                          querySelector("#RAWRequestButton")                           as HTMLButtonElement;
 
         this.sendBootNotificationRequestButton.onclick               = () => this.SendBootNotificationRequest();
@@ -165,6 +186,9 @@ class OCPPChargingStation {
         this.sendDataTransferRequestButton.onclick                   = () => this.SendDataTransferRequest();
         this.sendDiagnosticsStatusNotificationRequestButton.onclick  = () => this.SendDiagnosticsStatusNotificationRequest();
         this.sendFirmwareStatusNotificationRequestButton.onclick     = () => this.SendFirmwareStatusNotificationRequest();
+        this.sendSignCertificateRequestButton.onclick                = () => this.SendSignCertificateRequestRequest();
+        this.sendSecurityEventNotificationRequestButton.onclick      = () => this.SendSecurityEventNotificationRequestRequest();
+        this.sendNotifyCustomerInformationRequestButton.onclick      = () => this.NotifyCustomerInformationRequestRequest();
         this.sendRAWRequestButton.onclick                            = () => this.SendRAWRequest();
 
         //#endregion
@@ -199,6 +223,7 @@ class OCPPChargingStation {
 
                         this.csmsURL.readOnly                = true;
                         this.controlDiv.style.pointerEvents  = 'auto';
+                        this.buttonsDiv.style.pointerEvents  = 'auto';
                         this.csmsConnectButton.textContent   = "Disconnect";
 
                     };
@@ -509,14 +534,35 @@ class OCPPChargingStation {
         for (const child of Array.from(this.commandsDiv.querySelectorAll('div.command, div.properties, div.row')))
         {
 
+            // Only property lists having the selected "OCPPv..." class are shown!
             if (child.classList.contains("properties"))
             {
 
                 let divElement = child as HTMLDivElement;
 
                 divElement.style.display = child.classList.contains(this.csmsOCPPVersion.value)
-                                               ? 'block'
+                                               ? 'table'
                                                : 'none';
+
+            }
+
+            // Only rows without any "OCPPv..." class or the selected "OCPPv..." class are shown!
+            if (child.classList.contains("row"))
+            {
+
+                let divElement = child as HTMLDivElement;
+
+                if (child.classList.contains(this.csmsOCPPVersion.value))
+                    divElement.style.display = 'block';
+
+                else
+                {
+                    for (const className of (child.classList as any)) {
+                        if (className.startsWith('OCPPv')) {
+                            divElement.style.display = 'none';
+                        }
+                    }
+                }
 
             }
 
@@ -526,6 +572,7 @@ class OCPPChargingStation {
 
     //#endregion
 
+    //#region Helpers
 
     private showDialog(dialogDiv: HTMLDivElement) {
 
@@ -534,6 +581,39 @@ class OCPPChargingStation {
 
         dialogDiv.style.display = "block";
 
+    }
+
+    private ParseCustomData(CustomData?: string | null): any|null
+    {
+
+        if (CustomData == null)
+            return null;
+
+        let customData = null;
+
+        try
+        {
+            return JSON.parse(CustomData);
+        } catch { }
+
+        return null;
+
+    }
+
+    private removeNullsAndEmptyObjects(obj: any): any {
+        for (let key in obj) {
+            if (obj[key] === null) {
+                delete obj[key];
+            } else if (typeof obj[key] === 'object') {
+                obj[key] = this.removeNullsAndEmptyObjects(obj[key]);
+    
+                // After cleaning the inner object, if it's empty, delete it too.
+                if (Object.keys(obj[key]).length === 0) {
+                    delete obj[key];
+                }
+            }
+        }
+        return obj;
     }
 
     public sendRAWRequest(message: string) {
@@ -549,26 +629,22 @@ class OCPPChargingStation {
 
     }
 
+    //#endregion
+
+
     public sendRequest(command: string, request: any) {
 
         if (this.websocket &&
             this.websocket.readyState === WebSocket.OPEN)
         {
 
-            // Some central systems dislike null-values...
-            for (let key in request)
-            {
-                if (request[key] == null)
-                {
-                    delete(request[key]);
-                }
-            }
-
             const message = JSON.stringify([ 2,
-                                            (this.requestId++).toString(),
-                                            command,
-                                            request != null ? request : {}
-                                        ]);
+                                             (this.requestId++).toString(),
+                                             command,
+                                             request != null
+                                                 ? this.removeNullsAndEmptyObjects(request)
+                                                 : {}
+                                           ]);
 
             this.WriteToScreen("SENT: " + message);
             this.websocket.send(message);
@@ -585,9 +661,9 @@ class OCPPChargingStation {
         {
 
             const message = JSON.stringify([ 3,
-                                            responseId,
-                                            response
-                                        ]);
+                                             responseId,
+                                             response
+                                           ]);
 
             this.WriteToScreen("REPLY: " + message);
             this.websocket.send(message);
@@ -600,36 +676,96 @@ class OCPPChargingStation {
     public SendBootNotificationRequest(RequestDivElement?: HTMLDivElement)
     {
 
-      const bootNotificationRequestDiv  = RequestDivElement ?? document.querySelector("#BootNotificationRequest");
-      const properties                  = bootNotificationRequestDiv?.querySelector(".properties")                       as HTMLDivElement;
-      const ChargePointVendor           = (properties?.querySelector("#BootNotificationRequest_ChargePointVendor")       as HTMLInputElement)?.value;
-      const ChargePointModel            = (properties?.querySelector("#BootNotificationRequest_ChargePointModel")        as HTMLInputElement)?.value;
-      const ChargePointSerialNumber     = (properties?.querySelector("#BootNotificationRequest_ChargePointSerialNumber") as HTMLInputElement)?.value;
-      const ChargeBoxSerialNumber       = (properties?.querySelector("#BootNotificationRequest_ChargeBoxSerialNumber")   as HTMLInputElement)?.value;
-      const FirmwareVersion             = (properties?.querySelector("#BootNotificationRequest_FirmwareVersion")         as HTMLInputElement)?.value;
-      const ICCId                       = (properties?.querySelector("#BootNotificationRequest_ICCId")                   as HTMLInputElement)?.value;
-      const IMSI                        = (properties?.querySelector("#BootNotificationRequest_IMSI")                    as HTMLInputElement)?.value;
-      const MeterType                   = (properties?.querySelector("#BootNotificationRequest_MeterType")               as HTMLInputElement)?.value;
-      const MeterSerialNumber           = (properties?.querySelector("#BootNotificationRequest_MeterSerialNumber")       as HTMLInputElement)?.value;
+        if (this.csmsOCPPVersion.value === "OCPPv1_6")
+        {
 
-      this.sendRequest("BootNotification",
-                       {
-                           "chargePointVendor":        ChargePointVendor,
-                           "chargePointModel":         ChargePointModel,
-                           "chargePointSerialNumber":  ChargePointSerialNumber != "" ? ChargePointSerialNumber : null,
-                           "chargeBoxSerialNumber":    ChargeBoxSerialNumber   != "" ? ChargeBoxSerialNumber   : null,
-                           "firmwareVersion":          FirmwareVersion         != "" ? FirmwareVersion         : null,
-                           "iccid":                    ICCId                   != "" ? ICCId                   : null,
-                           "imsi":                     IMSI                    != "" ? IMSI                    : null,
-                           "meterType":                MeterType               != "" ? MeterType               : null,
-                           "meterSerialNumber":        MeterSerialNumber       != "" ? MeterSerialNumber       : null
-                       });
+            const properties               = this.bootNotificationRequestDiv?.querySelector(".properties, .OCPPv1_6") as HTMLDivElement;
+
+            const ChargePointVendor        = (properties?.querySelector('input[name="ChargePointVendor"]')             as HTMLInputElement). value;
+            const ChargePointModel         = (properties?.querySelector('input[name="ChargePointModel"]')              as HTMLInputElement). value;
+            const ChargePointSerialNumber  = (properties?.querySelector('input[name="ChargePointSerialNumber"]')       as HTMLInputElement)?.value || null;
+            const ChargeBoxSerialNumber    = (properties?.querySelector('input[name="ChargeBoxSerialNumber"]')         as HTMLInputElement)?.value || null;
+            const FirmwareVersion          = (properties?.querySelector('input[name="FirmwareVersion"]')               as HTMLInputElement)?.value || null;
+            const ICCId                    = (properties?.querySelector('input[name="ICCId"]')                         as HTMLInputElement)?.value || null;
+            const IMSI                     = (properties?.querySelector('input[name="IMSI"]')                          as HTMLInputElement)?.value || null;
+            const MeterType                = (properties?.querySelector('input[name="MeterType"]')                     as HTMLInputElement)?.value || null;
+            const MeterSerialNumber        = (properties?.querySelector('input[name="MeterSerialNumber"]')             as HTMLInputElement)?.value || null;
+
+            this.sendRequest("BootNotification",
+                            {
+                                "chargePointVendor":        ChargePointVendor,
+                                "chargePointModel":         ChargePointModel,
+                                "chargePointSerialNumber":  ChargePointSerialNumber,
+                                "chargeBoxSerialNumber":    ChargeBoxSerialNumber,
+                                "firmwareVersion":          FirmwareVersion,
+                                "iccid":                    ICCId,
+                                "imsi":                     IMSI,
+                                "meterType":                MeterType,
+                                "meterSerialNumber":        MeterSerialNumber
+                            });
+
+        }
+
+        else
+        {
+
+            const properties                        = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')   as HTMLDivElement;
+
+            const ChargingStation_Model             = (properties?.querySelector('input[name="ChargingStation_Model"]')            as HTMLInputElement).  value;
+            const ChargingStation_VendorName        = (properties?.querySelector('input[name="ChargingStation_VendorName"]')       as HTMLInputElement).  value;
+            const ChargingStation_SerialNumber      = (properties?.querySelector('input[name="ChargingStation_SerialNumber"]')     as HTMLInputElement)?. value || null;
+            const ChargingStation_Modem_ICCID       = (properties?.querySelector('input[name="ChargingStation_Modem_ICCID"]')      as HTMLInputElement)?. value || null;
+            const ChargingStation_Modem_ISMI        = (properties?.querySelector('input[name="ChargingStation_Modem_ISMI"]')       as HTMLInputElement)?. value || null;
+            const ChargingStation_Modem_CustomData  = (properties?.querySelector('input[name="ChargingStation_Modem_CustomData"]') as HTMLInputElement)?. value || null;
+            const ChargingStation_FirmwareVersion   = (properties?.querySelector('input[name="ChargingStation_FirmwareVersion"]')  as HTMLInputElement)?. value || null;
+            const ChargingStation_CustomData        = (properties?.querySelector('input[name="ChargingStation_CustomData"]')       as HTMLInputElement)?. value || null;
+            const Reason                            = (properties?.querySelector('select[name="Reason"]')                          as HTMLSelectElement)?.value || null;
+            const CustomData                        = (properties?.querySelector('input[name="CustomData"]')                       as HTMLInputElement)?. value || null;
+
+            this.sendRequest("BootNotification",
+                            {
+                                "chargingStation": {
+                                    "model":            ChargingStation_Model,
+                                    "vendorName":       ChargingStation_VendorName,
+                                    "serialNumber":     ChargingStation_SerialNumber,
+                                    "modem": {
+                                        "iccid":        ChargingStation_Modem_ICCID,
+                                        "imsi":         ChargingStation_Modem_ISMI,
+                                        "customData":   this.ParseCustomData(ChargingStation_Modem_CustomData),
+                                    },
+                                    "firmwareVersion":  ChargingStation_FirmwareVersion,
+                                    "customData":       this.ParseCustomData(ChargingStation_CustomData),
+                                },
+                                "reason":               Reason,
+                                "customData":           this.ParseCustomData(CustomData)
+                            });
+
+        }
 
     }
 
     public SendHeartbeatRequest(RequestDivElement?: HTMLDivElement)
     {
-        this.sendRequest("Heartbeat", null);
+
+        if (this.csmsOCPPVersion.value === "OCPPv1_6")
+        {
+            this.sendRequest("Heartbeat", null);
+        }
+
+        else
+        {
+
+            const properties  = this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1') as HTMLDivElement;
+
+            const CustomData  = (properties?.querySelector('input[name="CustomData"]')             as HTMLInputElement)?.value || null;
+
+            this.sendRequest("Heartbeat",
+                             {
+                                "customData":  this.ParseCustomData(CustomData)
+                             });
+
+        }
+
     }
 
     public SendAuthorizeRequest(RequestDivElement?: HTMLDivElement)
@@ -849,6 +985,60 @@ class OCPPChargingStation {
       const Status                                = (properties?.querySelector("#FirmwareStatusNotificationRequest_Status") as HTMLSelectElement)?.value;
 
       this.sendRequest("FirmwareStatusNotification",
+                       {
+                           "status": Status
+                       });
+
+    }
+
+    public SendSignCertificateRequestRequest(RequestDivElement?: HTMLDivElement)
+    {
+
+      const SignCertificateRequestDiv  = RequestDivElement ?? document.querySelector("#SignCertificateRequest");
+      const properties                 = SignCertificateRequestDiv?.querySelector(".properties")               as HTMLDivElement;
+
+      const CSR                        = (properties?.querySelector("#SignCertificateRequest_Type")            as HTMLInputElement)?.value;
+      const CertificateType            = (properties?.querySelector("#SignCertificateRequest_CertificateType") as HTMLSelectElement)?.value;
+      const CustomData                 = (properties?.querySelector("#SignCertificateRequest_CustomData")      as HTMLInputElement)?.value;
+
+      this.sendRequest("SignCertificate",
+                       {
+                           "csr":              CSR,
+                           "certificateType":  CertificateType,
+                           "customData":       this.ParseCustomData(CustomData)
+                       });
+
+    }
+
+    public SendSecurityEventNotificationRequestRequest(RequestDivElement?: HTMLDivElement)
+    {
+
+      const SecurityEventNotificationRequestDiv  = RequestDivElement ?? document.querySelector("#SecurityEventNotificationRequest");
+      const properties                           = SecurityEventNotificationRequestDiv?.querySelector(".properties")          as HTMLDivElement;
+
+      const Type                                 = (properties?.querySelector("#SecurityEventNotificationRequest_Type")       as HTMLInputElement)?.value;
+      const Timestamp                            = (properties?.querySelector("#SecurityEventNotificationRequest_Timestamp")  as HTMLInputElement)?.value;
+      const TechInfo                             = (properties?.querySelector("#SecurityEventNotificationRequest_TechInfo")   as HTMLInputElement)?.value;
+      const CustomData                           = (properties?.querySelector("#SecurityEventNotificationRequest_CustomData") as HTMLInputElement)?.value;
+
+      this.sendRequest("SecurityEventNotification",
+                       {
+                           "type":        Type,
+                           "timestamp":   Timestamp,
+                           "techInfo":    TechInfo,
+                           "customData":  this.ParseCustomData(CustomData)
+                       });
+
+    }
+
+    public NotifyCustomerInformationRequestRequest(RequestDivElement?: HTMLDivElement)
+    {
+
+      const CustomerInformationRequestRequestDiv  = RequestDivElement ?? document.querySelector("#CustomerInformationRequestRequest");
+      const properties                            = CustomerInformationRequestRequestDiv?.querySelector(".properties")      as HTMLDivElement;
+      const Status                                = (properties?.querySelector("#CustomerInformationRequestRequest_Status") as HTMLSelectElement)?.value;
+
+      this.sendRequest("CustomerInformationRequest",
                        {
                            "status": Status
                        });

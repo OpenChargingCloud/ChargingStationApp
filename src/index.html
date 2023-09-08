@@ -60,7 +60,7 @@
 
                         <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowAuthorizeRequestButton">Authorize</button>
                         <button class="OCPPv1_6"                     id="ShowStartTransactionRequestButton">Start Transaction</button>
-                        <button class="OCPPv2_0_1 OCPPv2_1"          id="ShowTransactionEventRequestButton">Transaction Event</button>
+                        <button class="         OCPPv2_0_1 OCPPv2_1" id="ShowTransactionEventRequestButton">Transaction Event</button>
                         <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowStatusNotificationRequestButton">Status Notification</button>
                         <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowMeterValuesRequestButton">Meter Values</button>
                         <button class="OCPPv1_6"                     id="ShowStopTransactionRequestButton">Stop Transaction</button>
@@ -68,6 +68,11 @@
                         <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowDataTransferRequestButton">Data Transfer</button>
                         <button class="OCPPv1_6"                     id="ShowDiagnosticsStatusNotificationRequestButton">Diagnostics Status Notification</button>
                         <button class="OCPPv1_6"                     id="ShowFirmwareStatusNotificationRequestButton">Firmware Status Notification</button>
+
+                        <button class="         OCPPv2_0_1 OCPPv2_1" id="ShowSignCertificateRequestButton">Sign Certificate</button>
+
+                        <button class="         OCPPv2_0_1 OCPPv2_1" id="ShowSecurityEventNotificationRequestButton">Security Event Notification</button>
+                        <button class="         OCPPv2_0_1 OCPPv2_1" id="ShowNotifyCustomerInformationRequestButton">Notify Customer Information</button>
 
                         <button class="OCPPv1_6 OCPPv2_0_1 OCPPv2_1" id="ShowRAWRequestButton">RAW Request</button>
 
@@ -80,30 +85,105 @@
                             <div class="description">Boot Notification Request</div>
 
                             <div class="properties OCPPv1_6">
-                                <div class="row"><div class="key M">Charge Point Vendor</div>       <div class="value"><input id="BootNotificationRequest_ChargePointVendor"               type="text"></div></div>
-                                <div class="row"><div class="key M">Charge Point Model</div>        <div class="value"><input id="BootNotificationRequest_ChargePointModel"                type="text"></div></div>
-                                <div class="row"><div class="key O">Charge Point Serial Number</div><div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber"         type="text"></div></div>
-                                <div class="row"><div class="key O">Charge Box Serial Number</div>  <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"           type="text"></div></div>
-                                <div class="row"><div class="key O">Firmware Version</div>          <div class="value"><input id="BootNotificationRequest_FirmwareVersion"                 type="text"></div></div>
-                                <div class="row"><div class="key O">ICCId</div>                     <div class="value"><input id="BootNotificationRequest_ICCId"                           type="text"></div></div>
-                                <div class="row"><div class="key O">IMSI</div>                      <div class="value"><input id="BootNotificationRequest_IMSI"                            type="text"></div></div>
-                                <div class="row"><div class="key O">Meter Type</div>                <div class="value"><input id="BootNotificationRequest_MeterType"                       type="text"></div></div>
-                                <div class="row"><div class="key O">Meter Serial Number</div>       <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"               type="text"></div></div>
+                                <div class="row mandatory">
+                                    <div class="key">Charge Point Vendor</div>
+                                    <div class="value"><input id="BootNotificationRequest_ChargePointVendor"       type="text"></div>
+                                </div>
+                                <div class="row mandatory"><div class="key M">Charge Point Model</div>
+                                    <div class="value"><input id="BootNotificationRequest_ChargePointModel"        type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Charge Point Serial Number</div>
+                                    <div class="value"><input id="BootNotificationRequest_ChargePointSerialNumber" type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Charge Box Serial Number</div>
+                                    <div class="value"><input id="BootNotificationRequest_ChargeBoxSerialNumber"   type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Firmware Version</div>
+                                    <div class="value"><input id="BootNotificationRequest_FirmwareVersion"         type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">ICCId</div>
+                                    <div class="value"><input id="BootNotificationRequest_ICCId"                   type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">IMSI</div>
+                                    <div class="value"><input id="BootNotificationRequest_IMSI"                    type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Meter Type</div>
+                                    <div class="value"><input id="BootNotificationRequest_MeterType"               type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Meter Serial Number</div>
+                                    <div class="value"><input id="BootNotificationRequest_MeterSerialNumber"       type="text"></div>
+                                </div>
                             </div>
 
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
-                                <div class="row"><div class="key M">Charging Station</div>          <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey M">Model</div>                  <div class="value"><input id="BootNotificationRequest_ChargingStation_Model"           type="text"></div></div>
-                                <div class="row"><div class="subKey M">Vendor Name</div>            <div class="value"><input id="BootNotificationRequest_ChargingStation_VendorName"      type="text"></div></div>
-                                <div class="row"><div class="subKey O">Serial Number</div>          <div class="value"><input id="BootNotificationRequest_ChargingStation_SerialNumber"    type="text"></div></div>
-                                <div class="row"><div class="subKey O">Modem</div>                  <div class="value"><input id="BootNotificationRequest_ChargingStation_Modem"           type="text"></div></div>
-                                <div class="row"><div class="subKey O">Firmware Version</div>       <div class="value"><input id="BootNotificationRequest_ChargingStation_FirmwareVersion" type="text"></div></div>
-                                <div class="row"><div class="subKey O">Custom Data</div>            <div class="value"><input id="BootNotificationRequest_ChargingStation_CustomData"      type="text"></div></div>
-                                <div class="row"><div class="key M">Reason</div>                    <div class="value"><input id="BootNotificationRequest_Reason"                          type="text"></div></div>
-                                <div class="row"><div class="key O">Custom Data</div>               <div class="value"><input id="BootNotificationRequest_CustomData"                      type="text"></div></div>
+                                <div class="row mandatory">
+                                    <div class="key">Charging Station</div>
+                                    <div class="value">&nbsp;</div>
+                                </div>
+                                <div class="row mandatory L2">
+                                    <div class="key">Model</div>
+                                    <div class="value"><input type="text" name="ChargingStation_Model"></div>
+                                </div>
+                                <div class="row mandatory L2">
+                                    <div class="key">Vendor Name</div>
+                                    <div class="value"><input type="text" name="ChargingStation_VendorName"></div>
+                                </div>
+                                <div class="row optional L2">
+                                    <div class="key">Serial Number</div>
+                                    <div class="value"><input type="text" name="ChargingStation_SerialNumber"></div>
+                                </div>
+                                <div class="row optional L2">
+                                    <div class="key">Modem</div>
+                                    <div class="value">&nbsp;</div></div>
+                                <div class="row optional L3">
+                                    <div class="key">ICCID</div>
+                                    <div class="value"><input type="text" name="ChargingStation_Modem_ICCID"></div>
+                                </div>
+                                <div class="row optional L3">
+                                    <div class="key">IMSI</div>
+                                    <div class="value"><input type="text" name="ChargingStation_Modem_ISMI"></div>
+                                </div>
+                                <div class="row optional L3">
+                                    <div class="key">CustomData</div>
+                                    <div class="value"><input type="text" name="ChargingStation_Modem_CustomData"></div>
+                                </div>
+                                <div class="row optional L2">
+                                    <div class="key">Firmware Version</div>
+                                    <div class="value"><input type="text" name="ChargingStation_FirmwareVersion"></div>
+                                </div>
+                                <div class="row optional L2">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input type="text" name="ChargingStation_CustomData"></div>
+                                </div>
+                                <div class="row mandatory">
+                                    <div class="key">Reason</div>
+                                    <div class="value">
+                                        <select name="Reason">
+                                            <option selected>ApplicationReset</option>
+                                            <option>FirmwareUpdate</option>
+                                            <option>LocalReset</option>
+                                            <option>PowerUp</option>
+                                            <option>RemoteReset</option>
+                                            <option>ScheduledReset</option>
+                                            <option>Triggered</option>
+                                            <option>Watchdog</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input type="text" name="CustomData"></div>
+                                </div>
                             </div>
 
-                            <button id="BootNotificationRequestButton" class="commandButton">send</button>
+                            <button class="commandButton">send</button>
 
                         </div>
 
@@ -112,10 +192,13 @@
                             <div class="description">Heartbeat Request</div>
 
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
-                                <div class="row"><div class="key O">Custom Data</div><div class="value"><input id="HeartbeatRequest_CustomData" type="text"></div></div>
+                                <div class="row optional">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input type="text" name="CustomData"></div>
+                                </div>
                             </div>
 
-                            <button id="HeartbeatRequestButton" class="commandButton">send</button>
+                            <button class="commandButton">send</button>
 
                         </div>
 
@@ -125,24 +208,71 @@
                             <div class="description">Authorize Request</div>
 
                             <div class="properties OCPPv1_6">
-                                <div class="row"><div class="key M">IdTag</div><div class="value"><input id="AuthorizeRequest_IdTag" type="text"></div></div>
+                                <div class="row mandatory">
+                                    <div class="key">IdTag</div>
+                                    <div class="value"><input type="text" name="IdTag"></div>
+                                </div>
                             </div>
 
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
-                                <div class="row"><div class="key M">Id Token</div>                       <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey M">Id Token</div>                    <div class="value"><input id="AuthorizeRequest_IdToken_IdToken"                          type="text"></div></div>
-                                <div class="row"><div class="subKey M">Type</div>                        <div class="value"><input id="AuthorizeRequest_IdToken_Type"                             type="text"></div></div>
 
-                                <div class="row"><div class="subKey O">Additional Info</div>             <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey2 M">Additional Id Token</div>        <div class="value"><input id="AuthorizeRequest_IdToken_AdditionalInfo_AdditionalIdToken" type="text"></div></div>
-                                <div class="row"><div class="subKey2 M">Type</div>                       <div class="value"><input id="AuthorizeRequest_IdToken_AdditionalInfo_Type"              type="text"></div></div>
-                                <div class="row"><div class="subKey2 O">Custom Data</div>                <div class="value"><input id="AuthorizeRequest_IdToken_AdditionalInfo_CustomData"        type="text"></div></div>
+                                <div class="row mandatory">
+                                    <div class="key">Id Token</div>
+                                    <div class="value">&nbsp;</div>
+                                </div>
+                                <div class="row mandatory L2">
+                                    <div class="key">Id Token</div>
+                                    <div class="value"><input type="text" name="IdToken_IdToken"></div>
+                                </div>
+                                <div class="row mandatory L2">
+                                    <div class="key">Type</div>
+                                    <div class="value"><input type="text" name="IdToken_Type"></div>
+                                </div>
 
-                                <div class="row"><div class="subKey O">Custom Data</div>                 <div class="value"><input id="AuthorizeRequest_IdToken_CustomData"                       type="text"></div></div>
+                                <div class="row optional L2">
+                                    <div class="key">Additional Info(s)</div>
+                                    <div class="value">&nbsp;</div>
+                                </div>
+                                <div name="IdToken_AdditionalInfo1" class="IdToken_AdditionalInfos collection">
+                                    <div class="row mandatory L3">
+                                        <div class="key">Additional Id Token</div>
+                                        <div class="value"><input type="text" name="AdditionalIdToken"></div>
+                                    </div>
+                                    <div class="row mandatory L3">
+                                        <div class="key">Type</div>
+                                        <div class="value"><input type="text" name="Type"></div>
+                                    </div>
+                                    <div class="row optional L3">
+                                        <div class="key">Custom Data</div>
+                                        <div class="value"><input type="text" name="CustomData"></div>
+                                    </div>
+                                </div>
+                                <div class="row L3">
+                                    <div class="key">&nbsp;</div>
+                                    <div class="value "><button class="addToCollectionButton" name="IdToken_Add_AdditionalInfoButton">+</button></div>
+                                </div>
 
-                                <div class="row"><div class="key O">Certificate</div>                    <div class="value"><input id="AuthorizeRequest_Certificate"                              type="text"></div></div>
-                                <div class="row"><div class="key O">ISO 15118 Certificate Hash Data</div><div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData"              type="text"></div></div>
-                                <div class="row"><div class="key O">Custom Data</div>                    <div class="value"><input id="AuthorizeRequest_CustomData"                               type="text"></div></div>
+                                <div class="row"><div class="subKey O">Custom Data</div>                 <div class="value"><input id="AuthorizeRequest_IdToken_CustomData"                          type="text"></div></div>
+
+                                <div class="row"><div class="key O">Certificate</div>                    <div class="value"><input id="AuthorizeRequest_Certificate"                                 type="text"></div></div>
+
+                                <div class="row"><div class="key O">ISO 15118 Certificate Hash Data</div><div class="value">&nbsp;</div></div>
+                                <div id="AuthorizeRequest_ISO15118CertificateHashDatas" class="collection">
+                                    <div class="row"><div class="subKey2 M">Hash Algorithm</div>         <div class="value">
+                                        <select id="AuthorizeRequest_ISO15118CertificateHashData1_HashAlgorithm">
+                                            <option>SHA256</option>
+                                            <option>SHA384</option>
+                                            <option>SHA512</option>
+                                        </select>
+                                    </div></div>
+                                    <div class="row"><div class="subKey2 M">Issuer Name Hash</div>       <div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData1_IssuerNameHash" type="text"></div></div>
+                                    <div class="row"><div class="subKey2 M">Issuer Key Hash</div>        <div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData1_IssuerKeyHash"  type="text"></div></div>
+                                    <div class="row"><div class="subKey2 M">Serial Number</div>          <div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData1_SerialNumber"   type="text"></div></div>
+                                    <div class="row"><div class="subKey2 M">Responder URL</div>          <div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData1_ResponderURL"   type="text"></div></div>
+                                    <div class="row"><div class="subKey2 O">Custom Data</div>            <div class="value"><input id="AuthorizeRequest_ISO15118CertificateHashData1_CustomData"     type="text"></div></div>
+                                </div>
+
+                                <div class="row"><div class="key O">Custom Data</div>                    <div class="value"><input id="AuthorizeRequest_CustomData"                                  type="text"></div></div>
                             </div>
 
                             <button id="AuthorizeRequestButton" class="commandButton">send</button>
@@ -164,29 +294,79 @@
                         <div id="TransactionEventRequest" class="command OCPPv2_0_1 OCPPv2_1">
                             <div class="description">Transaction Event Request</div>
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
+
                                 <div class="row"><div class="key M">EventType</div>                     <div class="value"><input id="TransactionEventRequest_EventType"                                                  type="text"></div></div>
                                 <div class="row"><div class="key M">Timestamp</div>                     <div class="value"><input id="TransactionEventRequest_Timestamp"                                                  type="text"></div></div>
-                                <div class="row"><div class="key M">Trigger Reason</div>                <div class="value"><input id="TransactionEventRequest_TriggerReason"                                              type="text"></div></div>
+                                <div class="row"><div class="key M">Trigger Reason</div>                <div class="value">
+                                    <select id="TransactionEventRequest_TriggerReason">
+                                        <option>AbnormalCondition</option>
+                                        <option>Authorized</option>
+                                        <option>CablePluggedIn</option>
+                                        <option>ChargingRateChanged</option>
+                                        <option>ChargingStateChanged</option>
+                                        <option>Deauthorized</option>
+                                        <option>EnergyLimitReached</option>
+                                        <option>EVCommunicationLost</option>
+                                        <option>EVConnectTimeout</option>
+                                        <option>EVDeparted</option>
+                                        <option>EVDetected</option>
+                                        <option>MeterValueClock</option>
+                                        <option>MeterValuePeriodic</option>
+                                        <option>RemoteStop</option>
+                                        <option>RemoteStart</option>
+                                        <option>ResetCommand</option>
+                                        <option>SignedDataReceived</option>
+                                        <option>StopAuthorized</option>
+                                        <option>TimeLimitReached</option>
+                                        <option>Trigger</option>
+                                        <option>UnlockCommand</option>
+                                        <option>OperationModeChanged</option>
+                                    </select>
+                                </div></div>
                                 <div class="row"><div class="key M">Seq No</div>                        <div class="value"><input id="TransactionEventRequest_SeqNo"                                                      type="text"></div></div>
 
                                 <div class="row"><div class="key M">TransactionInfo</div>               <div class="value">&nbsp;</div></div>
                                 <div class="row"><div class="subKey M">Transaction Id</div>             <div class="value"><input id="TransactionEventRequest_TransactionInfo_TransactionId"                              type="text"></div></div>
-                                <div class="row"><div class="subKey O">Charging State</div>             <div class="value"><input id="TransactionEventRequest_TransactionInfo_ChargingState"                              type="text"></div></div>
+                                <div class="row"><div class="subKey O">Charging State</div>             <div class="value">
+                                    <select id="TransactionEventRequest_TransactionInfo_ChargingState">
+                                        <option>Charging</option>
+                                        <option>EVConnected</option>
+                                        <option>SuspendedEV</option>
+                                        <option>SuspendedEVSE</option>
+                                        <option>Idle</option>
+                                    </select>
+                                </div></div>
                                 <div class="row"><div class="subKey O">Time Spent Charging</div>        <div class="value"><input id="TransactionEventRequest_TransactionInfo_TimeSpentCharging"                          type="text"></div></div>
                                 <div class="row"><div class="subKey O">Stopped Reason</div>             <div class="value"><input id="TransactionEventRequest_TransactionInfo_StoppedReason"                              type="text"></div></div>
                                 <div class="row"><div class="subKey O">Remote Start Id</div>            <div class="value"><input id="TransactionEventRequest_TransactionInfo_RemoteStartId"                              type="text"></div></div>
                                 <div class="row"><div class="subKey O">Operation Mode</div>             <div class="value"><input id="TransactionEventRequest_TransactionInfo_OperationMode"                              type="text"></div></div>
                                 <div class="row"><div class="subKey O">Custom Data</div>                <div class="value"><input id="TransactionEventRequest_TransactionInfo_CustomData"                                 type="text"></div></div>
 
-                                <div class="row"><div class="key O">Offline</div>                       <div class="value"><input id="TransactionEventRequest_Offline"                                                    type="text"></div></div>
-                                <div class="row"><div class="key O">Number of Phases Used</div>         <div class="value"><input id="TransactionEventRequest_NumberOfPhasesUsed"                                         type="text"></div></div>
-                                <div class="row"><div class="key O">Cable Max Current</div>             <div class="value"><input id="TransactionEventRequest_CableMaxCurrent"                                            type="text"></div></div>
+                                <div class="row"><div class="key O">Offline</div>                       <div class="value">
+                                    <select id="TransactionEventRequest_Offline">
+                                        <option>yes</option>
+                                        <option>no</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key O">Number of Phases Used</div>         <div class="value">
+                                    <select id="TransactionEventRequest_NumberOfPhasesUsed">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select>
+                                </div></div>
+                                <div class="row"><div class="key O">Cable Max Current (Ampere)</div>    <div class="value"><input id="TransactionEventRequest_CableMaxCurrent"                                            type="text"></div></div>
                                 <div class="row"><div class="key O">Reservation Id</div>                <div class="value"><input id="TransactionEventRequest_ReservationId"                                              type="text"></div></div>
  
                                 <div class="row"><div class="key O">Id Token</div>                      <div class="value">&nbsp;</div></div>
                                 <div class="row"><div class="subKey M">Id Token</div>                   <div class="value"><input id="TransactionEventRequest_IdToken_IdToken"                                            type="text"></div></div>
                                 <div class="row"><div class="subKey M">Type</div>                       <div class="value"><input id="TransactionEventRequest_IdToken_Type"                                               type="text"></div></div>
-                                <div class="row"><div class="subKey O">Additional Info</div>            <div class="value"><input id="TransactionEventRequest_IdToken_AdditionalInfo"                                     type="text"></div></div>
+                                <div class="row"><div class="subKey O">Additional Info(s)</div>         <div class="value">&nbsp;</div></div>
+                                <div id="TransactionEventRequest_IdToken_AdditionalInfos" class="collection">
+                                    <div class="row"><div class="subKey2 M">Additional Id Token</div>   <div class="value"><input id="TransactionEventRequest_IdToken_AdditionalInfo1_AdditionalIdToken"   type="text"></div></div>
+                                    <div class="row"><div class="subKey2 M">Type</div>                  <div class="value"><input id="TransactionEventRequest_IdToken_AdditionalInfo1_Type"                type="text"></div></div>
+                                    <div class="row"><div class="subKey2 O">Custom Data</div>           <div class="value"><input id="TransactionEventRequest_IdToken_AdditionalInfo1_CustomData"          type="text"></div></div>
+                                </div>
                                 <div class="row"><div class="subKey O">Custom Data</div>                <div class="value"><input id="TransactionEventRequest_IdToken_CustomData"                                         type="text"></div></div>
 
                                 <div class="row"><div class="key O">EVSE</div>                          <div class="value">&nbsp;</div></div>
@@ -195,32 +375,143 @@
                                 <div class="row"><div class="subKey O">Custom Data</div>                <div class="value"><input id="TransactionEventRequest_EVSE_CustomData"                                            type="text"></div></div>
 
                                 <div class="row"><div class="key O">Meter Value(s)</div>                <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey M">Timestamp</div>                  <div class="value"><input id="TransactionEventRequest_MeterValue1_Id"                                             type="text"></div></div>
+                                <div id="TransactionEventRequest_MeterValues" class="collection">
+                                    <div class="row"><div class="subKey M">Timestamp</div>                  <div class="value"><input id="TransactionEventRequest_MeterValue1_Id"                                             type="text"></div></div>
 
-                                <div class="row"><div class="subKey">Sampled Value(s)</div>            <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey2 M">Value</div>                    <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Value"                            type="text"></div></div>
-                                <div class="row"><div class="subKey2 M">Context</div>                  <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Context"                          type="text"></div></div>
-                                <div class="row"><div class="subKey2 M">Measurand</div>                <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Measurand"                        type="text"></div></div>
-                                <div class="row"><div class="subKey2 M">Phase</div>                    <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Phase"                            type="text"></div></div>
-                                <div class="row"><div class="subKey2 M">Location</div>                 <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Location"                         type="text"></div></div>
+                                    <div class="row"><div class="key L2">Sampled Value(s)</div>            <div class="value">&nbsp;</div></div>
+                                    <div id="TransactionEventRequest_MeterValue1_SampledValues" class="collection">
+                                        <div class="row"><div class="subKey2 M">Value</div>                    <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_Value"                            type="text"></div></div>
+                                        <div class="row"><div class="subKey2 M">Context</div>                  <div class="value">
+                                            <select id="TransactionEventRequest_MeterValue1_SampledValue1_Context">
+                                                <option>InterruptionBegin</option>
+                                                <option>InterruptionEnd</option>
+                                                <option>Other</option>
+                                                <option>SampleClock</option>
+                                                <option>TransactionBegin</option>
+                                                <option>TransactionEnd</option>
+                                                <option>Trigger</option>
+                                                <option>SamplePeriodic</option>
+                                            </select>
+                                        </div></div>
+                                        <div class="row"><div class="subKey2 M">Measurand</div>                <div class="value">
+                                            <select id="TransactionEventRequest_MeterValue1_SampledValue1_Measurand">
+                                                <option>Current_Export</option>
+                                                <option>Current_Import</option>
+                                                <option>Current_Offered</option>
 
-                                <div class="row"><div class="subKey2 O">Signed Meter Value</div>       <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey3 M">Signed Meter Data</div>        <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_SignedMeterData" type="text"></div></div>
-                                <div class="row"><div class="subKey3 O">Signing Method</div>           <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_SigningMethod"   type="text"></div></div>
-                                <div class="row"><div class="subKey3 O">Encoding Method</div>          <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_EncodingMethod"  type="text"></div></div>
-                                <div class="row"><div class="subKey3 O">Public Key</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_PublicKey"       type="text"></div></div>
-                                <div class="row"><div class="subKey3 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_CustomData"      type="text"></div></div>
+                                                <option>Current_Import_Offered</option>
+                                                <option>Current_Import_Minimum</option>
+                                                <option>Current_Export_Offered</option>
+                                                <option>Current_Export_Minimum</option>
+                                                <option>Display_PresentSOC</option>
+                                                <option>Display_MinimumSOC</option>
+                                                <option>Display_TargetSOC</option>
+                                                <option>Display_MaximumSOC</option>
+                                                <option>Display_RemainingTimeToMinimumSOC</option>
+                                                <option>Display_RemainingTimeToTargetSOC</option>
+                                                <option>Display_RemainingTimeToMaximumSOC</option>
+                                                <option>Display_ChargingComplete</option>
+                                                <option>Display_BatteryEnergyCapacity</option>
+                                                <option>Display_InletHot</option>
 
-                                <div class="row"><div class="subKey2 O">Unit Of Measure</div>          <div class="value">&nbsp;</div></div>
-                                <div class="row"><div class="subKey3 M">Unit</div>                     <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_Unit"               type="text"></div></div>
-                                <div class="row"><div class="subKey3 M">Multiplier</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_Multiplier"         type="text"></div></div>
-                                <div class="row"><div class="subKey3 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_CustomData"         type="text"></div></div>
+                                                <option>Energy_Active_Export_Register</option>
+                                                <option>Energy_Active_Import_Register</option>
 
-                                <div class="row"><div class="subKey2 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_CustomData"                       type="text"></div></div>
+                                                <option>Energy_Reactive_Export_Register</option>
+                                                <option>Energy_Reactive_Import_Register</option>
 
-                                <div class="row"><div class="subKey O">Custom Data</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_CustomData"                                     type="text"></div></div>
+                                                <option>Energy_Active_Export_Interval</option>
+                                                <option>Energy_Active_Import_Interval</option>
+                                                <option>Energy_Active_Setpoint_Interval</option>
+                                                <option>Energy_Active_Net</option>
 
-                                <div class="row"><div class="key O">Preconditioning Status</div>       <div class="value"><input id="TransactionEventRequest_PreconditioningStatus"                                      type="text"></div></div>
+                                                <option>Energy_Reactive_Export_Interval</option>
+                                                <option>Energy_Reactive_Import_Interval</option>
+                                                <option>Energy_Reactive_Net</option>
+
+                                                <option>Energy_Apparent_Export</option>
+                                                <option>Energy_Apparent_Import</option>
+                                                <option>Energy_Apparent_Net</option>
+
+                                                <option>EnergyRequest_Target</option>
+                                                <option>EnergyRequest_Minimum</option>
+                                                <option>EnergyRequest_Maximum</option>
+                                                <option>EnergyRequest_Minimum_V2X</option>
+                                                <option>EnergyRequest_Maximum_V2X</option>
+                                                <option>EnergyRequest_Bulk</option>
+
+                                                <option>Power_Active_Export</option>
+                                                <option>Power_Active_Import</option>
+                                                <option>Power_Active_Setpoint</option>
+                                                <option>Power_Active_Residual</option>
+                                                <option>Power_Reactive_Export</option>
+                                                <option>Power_Reactive_Import</option>
+                                                <option>Power_Factor</option>
+                                                <option>Power_Offered</option>
+
+                                                <option>Power_Import_Offered</option>
+                                                <option>Power_Import_Minimum</option>
+                                                <option>Power_Export_Offered</option>
+                                                <option>Power_Export_Minimum</option>
+
+                                                <option>Voltage</option>
+                                                <option>Voltage_Minimum</option>
+                                                <option>Voltage_Maximum</option>
+
+                                                <option>Frequency</option>
+                                                <option>SoC</option>
+
+                                            </select>
+                                        </div></div>
+                                        <div class="row"><div class="subKey2 M">Phase</div>                    <div class="value">
+                                            <select id="TransactionEventRequest_MeterValue1_SampledValue1_Phase">
+                                                <option>L1</option>
+                                                <option>L2</option>
+                                                <option>L3</option>
+                                                <option>N</option>
+                                                <option>L1_N</option>
+                                                <option>L2_N</option>
+                                                <option>L3_N</option>
+                                                <option>L1_L2</option>
+                                                <option>L2_L3</option>
+                                                <option>L3_L1</option>
+                                            </select>
+                                        </div></div>
+                                        <div class="row"><div class="subKey2 M">Location</div>                 <div class="value">
+                                            <select id="TransactionEventRequest_MeterValue1_SampledValue1_Location">
+                                                <option>Body</option>
+                                                <option>Cable</option>
+                                                <option>EV</option>
+                                                <option>Inlet</option>
+                                                <option>Outlet</option>
+                                                <option>LocalGrid</option>
+                                            </select>
+                                        </div></div>
+                                        <div class="row"><div class="subKey2 O">Signed Meter Value</div>       <div class="value">&nbsp;</div></div>
+                                        <div class="row"><div class="subKey3 M">Signed Meter Data</div>        <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_SignedMeterData" type="text"></div></div>
+                                        <div class="row"><div class="subKey3 M">Signing Method</div>           <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_SigningMethod"   type="text"></div></div>
+                                        <div class="row"><div class="subKey3 M">Encoding Method</div>          <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_EncodingMethod"  type="text"></div></div>
+                                        <div class="row"><div class="subKey3 M">Public Key</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_PublicKey"       type="text"></div></div>
+                                        <div class="row"><div class="subKey3 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_SignedMeterValue_CustomData"      type="text"></div></div>
+
+                                        <div class="row"><div class="subKey2 O">Unit Of Measure</div>          <div class="value">&nbsp;</div></div>
+                                        <div class="row"><div class="subKey3 M">Unit</div>                     <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_Unit"               type="text"></div></div>
+                                        <div class="row"><div class="subKey3 M">Multiplier</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_Multiplier"         type="text"></div></div>
+                                        <div class="row"><div class="subKey3 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_UnitOfMeasure_CustomData"         type="text"></div></div>
+
+                                        <div class="row"><div class="subKey2 O">Custom Data</div>              <div class="value"><input id="TransactionEventRequest_MeterValue1_SampledValue1_CustomData"                       type="text"></div></div>
+                                    </div>
+
+                                    <div class="row"><div class="subKey O">Custom Data</div>               <div class="value"><input id="TransactionEventRequest_MeterValue1_CustomData"                                     type="text"></div></div>
+                                </div>
+
+                                <div class="row"><div class="key O">Preconditioning Status</div>       <div class="value">
+                                    <select id="TransactionEventRequest_PreconditioningStatus">
+                                        <option>Ready</option>
+                                        <option>Preconditioning</option>
+                                        <option>NotReady</option>
+                                    </select>
+                                </div></div>
                                 <div class="row"><div class="key O">Custom Data</div>                  <div class="value"><input id="TransactionEventRequest_CustomData"                                                 type="text"></div></div>
 
                             </div>
@@ -420,8 +711,135 @@
                                 <div id="MeterValuesRequest_MeterValues" class="collection">
                                     <div id="MeterValuesRequest_MeterValue1" class="properties OCPPv2_0_1 OCPPv2_1">
 
-                                        <div class="row"><div class="key">Timestamp</div><div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
+                                        <div class="row"><div class="key">Timestamp</div>               <div class="value"><input id="MeterValuesRequest_MeterValue1_Timestamp" type="text"></div></div>
 
+                                        <div class="row"><div class="Key">Sampled Value(s)</div>     <div class="value">&nbsp;</div></div>
+                                        <div id="MeterValuesRequest_MeterValue1_SampledValues" class="collection">
+                                            <div class="row"><div class="subKey M">Value</div>             <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_Value"                            type="text"></div></div>
+
+                                            <div class="row"><div class="subKey2 M">Context</div>                  <div class="value">
+                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Context">
+                                                    <option>InterruptionBegin</option>
+                                                    <option>InterruptionEnd</option>
+                                                    <option>Other</option>
+                                                    <option>SampleClock</option>
+                                                    <option>TransactionBegin</option>
+                                                    <option>TransactionEnd</option>
+                                                    <option>Trigger</option>
+                                                    <option>SamplePeriodic</option>
+                                                </select>
+                                            </div></div>
+                                            <div class="row"><div class="subKey2 M">Measurand</div>                <div class="value">
+                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Measurand">
+                                                    <option>Current_Export</option>
+                                                    <option>Current_Import</option>
+                                                    <option>Current_Offered</option>
+    
+                                                    <option>Current_Import_Offered</option>
+                                                    <option>Current_Import_Minimum</option>
+                                                    <option>Current_Export_Offered</option>
+                                                    <option>Current_Export_Minimum</option>
+                                                    <option>Display_PresentSOC</option>
+                                                    <option>Display_MinimumSOC</option>
+                                                    <option>Display_TargetSOC</option>
+                                                    <option>Display_MaximumSOC</option>
+                                                    <option>Display_RemainingTimeToMinimumSOC</option>
+                                                    <option>Display_RemainingTimeToTargetSOC</option>
+                                                    <option>Display_RemainingTimeToMaximumSOC</option>
+                                                    <option>Display_ChargingComplete</option>
+                                                    <option>Display_BatteryEnergyCapacity</option>
+                                                    <option>Display_InletHot</option>
+    
+                                                    <option>Energy_Active_Export_Register</option>
+                                                    <option>Energy_Active_Import_Register</option>
+    
+                                                    <option>Energy_Reactive_Export_Register</option>
+                                                    <option>Energy_Reactive_Import_Register</option>
+    
+                                                    <option>Energy_Active_Export_Interval</option>
+                                                    <option>Energy_Active_Import_Interval</option>
+                                                    <option>Energy_Active_Setpoint_Interval</option>
+                                                    <option>Energy_Active_Net</option>
+    
+                                                    <option>Energy_Reactive_Export_Interval</option>
+                                                    <option>Energy_Reactive_Import_Interval</option>
+                                                    <option>Energy_Reactive_Net</option>
+    
+                                                    <option>Energy_Apparent_Export</option>
+                                                    <option>Energy_Apparent_Import</option>
+                                                    <option>Energy_Apparent_Net</option>
+    
+                                                    <option>EnergyRequest_Target</option>
+                                                    <option>EnergyRequest_Minimum</option>
+                                                    <option>EnergyRequest_Maximum</option>
+                                                    <option>EnergyRequest_Minimum_V2X</option>
+                                                    <option>EnergyRequest_Maximum_V2X</option>
+                                                    <option>EnergyRequest_Bulk</option>
+    
+                                                    <option>Power_Active_Export</option>
+                                                    <option>Power_Active_Import</option>
+                                                    <option>Power_Active_Setpoint</option>
+                                                    <option>Power_Active_Residual</option>
+                                                    <option>Power_Reactive_Export</option>
+                                                    <option>Power_Reactive_Import</option>
+                                                    <option>Power_Factor</option>
+                                                    <option>Power_Offered</option>
+    
+                                                    <option>Power_Import_Offered</option>
+                                                    <option>Power_Import_Minimum</option>
+                                                    <option>Power_Export_Offered</option>
+                                                    <option>Power_Export_Minimum</option>
+    
+                                                    <option>Voltage</option>
+                                                    <option>Voltage_Minimum</option>
+                                                    <option>Voltage_Maximum</option>
+    
+                                                    <option>Frequency</option>
+                                                    <option>SoC</option>
+    
+                                                </select>
+                                            </div></div>
+                                            <div class="row"><div class="subKey2 M">Phase</div>                    <div class="value">
+                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Phase">
+                                                    <option>L1</option>
+                                                    <option>L2</option>
+                                                    <option>L3</option>
+                                                    <option>N</option>
+                                                    <option>L1_N</option>
+                                                    <option>L2_N</option>
+                                                    <option>L3_N</option>
+                                                    <option>L1_L2</option>
+                                                    <option>L2_L3</option>
+                                                    <option>L3_L1</option>
+                                                </select>
+                                            </div></div>
+                                            <div class="row"><div class="subKey2 M">Location</div>                 <div class="value">
+                                                <select id="MeterValuesRequest_MeterValue1_SampledValue1_Location">
+                                                    <option>Body</option>
+                                                    <option>Cable</option>
+                                                    <option>EV</option>
+                                                    <option>Inlet</option>
+                                                    <option>Outlet</option>
+                                                    <option>LocalGrid</option>
+                                                </select>
+                                            </div></div>
+
+                                            <div class="row"><div class="subKey O">Signed Meter Value</div><div class="value">&nbsp;</div></div>
+                                            <div class="row"><div class="subKey2 M">Signed Meter Data</div> <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_SignedMeterValue_SignedMeterData" type="text"></div></div>
+                                            <div class="row"><div class="subKey2 M">Signing Method</div>    <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_SignedMeterValue_SigningMethod"   type="text"></div></div>
+                                            <div class="row"><div class="subKey2 M">Encoding Method</div>   <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_SignedMeterValue_EncodingMethod"  type="text"></div></div>
+                                            <div class="row"><div class="subKey2 M">Public Key</div>        <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_SignedMeterValue_PublicKey"       type="text"></div></div>
+                                            <div class="row"><div class="subKey2 O">Custom Data</div>       <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_SignedMeterValue_CustomData"      type="text"></div></div>
+
+                                            <div class="row"><div class="subKey O">Unit Of Measure</div>   <div class="value">&nbsp;</div></div>
+                                            <div class="row"><div class="subKey2 M">Unit</div>              <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_UnitOfMeasure_Unit"               type="text"></div></div>
+                                            <div class="row"><div class="subKey2 M">Multiplier</div>        <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_UnitOfMeasure_Multiplier"         type="text"></div></div>
+                                            <div class="row"><div class="subKey2 O">Custom Data</div>       <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_UnitOfMeasure_CustomData"         type="text"></div></div>
+
+                                            <div class="row"><div class="subKey O">Custom Data</div>       <div class="value"><input id="MeterValuesRequest_MeterValue1_SampledValue1_CustomData"                       type="text"></div></div>
+                                        </div>
+
+                                        <div class="row"><div class="key O">Custom Data</div>           <div class="value"><input id="MeterValuesRequest_CustomData"  type="text"></div></div>
 
                                     </div>
                                 </div>
@@ -436,7 +854,7 @@
 
                         <div id="StopTransactionRequest" class="command OCPPv1_6">
                             <div class="description">Stop Transaction Request</div>
-                            <div class="properties">
+                            <div class="properties OCPPv1_6">
 
                                 <div class="row"><div class="key">Transaction Id</div>  <div class="value"><input id="StopTransactionRequest_TransactionId" type="text"></div></div>
                                 <div class="row"><div class="key">Id Tag</div>          <div class="value"><input id="StopTransactionRequest_IdTag"         type="text"></div></div>
@@ -575,17 +993,30 @@
 
                         <div id="DataTransferRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
                             <div class="description">Data Transfer Request</div>
-                            <div class="properties">
-                                <div class="row"><div class="key">Vendor Id</div> <div class="value"><input id="DataTransferRequest_VendorId"  type="text"></div></div>
-                                <div class="row"><div class="key">Message Id</div><div class="value"><input id="DataTransferRequest_MessageId" type="text"></div></div>
-                                <div class="row"><div class="key">Data</div>      <div class="value"><input id="DataTransferRequest_Data"      type="text"></div></div>
+                            <div class="properties OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
+                                <div class="row mandatory">
+                                    <div class="key">Vendor Id</div>
+                                    <div class="value"><input id="DataTransferRequest_VendorId"   type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Message Id</div>
+                                    <div class="value"><input id="DataTransferRequest_MessageId"  type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Data</div>
+                                    <div class="value"><input id="DataTransferRequest_Data"       type="text"></div>
+                                </div>
+                                <div class="row optional OCPPv2_0_1 OCPPv2_1">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input id="DataTransferRequest_CustomData" type="text"></div>
+                                </div>
                             </div>
                             <button id="DataTransferRequestButton" class="commandButton">send</button>
                         </div>
 
                         <div id="DiagnosticsStatusNotificationRequest" class="command OCPPv1_6">
                             <div class="description">Diagnostics Status Notification Request</div>
-                            <div class="properties">
+                            <div class="properties OCPPv1_6">
                                 <div class="row">
                                     <div class="key">Status</div>
                                     <div class="value">
@@ -603,7 +1034,7 @@
 
                         <div id="FirmwareStatusNotificationRequest" class="command OCPPv1_6">
                             <div class="description">Firmware Status Notification Request</div>
-                            <div class="properties">
+                            <div class="properties OCPPv1_6">
                                 <div class="row">
                                     <div class="key">Status</div>
                                     <div class="value">
@@ -622,6 +1053,92 @@
                             <button id="FirmwareStatusNotificationRequestButton" class="commandButton">send</button>
                         </div>
 
+
+                        <div id="SignCertificateRequest" class="command OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Sign Certificate Request</div>
+                            <div class="properties OCPPv2_0_1 OCPPv2_1">
+                                <div class="row mandatory">
+                                    <div class="key">Certificate Signing Request (PEM-encoded)</div>
+                                    <div class="value"><input id="SignCertificateRequest_CSR" type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Context</div>
+                                    <div class="value">
+                                        <select id="SignCertificateRequest_CertificateType">
+                                            <option value="ChargingStationCertificate">Charging Station Certificate</option>
+                                            <option value="V2GCertificate">V2G Certificate</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input id="AuthorizeRequest_CustomData" type="text"></div>
+                                </div>
+                            </div>
+                            <button id="SignCertificateRequestButton" class="commandButton">send</button>
+                        </div>
+
+
+                        <div id="SecurityEventNotificationRequest" class="command OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Security Event Notification Request</div>
+                            <div class="properties OCPPv2_0_1 OCPPv2_1">
+                                <div class="row mandatory">
+                                    <div class="key">Type</div>
+                                    <div class="value"><input id="SignCertificateRequest_Type"       type="text"></div>
+                                </div>
+                                <div class="row mandatory">
+                                    <div class="key">Timestamp</div>
+                                    <div class="value"><input id="SignCertificateRequest_Timestamp"  type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Tech Info</div>
+                                    <div class="value"><input id="SignCertificateRequest_TechInfo"   type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input id="SignCertificateRequest_CustomData" type="text"></div>
+                                </div>
+                            </div>
+                            <button id="SecurityEventNotificationRequestButton" class="commandButton">send</button>
+                        </div>
+
+                        <div id="NotifyCustomerInformationRequest" class="command OCPPv2_0_1 OCPPv2_1">
+                            <div class="description">Security Event Notification Request</div>
+                            <div class="properties OCPPv2_0_1 OCPPv2_1">
+                                <div class="row mandatory">
+                                    <div class="key">Request Id</div>
+                                    <div class="value"><input id="SignCertificateRequest_RequestId"      type="text"></div>
+                                </div>
+                                <div class="row mandatory">
+                                    <div class="key">Data</div>
+                                    <div class="value"><input id="SignCertificateRequest_Data"           type="text"></div>
+                                </div>
+                                <div class="row mandatory">
+                                    <div class="key">Sequence Number</div>
+                                    <div class="value"><input id="SignCertificateRequest_SequenceNumber" type="text"></div>
+                                </div>
+                                <div class="row mandatory">
+                                    <div class="key">Generated At</div>
+                                    <div class="value"><input id="SignCertificateRequest_GeneratedAt"    type="text"></div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">To Be Continued</div>
+                                    <div class="value">
+                                        <select id="SignCertificateRequest_ToBeContinued">
+                                            <option selected>No</option>
+                                            <option>Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row optional">
+                                    <div class="key">Custom Data</div>
+                                    <div class="value"><input id="SignCertificateRequest_CustomData"     type="text"></div>
+                                </div>
+                            </div>
+                            <button id="NotifyCustomerInformationRequestButton" class="commandButton">send</button>
+                        </div>
+
+
                         <div id="RAWRequest" class="command OCPPv1_6 OCPPv2_0_1 OCPPv2_1">
                             <div class="description">RAW Request</div>
                             <div class="properties">
@@ -634,7 +1151,7 @@
                             </div>
                             <button id="RAWRequestButton" class="commandButton">send</button>
                         </div>
-                
+
                     </div>
 
                 </div>

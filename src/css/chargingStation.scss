@@ -175,6 +175,7 @@ html {
 
                                     .collection {
 
+                                        display:            table-row-group;
                                         margin-left:        15px;
 
                                         .properties {
@@ -192,36 +193,6 @@ html {
                                             padding-right:      20px;
                                             white-space:        nowrap;
                                         }
-
-                                        .subKey {
-                                            display:            table-cell;
-                                            padding-left:       15px;
-                                            padding-right:      20px;
-                                            white-space:        nowrap;
-                                        }
-
-                                        .subKey2 {
-                                            display:            table-cell;
-                                            padding-left:       30px;
-                                            padding-right:      20px;
-                                            white-space:        nowrap;
-                                        }
-
-                                        .subKey3 {
-                                            display:            table-cell;
-                                            padding-left:       45px;
-                                            padding-right:      20px;
-                                            white-space:        nowrap;
-                                        }
-
-                                        .M {
-                                            font-weight:        bold;
-                                        }
-
-                                        .O {
-                                            font-style:         italic;
-                                        }
-
 
                                         .value {
 
@@ -253,8 +224,44 @@ html {
                                                 resize:             vertical;
                                             }
 
+                                            .addToCollectionButton {
+                                                display:            block;
+                                                margin-left:        auto;
+                                                margin-right:       0;
+                                            }
+
                                         }
 
+                                    }
+
+                                    .mandatory {
+                                        .key {
+                                            font-weight:        bold;
+                                        }
+                                    }
+
+                                    .optional {
+                                        .key {
+                                            font-style:         italic;
+                                        }
+                                    }
+
+                                    .L2 {
+                                        .key {
+                                            padding-left:       15px;
+                                        }
+                                    }
+
+                                    .L3 {
+                                        .key {
+                                            padding-left:       30px;
+                                        }
+                                    }
+
+                                    .L4 {
+                                        .key {
+                                            padding-left:       45px;
+                                        }
                                     }
 
                                 }

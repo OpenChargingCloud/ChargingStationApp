@@ -1,8 +1,8 @@
 { 
     "compilerOptions": {
-      "target":                          "es2018",
-      "module":                          "commonjs",
-      "lib":                              ["dom", "es2018"],
+      "target":                          "ESNext",
+      "module":                          "ESNext",
+      "lib":                              ["dom", "ESNext"],
       "moduleResolution":                "node",
       "sourceMap":                        true,
       "emitDecoratorMetadata":            true,

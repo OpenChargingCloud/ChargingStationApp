@@ -154,12 +154,14 @@ html {
 
                         #commands {
 
+                            flex-grow:          1;
+
                             .command {
 
                                 display:            none;
                                 padding:            10px 12px;
                                 border-radius:      8px;
-                                margin:             10px 20px;
+                                margin-left:        15px;
                                 background-color:   rgb(214, 214, 214);
 
                                 .description {
@@ -172,6 +174,10 @@ html {
                                     display:            table;
                                     width:              calc(100% - 14px);
                                     margin-left:        10px;
+
+                                    .group {
+                                        display:            contents;
+                                    }
 
                                     .collection {
 

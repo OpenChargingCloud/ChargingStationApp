@@ -123,49 +123,53 @@
                             </div>
 
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
-                                <div class="row mandatory">
-                                    <div class="key">Charging Station</div>
-                                    <div class="value">&nbsp;</div>
-                                </div>
-                                <div class="row mandatory L2">
-                                    <div class="key">Model</div>
-                                    <div class="value"><input type="text" name="ChargingStation_Model"></div>
-                                </div>
-                                <div class="row mandatory L2">
-                                    <div class="key">Vendor Name</div>
-                                    <div class="value"><input type="text" name="ChargingStation_VendorName"></div>
-                                </div>
-                                <div class="row optional L2">
-                                    <div class="key">Serial Number</div>
-                                    <div class="value"><input type="text" name="ChargingStation_SerialNumber"></div>
-                                </div>
-                                <div class="row optional L2">
-                                    <div class="key">Modem</div>
-                                    <div class="value">&nbsp;</div></div>
-                                <div class="row optional L3">
-                                    <div class="key">ICCID</div>
-                                    <div class="value"><input type="text" name="ChargingStation_Modem_ICCID"></div>
-                                </div>
-                                <div class="row optional L3">
-                                    <div class="key">IMSI</div>
-                                    <div class="value"><input type="text" name="ChargingStation_Modem_ISMI"></div>
-                                </div>
-                                <div class="row optional L3">
-                                    <div class="key">CustomData</div>
-                                    <div class="value"><input type="text" name="ChargingStation_Modem_CustomData"></div>
-                                </div>
-                                <div class="row optional L2">
-                                    <div class="key">Firmware Version</div>
-                                    <div class="value"><input type="text" name="ChargingStation_FirmwareVersion"></div>
-                                </div>
-                                <div class="row optional L2">
-                                    <div class="key">Custom Data</div>
-                                    <div class="value"><input type="text" name="ChargingStation_CustomData"></div>
+                                <div name="chargingStation" class="group">
+                                    <div class="row mandatory">
+                                        <div class="key">Charging Station</div>
+                                        <div class="value">&nbsp;</div>
+                                    </div>
+                                    <div class="row mandatory L2">
+                                        <div class="key">Model</div>
+                                        <div class="value"><input type="text" name="model"></div>
+                                    </div>
+                                    <div class="row mandatory L2">
+                                        <div class="key">Vendor Name</div>
+                                        <div class="value"><input type="text" name="vendorName"></div>
+                                    </div>
+                                    <div class="row optional L2">
+                                        <div class="key">Serial Number</div>
+                                        <div class="value"><input type="text" name="serialNumber"></div>
+                                    </div>
+                                    <div name="modem" class="group">
+                                        <div class="row optional L2">
+                                            <div class="key">Modem</div>
+                                            <div class="value">&nbsp;</div></div>
+                                        <div class="row optional L3">
+                                            <div class="key">ICCID</div>
+                                            <div class="value"><input type="text" name="ICCID"></div>
+                                        </div>
+                                        <div class="row optional L3">
+                                            <div class="key">IMSI</div>
+                                            <div class="value"><input type="text" name="ISMI"></div>
+                                        </div>
+                                        <div class="row optional L3">
+                                            <div class="key">CustomData</div>
+                                            <div class="value"><input type="text" name="customData"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row optional L2">
+                                        <div class="key">Firmware Version</div>
+                                        <div class="value"><input type="text" name="firmwareVersion"></div>
+                                    </div>
+                                    <div class="row optional L2">
+                                        <div class="key">Custom Data</div>
+                                        <div class="value"><input type="text" name="customData"></div>
+                                    </div>
                                 </div>
                                 <div class="row mandatory">
                                     <div class="key">Reason</div>
                                     <div class="value">
-                                        <select name="Reason">
+                                        <select name="reason">
                                             <option selected>ApplicationReset</option>
                                             <option>FirmwareUpdate</option>
                                             <option>LocalReset</option>
@@ -179,7 +183,7 @@
                                 </div>
                                 <div class="row optional">
                                     <div class="key">Custom Data</div>
-                                    <div class="value"><input type="text" name="CustomData"></div>
+                                    <div class="value"><input type="text" name="customData"></div>
                                 </div>
                             </div>
 
@@ -194,7 +198,7 @@
                             <div class="properties OCPPv2_0_1 OCPPv2_1">
                                 <div class="row optional">
                                     <div class="key">Custom Data</div>
-                                    <div class="value"><input type="text" name="CustomData"></div>
+                                    <div class="value"><input type="text" name="customData"></div>
                                 </div>
                             </div>
 

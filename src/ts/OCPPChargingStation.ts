@@ -681,15 +681,15 @@ class OCPPChargingStation {
 
             const properties               = this.bootNotificationRequestDiv?.querySelector(".properties, .OCPPv1_6") as HTMLDivElement;
 
-            const ChargePointVendor        = (properties?.querySelector('input[name="ChargePointVendor"]')             as HTMLInputElement). value;
-            const ChargePointModel         = (properties?.querySelector('input[name="ChargePointModel"]')              as HTMLInputElement). value;
-            const ChargePointSerialNumber  = (properties?.querySelector('input[name="ChargePointSerialNumber"]')       as HTMLInputElement)?.value || null;
-            const ChargeBoxSerialNumber    = (properties?.querySelector('input[name="ChargeBoxSerialNumber"]')         as HTMLInputElement)?.value || null;
-            const FirmwareVersion          = (properties?.querySelector('input[name="FirmwareVersion"]')               as HTMLInputElement)?.value || null;
-            const ICCId                    = (properties?.querySelector('input[name="ICCId"]')                         as HTMLInputElement)?.value || null;
-            const IMSI                     = (properties?.querySelector('input[name="IMSI"]')                          as HTMLInputElement)?.value || null;
-            const MeterType                = (properties?.querySelector('input[name="MeterType"]')                     as HTMLInputElement)?.value || null;
-            const MeterSerialNumber        = (properties?.querySelector('input[name="MeterSerialNumber"]')             as HTMLInputElement)?.value || null;
+            const ChargePointVendor        = (properties?.querySelector('input[name="ChargePointVendor"]')            as HTMLInputElement). value;
+            const ChargePointModel         = (properties?.querySelector('input[name="ChargePointModel"]')             as HTMLInputElement). value;
+            const ChargePointSerialNumber  = (properties?.querySelector('input[name="ChargePointSerialNumber"]')      as HTMLInputElement)?.value || null;
+            const ChargeBoxSerialNumber    = (properties?.querySelector('input[name="ChargeBoxSerialNumber"]')        as HTMLInputElement)?.value || null;
+            const FirmwareVersion          = (properties?.querySelector('input[name="FirmwareVersion"]')              as HTMLInputElement)?.value || null;
+            const ICCId                    = (properties?.querySelector('input[name="ICCId"]')                        as HTMLInputElement)?.value || null;
+            const IMSI                     = (properties?.querySelector('input[name="IMSI"]')                         as HTMLInputElement)?.value || null;
+            const MeterType                = (properties?.querySelector('input[name="MeterType"]')                    as HTMLInputElement)?.value || null;
+            const MeterSerialNumber        = (properties?.querySelector('input[name="MeterSerialNumber"]')            as HTMLInputElement)?.value || null;
 
             this.sendRequest("BootNotification",
                             {
@@ -709,35 +709,38 @@ class OCPPChargingStation {
         else
         {
 
-            const properties                        = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')   as HTMLDivElement;
+            const properties                        = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')        as HTMLDivElement;
 
-            const ChargingStation_Model             = (properties?.querySelector('input[name="ChargingStation_Model"]')            as HTMLInputElement).  value;
-            const ChargingStation_VendorName        = (properties?.querySelector('input[name="ChargingStation_VendorName"]')       as HTMLInputElement).  value;
-            const ChargingStation_SerialNumber      = (properties?.querySelector('input[name="ChargingStation_SerialNumber"]')     as HTMLInputElement)?. value || null;
-            const ChargingStation_Modem_ICCID       = (properties?.querySelector('input[name="ChargingStation_Modem_ICCID"]')      as HTMLInputElement)?. value || null;
-            const ChargingStation_Modem_ISMI        = (properties?.querySelector('input[name="ChargingStation_Modem_ISMI"]')       as HTMLInputElement)?. value || null;
-            const ChargingStation_Modem_CustomData  = (properties?.querySelector('input[name="ChargingStation_Modem_CustomData"]') as HTMLInputElement)?. value || null;
-            const ChargingStation_FirmwareVersion   = (properties?.querySelector('input[name="ChargingStation_FirmwareVersion"]')  as HTMLInputElement)?. value || null;
-            const ChargingStation_CustomData        = (properties?.querySelector('input[name="ChargingStation_CustomData"]')       as HTMLInputElement)?. value || null;
-            const Reason                            = (properties?.querySelector('select[name="Reason"]')                          as HTMLSelectElement)?.value || null;
-            const CustomData                        = (properties?.querySelector('input[name="CustomData"]')                       as HTMLInputElement)?. value || null;
+            const chargingStation                   = (properties?.                    querySelector('div[name="chargingStation"]')    as HTMLDivElement);
+            const modem                             = (chargingStation?.               querySelector('div[name="modem"]')              as HTMLDivElement);
+
+            const chargingStation_Model             = (chargingStation?.               querySelector('input[name="model"]')            as HTMLInputElement).  value;
+            const chargingStation_VendorName        = (chargingStation?.               querySelector('input[name="vendorName"]')       as HTMLInputElement).  value;
+            const chargingStation_SerialNumber      = (chargingStation?.               querySelector('input[name="serialNumber"]')     as HTMLInputElement)?. value || null;
+            const chargingStation_Modem_ICCID       = (modem?.                         querySelector('input[name="ICCID"]')            as HTMLInputElement)?. value || null;
+            const chargingStation_Modem_ISMI        = (modem?.                         querySelector('input[name="ISMI"]')             as HTMLInputElement)?. value || null;
+            const chargingStation_Modem_CustomData  = (modem?.                         querySelector('input[name="customData"]')       as HTMLInputElement)?. value || null;
+            const chargingStation_FirmwareVersion   = (chargingStation?.               querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?. value || null;
+            const chargingStation_CustomData        = (chargingStation?.               querySelector('input[name="customData"]')       as HTMLInputElement)?. value || null;
+            const reason                            = (properties?.                    querySelector('select[name="reason"]')          as HTMLSelectElement)?.value || null;
+            const customData                        = (properties?.                    querySelector('input[name="customData"]')       as HTMLInputElement)?. value || null;
 
             this.sendRequest("BootNotification",
                             {
                                 "chargingStation": {
-                                    "model":            ChargingStation_Model,
-                                    "vendorName":       ChargingStation_VendorName,
-                                    "serialNumber":     ChargingStation_SerialNumber,
+                                    "model":            chargingStation_Model,
+                                    "vendorName":       chargingStation_VendorName,
+                                    "serialNumber":     chargingStation_SerialNumber,
                                     "modem": {
-                                        "iccid":        ChargingStation_Modem_ICCID,
-                                        "imsi":         ChargingStation_Modem_ISMI,
-                                        "customData":   this.ParseCustomData(ChargingStation_Modem_CustomData),
+                                        "iccid":        chargingStation_Modem_ICCID,
+                                        "imsi":         chargingStation_Modem_ISMI,
+                                        "customData":   this.ParseCustomData(chargingStation_Modem_CustomData),
                                     },
-                                    "firmwareVersion":  ChargingStation_FirmwareVersion,
-                                    "customData":       this.ParseCustomData(ChargingStation_CustomData),
+                                    "firmwareVersion":  chargingStation_FirmwareVersion,
+                                    "customData":       this.ParseCustomData(chargingStation_CustomData),
                                 },
-                                "reason":               Reason,
-                                "customData":           this.ParseCustomData(CustomData)
+                                "reason":               reason,
+                                "customData":           this.ParseCustomData(customData)
                             });
 
         }
@@ -757,11 +760,11 @@ class OCPPChargingStation {
 
             const properties  = this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1') as HTMLDivElement;
 
-            const CustomData  = (properties?.querySelector('input[name="CustomData"]')             as HTMLInputElement)?.value || null;
+            const customData  = (properties?.querySelector('input[name="customData"]')             as HTMLInputElement)?.value || null;
 
             this.sendRequest("Heartbeat",
                              {
-                                "customData":  this.ParseCustomData(CustomData)
+                                "customData":  this.ParseCustomData(customData)
                              });
 
         }

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+// OCPP Messages
+
 export interface AuthorizeRequest {
     idTag:                      IdToken
 }
@@ -77,7 +79,7 @@ export interface SignedFirmwareStatusNotificationRequest {
 export interface StartTransactionRequest {
     connectorId:                ConnectorId,
     idTag:                      IdToken,
-    startTimestamp:             Timestamp,
+    timestamp:                  Timestamp,
     meterStart:                 MeteringValue,
     reservationId?:             ReservationId
 }
@@ -87,7 +89,7 @@ export interface StatusNotificationRequest {
     status:                     ChargePointStatus,
     errorCode:                  ChargePointErrorCode,
     info?:                      string,
-    statusTimestamp?:           Timestamp,
+    timestamp?:                 Timestamp,
     vendorId?:                  VendorId,
     vendorErrorCode?:           string
 }

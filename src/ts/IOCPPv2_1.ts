@@ -15,43 +15,67 @@
  * limitations under the License.
  */
 
+// OCPP Messages
+
 export interface BootNotificationRequest {
-    chargingStation:          IChargingStation;
-    reason:                   BootReason;
-    customData?:              ICustomData;
+    chargingStation:            IChargingStation;
+    reason:                     BootReason;
+    customData?:                ICustomData;
+}
+
+export interface HeartBeatRequest {
+    customData?:                ICustomData;
 }
 
 
-export interface IChargingStation {
-    model:                    string;
-    vendorName:               string;
-    serialNumber?:            string;
-    modem?:                   IModem;
-    firmwareVersion?:         string;
-    customData?:              ICustomData;
-}
 
-
-export interface IModem {
-    iccid?:                   string;
-    imsi?:                    string;
-    customData?:              ICustomData;
-}
-
-// Extensible list of boot reasons
-type BootReason = "ApplicationReset" |
-                  "FirmwareUpdate"   |
-                  "LocalReset"       |
-                  "PowerUp"          |
-                  "RemoteReset"      |
-                  "ScheduledReset"   |
-                  "Triggered"        |
-                  "Watchdog"         |
-                  string;
-
-
+// Complex Data Structures
 
 export interface ICustomData {
-    vendorId:                 string;
-    [key: string]:            any;
+    vendorId:                   string;
+    [key: string]:              any;
 }
+
+export interface IChargingStation {
+    model:                      string;
+    vendorName:                 string;
+    serialNumber?:              string;
+    modem?:                     IModem;
+    firmwareVersion?:           string;
+    customData?:                ICustomData;
+
+}
+export interface IModem {
+    iccid?:                     string;
+    imsi?:                      string;
+    customData?:                ICustomData;
+}
+
+
+
+// Types
+
+// Currently just for clarity
+type IdToken                = string;
+type VendorId               = string;
+type RequestId              = number;
+type Timestamp              = string;
+type EVSEId                 = number;
+type ConnectorId            = number;
+type TransactionId          = number;
+type MeteringValue          = number;
+type ReservationId          = number;
+
+type BootReason             = "ApplicationReset" |
+                              "FirmwareUpdate"   |
+                              "LocalReset"       |
+                              "PowerUp"          |
+                              "RemoteReset"      |
+                              "ScheduledReset"   |
+                              "Triggered"        |
+                              "Watchdog"         |
+                               string;
+
+
+
+

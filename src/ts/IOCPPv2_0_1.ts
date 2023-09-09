@@ -18,74 +18,144 @@
 // OCPP Messages
 
 export interface AuthorizeRequest {
-    idToken:                        IdToken;
-    certificate?:                   Certificate;
-    iso15118CertificateHashData?:   OCSPRequestData[];
-    customData?:                    ICustomData;
+    idToken:                        IdToken,
+    certificate?:                   Certificate,
+    iso15118CertificateHashData?:   OCSPRequestData[],
+    customData?:                    ICustomData
 }
 
 export interface BootNotificationRequest {
-    chargingStation:                ChargingStation;
-    reason:                         BootReason;
-    customData?:                    ICustomData;
+    chargingStation:                ChargingStation,
+    reason:                         BootReason,
+    customData?:                    ICustomData
 }
 
 export interface ClearedChargingLimitRequest {
-    chargingLimitSource:            ChargingLimitSource;
-    evseId?:                        EVSEId;
-    customData?:                    ICustomData;
+    chargingLimitSource:            ChargingLimitSource,
+    evseId?:                        EVSEId,
+    customData?:                    ICustomData
 }
 
 export interface DataTransferRequest {
-    customData?:                    ICustomData;
+    vendorId:                       VendorId,
+    messageId?:                     string,
+    data?:                          any,
+    customData?:                    ICustomData
+}
+
+export interface FirmwareStatusNotificationRequest {
+    status:                         FirmwareStatus,
+    requestId?:                     RequestId,
+    customData?:                    ICustomData
+}
+
+export interface Get15118EVCertificateRequest {
+    iso15118SchemaVersion:          ISO15118SchemaVersion,
+    action:                         CertificateAction,
+    exiRequest:                     EXIData,
+    customData?:                    ICustomData
+}
+
+export interface GetCertificateStatusRequest {
+    ocspRequestData:                OCSPRequestData,
+    customData?:                    ICustomData
 }
 
 export interface HeartBeatRequest {
-    customData?:                    ICustomData;
+    customData?:                    ICustomData
 }
+
+export interface LogStatusNotificationRequest {
+    status:                         UploadLogStatus,
+    requestId:                      RequestId,
+    customData?:                    ICustomData
+}
+
+export interface MeterValuesRequest {
+    evseId:                         EVSEId,
+    meterValue:                     MeterValue[],
+    customData?:                    ICustomData
+}
+
+
+
+
+
 
 
 // Complex Data Structures
 
 export interface IdToken {
-    idToken:                        IdToken2;
-    type:                           IdTokenType;
-    additionalInfo:                 AdditionalInfo[];
+    idToken:                        IdToken2,
+    type:                           IdTokenType,
+    additionalInfo:                 AdditionalInfo[],
 }
 
 export interface AdditionalInfo {
-    additionalIdToken:              IdToken2;
-    type:                           string;
-    customData?:                    ICustomData;
+    additionalIdToken:              IdToken2,
+    type:                           string,
+    customData?:                    ICustomData,
 }
 
 export interface ICustomData {
-    vendorId:                       VendorId;
-    [key: string]:                  any;
+    vendorId:                       VendorId,
+    [key: string]:                  any,
 }
 
 export interface OCSPRequestData {
-    hashAlgorithm:                  HashAlgorithm;
-    issuerNameHash:                 string;
-    issuerKeyHash:                  string;
-    serialNumber:                   string;
-    responderURL:                   URL;
-    customData?:                    ICustomData;
+    hashAlgorithm:                  HashAlgorithm,
+    issuerNameHash:                 string,
+    issuerKeyHash:                  string,
+    serialNumber:                   string,
+    responderURL:                   URL,
+    customData?:                    ICustomData,
 }
 
 export interface ChargingStation {
-    model:                          string;
-    vendorName:                     string;
-    serialNumber?:                  string;
-    modem?:                         Modem;
-    firmwareVersion?:               string;
-    customData?:                    ICustomData;
+    model:                          string,
+    vendorName:                     string,
+    serialNumber?:                  string,
+    modem?:                         Modem,
+    firmwareVersion?:               string,
+    customData?:                    ICustomData,
 
 }
 export interface Modem {
-    iccid?:                         string;
-    imsi?:                          string;
-    customData?:                    ICustomData;
+    iccid?:                         string,
+    imsi?:                          string,
+    customData?:                    ICustomData,
+}
+
+export interface MeterValue {
+    timestamp:                  Timestamp,
+    sampledValue:               SampledValue[],
+    customData?:                ICustomData
+}
+
+export interface SampledValue {
+    value:                      string,
+    context:                    ReadingContext,
+    format:                     ValueFormat,
+    measurand:                  Measurand,
+    phase?:                     Phase,
+    location?:                  MeteringLocation,
+    signedMeterValue?:          SignedMeterValue[],
+    unit?:                      UnitsOfMeasure,
+    customData?:                ICustomData
+}
+
+export interface SignedMeterValue {
+    signedMeterData:            string,
+    signingMethod:              string,
+    encodingMethod:             string,
+    publicKey:                  string,
+    customData?:                ICustomData
+}
+
+export interface UnitsOfMeasure {
+    unit:                       UnitOfMeasure,
+    multiplier:                 Integer,
+    customData?:                ICustomData
 }
 
 
@@ -97,8 +167,11 @@ type IdToken2               = string;
 type VendorId               = string;
 type Certificate            = string;
 type RequestId              = number;
-type Timestamp              = string;
 type EVSEId                 = number;
+type ISO15118SchemaVersion  = string;
+type EXIData                = string;
+type Timestamp              = string;
+type Integer                = number;
 type ConnectorId            = number;
 type TransactionId          = number;
 type MeteringValue          = number;
@@ -135,4 +208,110 @@ type ChargingLimitSource    = "EMS"   |
                               "CSO"   |
                                string;
 
+type FirmwareStatus         = "Downloaded"                |
+                              "DownloadFailed"            |
+                              "Downloading"               |
+                              "DownloadScheduled"         |
+                              "DownloadPaused"            |
+                              "Idle"                      |
+                              "InstallationFailed"        |
+                              "Installing"                |
+                              "Installed"                 |
+                              "InstallRebooting"          |
+                              "InstallScheduled"          |
+                              "InstallVerificationFailed" |
+                              "InvalidSignature"          |
+                              "SignatureVerified"         |
+                               string;
+
+type CertificateAction      = "Install" |
+                              "Update"  |
+                               string;
+
+type UploadLogStatus        = "BadMessage"            |
+                              "Idle"                  |
+                              "NotSupportedOperation" |
+                              "PermissionDenied"      |
+                              "Uploaded"              |
+                              "UploadFailure"         |
+                              "Uploading"             |
+                              "AcceptedCanceled"      |
+                               string;
+
+type ReadingContext         = "Interruption.Begin" |
+                              "Interruption.End"   |
+                              "Other"              |
+                              "Sample.Clock"       |
+                              "Transaction.Begin"  |
+                              "Transaction.End"    |
+                              "Trigger"            |
+                              "Sample.Periodic"    |
+                               string;
+ 
+ type ValueFormat           = "Raw" |
+                              "SignedData";
+ 
+ type Measurand             = "Current.Export"                  |
+                              "Current.Import"                  |
+                              "Current.Offered"                 |
+                              "Energy.Active.Export.Register"   |
+                              "Energy.Active.Import.Register"   |
+                              "Energy.Reactive.Export.Register" |
+                              "Energy.Reactive.Import.Register" |
+                              "Energy.Active.Export.Interval"   |
+                              "Energy.Active.Import.Interval"   |
+                              "Energy.Active.Net"               |
+                              "Energy.Reactive.Export.Interval" |
+                              "Energy.Reactive.Import.Interval" |
+                              "Energy.Reactive.Net"             |
+                              "Energy.Apparent.Import"          |
+                              "Energy.Apparent.Export"          |
+                              "Energy.Apparent.Net"             |
+                              "Power.Active.Export"             |
+                              "Power.Active.Import"             |
+                              "Power.Reactive.Export"           |
+                              "Power.Reactive.Import"           |
+                              "Power.Factor"                    |
+                              "Power.Offered"                   |
+                              "Frequency"                       |
+                              "Voltage"                         |
+                              "SoC"                             |
+                               string;
+ 
+ type Phase                 = "L1"    |
+                              "L2"    |
+                              "L3"    |
+                              "N"     |
+                              "L1_N"  |
+                              "L2_N"  |
+                              "L3_N"  |
+                              "L1_L2" |
+                              "L2_L3" |
+                              "L3_L1" |
+                               string;
+ 
+ type MeteringLocation      = "Body"   |
+                              "Cable"  |
+                              "EV"     |
+                              "Inlet"  |
+                              "Outlet" |
+                               string;
+ 
+ type UnitOfMeasure         = "Celsius"    |
+                              "Fahrenheit" |
+                              "Wh"         |
+                              "kWh"        |
+                              "varh"       |
+                              "kvarh"      |
+                              "Watts"      |
+                              "kW"         |
+                              "VoltAmpere" |
+                              "kVA"        |
+                              "var"        |
+                              "kvar"       |
+                              "Amperes"    |
+                              "Voltage"    |
+                              "Kelvin"     |
+                              "Percent"    |
+                               string;
 

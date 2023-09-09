@@ -91,7 +91,7 @@ export interface StatusNotificationRequest {
     info?:                      string,
     timestamp?:                 Timestamp,
     vendorId?:                  VendorId,
-    vendorErrorCode?:           string
+    vendorErrorCode?:           string;
 }
 
 export interface StopTransactionRequest {
@@ -201,7 +201,6 @@ type Measurand              = "Current.Export"                  |
                               "SoC"                             |
                               "Temperature"                     |
                               "Voltage"                         |
-                              "Energy.Active.Import.Register"   |
                                string;
 
 type Phase                  = "L1"    |

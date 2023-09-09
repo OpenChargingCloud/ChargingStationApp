@@ -17,38 +17,75 @@
 
 // OCPP Messages
 
+export interface AuthorizeRequest {
+    idToken:                        IdToken;
+    certificate?:                   Certificate;
+    iso15118CertificateHashData?:   OCSPRequestData[];
+    customData?:                    ICustomData;
+}
+
 export interface BootNotificationRequest {
-    chargingStation:            IChargingStation;
-    reason:                     BootReason;
-    customData?:                ICustomData;
+    chargingStation:                ChargingStation;
+    reason:                         BootReason;
+    customData?:                    ICustomData;
+}
+
+export interface ClearedChargingLimitRequest {
+    chargingLimitSource:            ChargingLimitSource;
+    evseId?:                        EVSEId;
+    customData?:                    ICustomData;
+}
+
+export interface DataTransferRequest {
+    customData?:                    ICustomData;
 }
 
 export interface HeartBeatRequest {
-    customData?:                ICustomData;
+    customData?:                    ICustomData;
 }
-
 
 
 // Complex Data Structures
 
+export interface IdToken {
+    idToken:                        IdToken2;
+    type:                           IdTokenType;
+    additionalInfo:                 AdditionalInfo[];
+}
+
+export interface AdditionalInfo {
+    additionalIdToken:              IdToken2;
+    type:                           string;
+    customData?:                    ICustomData;
+}
+
 export interface ICustomData {
-    vendorId:                   string;
-    [key: string]:              any;
+    vendorId:                       VendorId;
+    [key: string]:                  any;
 }
 
-export interface IChargingStation {
-    model:                      string;
-    vendorName:                 string;
-    serialNumber?:              string;
-    modem?:                     IModem;
-    firmwareVersion?:           string;
-    customData?:                ICustomData;
+export interface OCSPRequestData {
+    hashAlgorithm:                  HashAlgorithm;
+    issuerNameHash:                 string;
+    issuerKeyHash:                  string;
+    serialNumber:                   string;
+    responderURL:                   URL;
+    customData?:                    ICustomData;
+}
+
+export interface ChargingStation {
+    model:                          string;
+    vendorName:                     string;
+    serialNumber?:                  string;
+    modem?:                         Modem;
+    firmwareVersion?:               string;
+    customData?:                    ICustomData;
 
 }
-export interface IModem {
-    iccid?:                     string;
-    imsi?:                      string;
-    customData?:                ICustomData;
+export interface Modem {
+    iccid?:                         string;
+    imsi?:                          string;
+    customData?:                    ICustomData;
 }
 
 
@@ -56,8 +93,9 @@ export interface IModem {
 // Types
 
 // Currently just for clarity
-type IdToken                = string;
+type IdToken2               = string;
 type VendorId               = string;
+type Certificate            = string;
 type RequestId              = number;
 type Timestamp              = string;
 type EVSEId                 = number;
@@ -65,6 +103,21 @@ type ConnectorId            = number;
 type TransactionId          = number;
 type MeteringValue          = number;
 type ReservationId          = number;
+
+type IdTokenType            = "Central"         |
+                              "eMAID"           |
+                              "ISO14443"        |
+                              "ISO15693"        |
+                              "KeyCode"         |
+                              "Local"           |
+                              "MacAddress"      |
+                              "NoAuthorization" |
+                               string;
+
+type HashAlgorithm          = "SHA256" |
+                              "SHA384" |
+                              "SHA512" |
+                               string;
 
 type BootReason             = "ApplicationReset" |
                               "FirmwareUpdate"   |
@@ -76,6 +129,10 @@ type BootReason             = "ApplicationReset" |
                               "Watchdog"         |
                                string;
 
-
+type ChargingLimitSource    = "EMS"   |
+                              "Other" |
+                              "SO"    |
+                              "CSO"   |
+                               string;
 
 

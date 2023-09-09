@@ -1,7 +1,9 @@
 *~
 .vscode
 node_modules
+build/*.js
 dist
+src/build/*.js
 src/css/*.css
 src/css/*.css.map
 !src/css/fontawesome-all.min.css

@@ -10,6 +10,32 @@ This project implements a set of **e-mobility charging stations** using [Electro
 - **OCPP v2.1 (Draft 0.4) with Computer Science Extentions** (OCPP v2.1/CSE) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud) *(under development)*
 - **WWCP Charging Station Protocol** (WWCP/CS) as defined by the [Open Charging Cloud](https://github.com/OpenChargingCloud) *(under development)*
 
+
+## (Re-)Build
+
+Install additional Node.js modules...
+
+```
+$ npm install electron@latest --save-dev
+$ npm install electron-builder@latest --save-dev
+$ npm install typescript@latest --save-dev
+$ npm install sass@latest --save-dev
+$ npm install @types/node@latest --save-dev
+$ npm install webpack --save-dev
+$ npm install webpack-cli --save-dev
+$ npm install ts-loader --save-dev
+```
+
+Update of all Node.js modules...
+```
+$ npm update
+```
+
+Security updates...
+```
+$ npm audit fix
+```
+
 ## License
 
 [Apache License 2.0 License)](LICENSE)

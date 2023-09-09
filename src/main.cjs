@@ -9,7 +9,7 @@ function createWindow () {
     width:  1700,
     height:  900,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.cjs')
     }
   })
 
@@ -17,8 +17,8 @@ function createWindow () {
   //mainWindow.loadFile('index.html')
   mainWindow.loadURL(`file://${app.getAppPath()}/src/index.html`);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  if (app.commandLine.hasSwitch('inspect'))
+      mainWindow.webContents.openDevTools()
   
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright 2018-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of ChargingStation <https://github.com/OpenChargingCloud/ChargingStation>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-///<reference path="OCPPChargingStation.ts" />
+//  //<refe  rence path="OCPPChargingStation.ts" />
+
+import * as OCPP from './OCPPChargingStation';
 
 class chargingStationApp {
 
     //#region Data
 
-    private readonly ocppChargingStationProxy:  OCPPChargingStation;
+    private readonly ocppChargingStationProxy:  OCPP.OCPPChargingStation;
     private readonly LogView:                   HTMLDivElement;
 
     //#endregion
@@ -29,7 +31,7 @@ class chargingStationApp {
     constructor()
     {
 
-        this.ocppChargingStationProxy  = new OCPPChargingStation((t) => this.writeToScreen(t));
+        this.ocppChargingStationProxy  = new OCPP.OCPPChargingStation((t) => this.writeToScreen(t));
 
         this.LogView                   = document.querySelector("#logView") as HTMLDivElement;
 
@@ -48,4 +50,6 @@ class chargingStationApp {
 
     }
 
- }
+}
+
+const app = new chargingStationApp();

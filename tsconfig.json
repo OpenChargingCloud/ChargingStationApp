@@ -1,26 +1,49 @@
-{ 
+{
+
     "compilerOptions": {
-      "target":                          "ESNext",
-      "module":                          "ESNext",
-      "lib":                              ["dom", "ESNext"],
-      "moduleResolution":                "node",
-      "sourceMap":                        true,
-      "emitDecoratorMetadata":            true,
-      "experimentalDecorators":           true,
-      "removeComments":                   false,
-      "forceConsistentCasingInFileNames": true,
-      "strict":                           true,
-      "noImplicitAny":                    true,
-      "strictNullChecks":                 true,
-      "noImplicitThis":                   true,
-      "alwaysStrict":                     true,
-      //"noUnusedLocals":                   true,
-      //"noUnusedParameters":               true,
-      "noImplicitReturns":                true,
-      "noFallthroughCasesInSwitch":       true
+
+      "target":                               "ESNext",
+      "module":                               "ESNext",
+      "lib":                                   ["dom", "ESNext"],
+      "moduleResolution":                     "node",
+      "sourceMap":                             true,
+      "emitDecoratorMetadata":                 true,
+      "experimentalDecorators":                true,
+      "removeComments":                        false,
+
+      "forceConsistentCasingInFileNames":      true,
+      "strict":                                true,
+      "noImplicitAny":                         true,
+      "strictNullChecks":                      true,
+      "noImplicitThis":                        true,
+      "alwaysStrict":                          true,
+      "noFallthroughCasesInSwitch":            true,
+
+      /* Additional Checks */
+      "noUncheckedIndexedAccess":              true,
+      "noPropertyAccessFromIndexSignature":    true,
+      "strictBindCallApply":                   true,
+      "strictFunctionTypes":                   true,
+      "strictPropertyInitialization":          true,
+      "noImplicitOverride":                    true,
+      //"noUnusedLocals":                        true,
+      //"noUnusedParameters":                    true,
+      "noImplicitReturns":                     true,
+
+      "typeRoots": [
+         "./node_modules/@types/"
+      ]
+
     },
+
     "exclude": [ "node_modules" ],
+
     "files": [
         "src/ts/chargingStationApp.ts"
-    ]
-  }
+    ],
+
+    "awesomeTypescriptLoaderOptions": {
+      "useWebpackText": true
+    }
+
+}

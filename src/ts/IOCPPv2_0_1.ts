@@ -21,6 +21,12 @@ export interface BootNotificationRequest {
     customData?:              ICustomData;
 }
 
+export interface HeartBeatRequest {
+    customData?:              ICustomData;
+}
+
+
+
 
 export interface IChargingStation {
     model:                    string;

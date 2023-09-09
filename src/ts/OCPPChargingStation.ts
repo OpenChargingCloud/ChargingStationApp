@@ -687,13 +687,12 @@ export class OCPPChargingStation {
 
     public SendBootNotificationRequest(RequestDivElement?: HTMLDivElement)
     {
-
         switch (this.csmsOCPPVersion.value)
         {
 
             case "OCPPv1_6": {
 
-                const properties = this.bootNotificationRequestDiv?.querySelector(".properties, .OCPPv1_6") as HTMLDivElement;
+                const properties = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement;
 
                 const bootNotificationRequest: OCPPv1_6.BootNotificationRequest = {
                     chargePointVendor:        (properties?.querySelector('input[name="ChargePointVendor"]')        as HTMLInputElement). value,
@@ -741,31 +740,34 @@ export class OCPPChargingStation {
             break;
 
         }
-
     }
 
     public SendHeartbeatRequest(RequestDivElement?: HTMLDivElement)
     {
-
-        if (this.csmsOCPPVersion.value === "OCPPv1_6")
-        {
-            this.sendRequest("Heartbeat", null);
-        }
-
-        else
+        switch (this.csmsOCPPVersion.value)
         {
 
-            const properties  = this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1') as HTMLDivElement;
+            case "OCPPv1_6": {
 
-            const customData  = (properties?.querySelector('input[name="customData"]')             as HTMLInputElement)?.value || null;
+                this.sendRequest("Heartbeat", null);
 
-            this.sendRequest("Heartbeat",
-                             {
-                                "customData":  this.ParseCustomData(customData)
-                             });
+            }
+            break;
+
+            default: {
+
+                const properties  = this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1')  as HTMLDivElement;
+
+                const heartBeatRequest: OCPPv2_0_1.HeartBeatRequest = {
+                    customData:  this.ParseCustomData((properties?.querySelector('input[name="customData"]')  as HTMLInputElement).value),
+                }
+
+                this.sendRequest("Heartbeat", heartBeatRequest);
+
+            }
+            break;
 
         }
-
     }
 
     public SendAuthorizeRequest(RequestDivElement?: HTMLDivElement)

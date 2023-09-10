@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-// OCPP Messages
+//#region OCPP Messages
 
 export interface AuthorizeRequest {
     idTag:                      IdToken
@@ -103,8 +103,9 @@ export interface StopTransactionRequest {
     transactionData?:           MeterValue[]
 }
 
+//#endregion
 
-// Complex Data Structures
+//#region Complex Data Structures
 
 export interface MeterValue {
     timestamp:                  Timestamp,
@@ -121,9 +122,9 @@ export interface SampledValue {
     unit?:                      UnitOfMeasure
 }
 
+//#endregion
 
-
-// Types
+//#region Types
 
 // Currently just for clarity
 type IdToken                = string;
@@ -301,3 +302,5 @@ type StopReason             = "EmergencyStop"  |
                               "UnlockCommand"  |
                               "DeAuthorized"   |
                                string;
+
+//#endregion

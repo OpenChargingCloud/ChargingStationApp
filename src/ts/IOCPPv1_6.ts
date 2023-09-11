@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+// Only OCPP Charging Station initiated messages!
+
 //#region OCPP Messages
 
 export interface AuthorizeRequest {

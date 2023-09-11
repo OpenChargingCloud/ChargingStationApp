@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+// Only OCPP Charging Station initiated messages!
+
 //#region OCPP Messages
 
 export interface AuthorizeRequest {
@@ -136,6 +138,7 @@ export interface NotifyReportRequest {
     seqNo:                          Integer,
     generatedAt:                    Timestamp,
     reportData:                     ReportData[],
+    tbc?:                           boolean,
     customData?:                    ICustomData
 }
 
@@ -163,7 +166,8 @@ export interface ReservationStatusUpdateRequest {
 
 export interface SecurityEventNotificationRequest {
     type:                           SecurityEventType,
-    reservationUpdateStatus:        ReservationUpdateStatus,
+    timestamp:                      Timestamp,
+    techInfo?:                      string,
     customData?:                    ICustomData
 }
 

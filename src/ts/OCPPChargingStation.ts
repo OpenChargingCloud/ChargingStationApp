@@ -342,6 +342,8 @@ export class OCPPChargingStation {
                             switch (message[0])
                             {
 
+                                //#region Incoming OCPP Commands
+
                                 case 2:
                                     this.WriteToScreen("<span>COMMAND: " + e.data + "</span>");
 
@@ -480,16 +482,30 @@ export class OCPPChargingStation {
 
                                     break;
 
+                                //#endregion
+
+                                //#region OCPP Responses
+
                                 case 3:
                                     this.WriteToScreen("<span>RESPONSE: " + e.data + "</span>");
                                     break;
+
+                                //#endregion
+
+                                //#region OCPP Error Responses
+
+                                case 4:
+                                    this.WriteToScreen("<span>ERROR: " + e.data + "</span>");
+                                    break;
+
+                                //#endregion
 
                             }
 
                         }
                         catch (ex)
                         {
-                            this.WriteToScreen("<span>ERROR: " + e.data + " => " + ex + "</span>");
+                            this.WriteToScreen("<span>EXCEPTION: " + e.data + " => " + ex + "</span>");
                         }
 
                     };

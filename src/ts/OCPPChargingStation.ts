@@ -614,7 +614,7 @@ export class OCPPChargingStation {
 
     private removeNullsAndEmptyObjects(obj: any): any {
         for (let key in obj) {
-            if (obj[key] === null) {
+            if (obj[key] == null || obj[key] === "") {
                 delete obj[key];
             } else if (typeof obj[key] === 'object') {
                 obj[key] = this.removeNullsAndEmptyObjects(obj[key]);
@@ -730,7 +730,7 @@ export class OCPPChargingStation {
                         firmwareVersion:   (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?.value || undefined,
                         customData:         this.ParseCustomData((ChargingStation?.querySelector('input[name="customData"]')       as HTMLInputElement). value),
                     },
-                    reason:                (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement). value,
+                    reason:                (properties?.                           querySelector('select[name="reason"]')          as HTMLInputElement). value,
                     customData:             this.ParseCustomData((properties?.     querySelector('input[name="customData"]')       as HTMLInputElement). value),
                 }
 

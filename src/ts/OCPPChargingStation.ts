@@ -218,7 +218,7 @@ export class OCPPChargingStation {
 
                     this.websocket = new WebSocket(
                                          this.csmsURL.value,
-                                         this.csmsOCPPVersion.value.toLowerCase().replace("v", "").replace("_", ".")
+                                         this.csmsOCPPVersion.value.toLowerCase().replace(/v/g, "").replace(/_/g, ".")
                                      );
 
                     this.websocket.onopen = (e) => {

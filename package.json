@@ -23,7 +23,7 @@
   "homepage": "https://github.com/OpenChargingCloud/ChargingStation",
   "devDependencies": {
     "@types/node": "^20.6.0",
-    "electron": "^26.2.0",
+    "electron": "^26.2.1",
     "electron-builder": "^24.6.4",
     "sass": "^1.66.1",
     "ts-loader": "^9.4.4",

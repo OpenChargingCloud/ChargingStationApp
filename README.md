@@ -16,14 +16,18 @@ This project implements a set of **e-mobility charging stations** using [Electro
 Install additional Node.js modules...
 
 ```
-$ npm install electron@latest --save-dev
-$ npm install electron-builder@latest --save-dev
-$ npm install typescript@latest --save-dev
-$ npm install sass@latest --save-dev
-$ npm install @types/node@latest --save-dev
-$ npm install webpack --save-dev
-$ npm install webpack-cli --save-dev
-$ npm install ts-loader --save-dev
+npm install electron@latest --save-dev
+npm install electron-builder@latest --save-dev
+npm install electron-localshortcut --save-dev
+npm install typescript@latest --save-dev
+npm install @types/node@latest --save-dev
+npm install sass@latest --save-dev
+npm install @types/elliptic@latest --save-dev
+npm install @types/elliptic@latest --save-dev
+npm install webpack --save-dev
+npm install webpack-cli --save-dev
+npm install ts-loader --save-dev
+
 ```
 
 Update of all Node.js modules...

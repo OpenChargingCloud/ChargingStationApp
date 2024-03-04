@@ -25,7 +25,7 @@
     "@types/elliptic": "^6.4.16",
     "@types/node": "^20.8.8",
     "electron": "^27.0.2",
-    "electron-builder": "^24.6.4",
+    "electron-builder": "^24.13.3",
     "electron-localshortcut": "^3.2.1",
     "sass": "^1.69.4",
     "ts-loader": "^9.5.0",

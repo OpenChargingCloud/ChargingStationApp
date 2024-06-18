@@ -29,6 +29,10 @@ export class OCPPChargingStation {
 
     private          websocket?:                                         WebSocket;
 
+    private readonly configurationDiv:                                   HTMLDivElement;
+    private readonly qrCodeDiv:                                          HTMLDivElement;
+    private readonly qrCodeURL:                                          HTMLAnchorElement;
+
     private readonly csmsDiv:                                            HTMLDivElement;
     private readonly csmsURL:                                            HTMLInputElement;
     private readonly csmsOCPPVersion:                                    HTMLSelectElement;
@@ -101,6 +105,11 @@ export class OCPPChargingStation {
         this.WriteToScreen = WriteToScreen;
 
         //#region Data
+
+        // Configuration on the top
+        this.configurationDiv                                        = document.querySelector("#configuration")                                         as HTMLDivElement;
+        this.qrCodeDiv                                               = document.querySelector("#qrcode")                                                as HTMLDivElement;
+        this.qrCodeURL                                               = document.querySelector("#qrCodeURL")                                             as HTMLAnchorElement;
 
         // CSMS on the top
         this.csmsDiv                                                 = document.querySelector("#CSMS")                                                  as HTMLDivElement;
@@ -196,6 +205,8 @@ export class OCPPChargingStation {
         this.sendRAWRequestButton.onclick                            = () => this.SendRAWRequest();
 
         //#endregion
+
+        this.startQRCodeInterval();
 
         //#region Handle OCPP version selector
 
@@ -539,6 +550,170 @@ export class OCPPChargingStation {
     }
 
     //#endregion
+
+    public isLittleEndian() {
+        const buf = new ArrayBuffer(4);
+        new DataView(buf).setUint32(0, 1, true);
+        return new Uint32Array(buf)[0] === 1;
+    }
+
+    public reverseBytes(buffer: Uint8Array): void {
+        for (let i = 0; i < buffer.length / 2; i++) {
+            let temp = buffer[i] as number;
+            buffer[i] = buffer[buffer.length - 1 - i] as number;
+            buffer[buffer.length - 1 - i] = temp;
+        }
+    }
+
+    private async calcTOTPSlot(slotBytes:     Uint8Array,
+                               TOTPLength:    number,
+                               alphabet:      string,
+                               sharedSecret:  string) {
+
+        // JavaScript's Buffer methods default to big-endian!
+        if (!this.isLittleEndian())
+            this.reverseBytes(slotBytes);
+
+        const hash = await crypto.subtle.sign(
+            "HMAC",
+            await crypto.subtle.importKey(
+                "raw",
+                new TextEncoder().encode(sharedSecret),
+                {
+                    name: "HMAC",
+                    hash: "SHA-256"
+                },
+                false,
+                ["sign", "verify"]
+            ),
+            slotBytes
+        );
+
+        const currentHash = new Uint8Array(hash);
+        const offset      = currentHash[currentHash.length - 1]! & 0x0F;
+
+        let result = '';
+        for (let i = 0; i < TOTPLength; i++)
+            result += alphabet[(currentHash[(offset + i) % currentHash.length]! >>> 0) % alphabet.length];
+
+        return result;
+
+    }
+
+    private async generateTOTPs(SharedSecret:  string,
+                                ValidityTime:  number | undefined = undefined,
+                                TOTPLength:    number | undefined = undefined,
+                                Alphabet:      string | undefined = undefined,
+                                Timestamp:     number | undefined = undefined) {
+
+        if (!ValidityTime) ValidityTime  = 30;
+        if (!TOTPLength)   TOTPLength    = 12;
+        if (!Alphabet)     Alphabet      = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        if (!Timestamp)    Timestamp     = Date.now();
+
+        SharedSecret = SharedSecret?.trim();
+        Alphabet     = Alphabet?.    trim();
+
+        if (!SharedSecret)                              throw new Error("The given shared secret must not be null or empty!");
+        if (/\s/.test(SharedSecret))                    throw new Error("The given shared secret must not contain any whitespace characters!");
+        if (SharedSecret.length < 16)                   throw new Error("The length of the given shared secret must be at least 16 characters!");
+        if (TOTPLength < 4)                             throw new Error("The expected length of the TOTP must be between 4 and 255 characters!");
+        if (!Alphabet)                                  throw new Error("The given alphabet must not be null or empty!");
+        if (Alphabet.length < 4)                        throw new Error("The given alphabet must contain at least 4 characters!");
+        if (new Set(Alphabet).size !== Alphabet.length) throw new Error("The given alphabet must not contain duplicate characters!");
+        if (/\s/.test(Alphabet))                        throw new Error("The given alphabet must not contain any whitespace characters!");
+
+        var  currentUnixTime     = 0;
+
+        if (typeof Timestamp === 'string')
+            currentUnixTime = Math.floor(new Date(Timestamp).getTime() / 1000) - new Date().getTimezoneOffset() * 60;
+        else if (typeof Timestamp === 'number')
+            currentUnixTime = Timestamp;
+        else
+            throw new Error('Invalid timestamp format');
+
+        const currentSlot        = BigInt(Math.floor(currentUnixTime / ValidityTime));
+        const remainingTime      = ValidityTime - (currentUnixTime % ValidityTime);
+
+        // For interoperability we use 8 byte timestamps
+        const previousSlotBytes  = new Uint8Array(8);
+        const currentSlotBytes   = new Uint8Array(8);
+        const nextSlotBytes      = new Uint8Array(8);
+
+        new DataView(previousSlotBytes.buffer).setBigUint64(0, currentSlot - BigInt(1));
+        new DataView(currentSlotBytes.buffer). setBigUint64(0, currentSlot);
+        new DataView(nextSlotBytes.buffer).    setBigUint64(0, currentSlot + BigInt(1));
+
+        const previous           = await this.calcTOTPSlot(previousSlotBytes, TOTPLength, Alphabet, SharedSecret);
+        const current            = await this.calcTOTPSlot(currentSlotBytes,  TOTPLength, Alphabet, SharedSecret);
+        const next               = await this.calcTOTPSlot(nextSlotBytes,     TOTPLength, Alphabet, SharedSecret);
+
+        return {
+            previous,
+            current,
+            next,
+            remainingTime
+        };
+
+    }
+    public replaceTemplate(template: string, key: string, value: string) {
+        const regex = new RegExp(`{${key}}`, 'g');
+        return template.replace(regex, value);
+    }
+
+
+    private startQRCodeInterval(): void {
+        setInterval(() => {
+            this.QRCode();
+        }, 1000);
+    }
+
+    private async QRCode() {
+
+        const sharedSecret  = "dfwsighifbdfibhidgijhdgtng";
+        const validityTime  = "30";
+        const totpLength    = "12";
+        const alphabet      = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        const timestamp     = Date.now() / 1000;
+
+        const result = await this.generateTOTPs(
+                                 sharedSecret,
+                                 validityTime ? parseInt(validityTime) : undefined,
+                                 totpLength   ? parseInt(totpLength)   : undefined,
+                                 alphabet     ? alphabet               : undefined,
+                                 timestamp
+                             );
+
+        let url = "http://qr.charging.cloud/qr/{evseId}/{totp}";
+        let evseId = "DE*GEF*E1234*5678*1";
+        url = this.replaceTemplate(url, 'evseId', evseId);
+        url = this.replaceTemplate(url, 'totp',   result.current);
+        // Remove all remaining placeholders
+        url = url.replace(/{(\w+)}/g, '');
+
+        //@ts-ignore
+        var svgDocument = new QRCode({
+                              msg: url,
+                              dim: 128,
+                              pad: 0,
+                              mtx: -1,
+                              ecl: "L",
+                              ecb: 1,
+                              pal: ["#0"],
+                              vrb: 0
+                          });
+
+        while (this.qrCodeDiv.firstChild)
+            this.qrCodeDiv.removeChild(this.qrCodeDiv.firstChild);
+
+        this.qrCodeDiv.appendChild(svgDocument);
+
+    //    var qrCodeURL                                               = document.querySelector("#QRCodeURL")                                             as HTMLAnchorElement;
+        this.qrCodeURL.href      = url;
+        this.qrCodeURL.innerText = url;
+
+    }
+
 
 
     //#region Handle OCPP version change

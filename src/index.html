@@ -39,6 +39,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' ws: wss: https://open.charging.cloud; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';">
 
     <link rel="stylesheet" href="css/chargingStation.css" type="text/css" />
+    <script type="text/javascript" src="QRCodeSVG/qrcode.min.js"></script>
     <script type="module" src="build/chargingStationApp-bundle.js"></script>
 
   </head>
@@ -57,6 +58,14 @@
                 <div id=logView></div>
             </div>
             <div id="right">
+
+                <div id="configuration">
+                    <div id="qrcode"></div>
+                    <div id="rightConfig">
+                        <div id="urlTemplate"></div>
+                        <a id="qrCodeURL" href="" target="_blank"></a>
+                    </div>
+                </div>
 
                 <div id="CSMS">
                     <div class="properties">

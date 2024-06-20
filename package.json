@@ -23,14 +23,14 @@
   "homepage": "https://github.com/OpenChargingCloud/ChargingStation",
   "devDependencies": {
     "@types/elliptic": "^6.4.18",
-    "@types/node": "^20.14.5",
-    "electron": "^31.0.1",
+    "@types/node": "^20.14.7",
+    "electron": "^31.0.2",
     "electron-builder": "^24.13.3",
     "electron-localshortcut": "^3.2.1",
     "sass": "^1.77.6",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.4.5",
-    "webpack": "^5.92.0",
+    "typescript": "^5.5.2",
+    "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4"
   }
 }

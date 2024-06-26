@@ -1,7 +1,7 @@
 {
-  "name": "occ_chargingstation",
+  "name": "occ_chargingstation_app",
   "version": "1.0.0",
-  "description": "An simple e-mobility charging station test application",
+  "description": "An OCPP Charging Station test application based on Electron",
   "main": "src/main.cjs",
   "type": "module",
   "scripts": {

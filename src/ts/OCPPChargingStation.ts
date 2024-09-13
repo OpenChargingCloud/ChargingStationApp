@@ -35,6 +35,7 @@ export class OCPPChargingStation {
 
     private readonly csmsDiv:                                            HTMLDivElement;
     private readonly csmsURL:                                            HTMLInputElement;
+    private readonly httpBasicAuthDiv:                                   HTMLDivElement;
     private readonly csmsOCPPVersion:                                    HTMLSelectElement;
     private readonly csmsConnectButton:                                  HTMLButtonElement;
 
@@ -114,6 +115,7 @@ export class OCPPChargingStation {
         // CSMS on the top
         this.csmsDiv                                                 = document.querySelector("#CSMS")                                                  as HTMLDivElement;
         this.csmsURL                                                 = this.csmsDiv.querySelector("#CSMS_URL")                                          as HTMLInputElement;
+        this.httpBasicAuthDiv                                        = this.csmsDiv.querySelector("#HTTPBasicAuthDiv")                                  as HTMLDivElement;
         this.csmsOCPPVersion                                         = this.csmsDiv.querySelector("#selectedOCPPVersion")                               as HTMLSelectElement;
         this.csmsConnectButton                                       = this.csmsDiv.querySelector("#connectButton")                                     as HTMLButtonElement;
 
@@ -206,6 +208,9 @@ export class OCPPChargingStation {
 
         //#endregion
 
+        this.CheckHTTPBasicAuth();
+            this.csmsURL.onkeyup = () => this.CheckHTTPBasicAuth();
+
         this.startQRCodeInterval();
 
         //#region Handle OCPP version selector
@@ -227,9 +232,30 @@ export class OCPPChargingStation {
                 try
                 {
 
+                    let url = this.csmsURL.value;
+
+                    if (url.startsWith("wss://"))
+                    {
+
+                        const usernameInput = this.httpBasicAuthDiv.querySelector("#HTTPBasicAuthUsername") as HTMLInputElement;
+                        const passwordInput = this.httpBasicAuthDiv.querySelector("#HTTPBasicAuthPassword") as HTMLInputElement;
+
+                        if (usernameInput && passwordInput)
+                        {
+
+                            var username = usernameInput.value.trim();
+                            var password = passwordInput.value.trim();
+
+                            if (username.length > 0 && password.length > 0)
+                                url = url.replace("wss://", `wss://${username}:${password}@`);
+
+                        }
+
+                    }
+
                     this.websocket = new WebSocket(
-                                         this.csmsURL.value,
-                                         this.csmsOCPPVersion.value.toLowerCase().replace(/v/g, "").replace(/_/g, ".")
+                                         url,
+                                         this.csmsOCPPVersion.value.toLowerCase().replace(/v/g, "").replace(/_/g, "."),
                                      );
 
                     this.websocket.onopen = (e) => {
@@ -539,8 +565,6 @@ export class OCPPChargingStation {
 
                 this.websocket.close();
 
-
-
             }
 
         }
@@ -564,6 +588,16 @@ export class OCPPChargingStation {
             buffer[buffer.length - 1 - i] = temp;
         }
     }
+
+
+    public CheckHTTPBasicAuth()
+    {
+        if (this.csmsURL.value.startsWith("wss://"))
+            this.httpBasicAuthDiv.style.display = 'table-row-group';
+        else
+            this.httpBasicAuthDiv.style.display = 'none';
+    }
+
 
     private async calcTOTPSlot(slotBytes:     Uint8Array,
                                TOTPLength:    number,

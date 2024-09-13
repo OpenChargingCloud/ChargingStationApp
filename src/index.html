@@ -69,11 +69,28 @@
 
                 <div id="CSMS">
                     <div class="properties">
-                        <div class="row"><div class="key">URL</div><div class="value"><input id="CSMS_URL" type="text" value="ws://127.0.0.1:9920/GD001"></div></div>
+
                         <!-- ws://127.0.0.1:9920/GD001 -->
                         <!-- wss://api3.ocpp.charging.cloud/GD001 -->
+
                         <!-- HTTP Basic Auth does no longer work without TLS! -->
                         <!-- wss://user1:pass1@api3.ocpp.charging.cloud/GD001 -->
+
+                        <div class="row">
+                            <div class="key">URL</div>
+                            <div class="value"><input id="CSMS_URL" type="text" value="ws://127.0.0.1:9920/GD001"></div>
+                        </div>
+
+                        <div id="HTTPBasicAuthDiv" class="subProperties">
+                            <div class="row">
+                                <div class="key">Charging Station Id</div>
+                                <div class="value"><input id="HTTPBasicAuthUsername" type="text" value="GD001"></div>
+                            </div>
+                            <div class="row">
+                                <div class="key">Password</div>
+                                <div class="value"><input id="HTTPBasicAuthPassword" type="text"></div>
+                            </div>
+                        </div>
 
                         <div class="row"><div class="key">OCPP Version</div><div class="value">
                             <select id="selectedOCPPVersion">
@@ -82,7 +99,9 @@
                                 <option value="OCPPv2_1" selected>OCPP v2.1</option>
                             </select>
                         </div></div>
+
                         <div class="row"><div class="key"><button id="connectButton">Connect</button></div></div>
+
                     </div>
                 </div>
 

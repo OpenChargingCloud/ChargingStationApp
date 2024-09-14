@@ -237,6 +237,11 @@ export class OCPPChargingStation {
                     if (url.startsWith("wss://"))
                     {
 
+                        // HTTP WebSockets with HTTP Basic Auth seem to be broken in most browsers!
+
+                        // Kubernetes transport username and password as subprotocol, not as a HTTP Authorization header! m(
+                        // https://github.com/kubernetes/kubernetes/commit/714f97d7baf4975ad3aa47735a868a81a984d1f0
+
                         const usernameInput = this.httpBasicAuthDiv.querySelector("#HTTPBasicAuthUsername") as HTMLInputElement;
                         const passwordInput = this.httpBasicAuthDiv.querySelector("#HTTPBasicAuthPassword") as HTMLInputElement;
 
@@ -247,7 +252,10 @@ export class OCPPChargingStation {
                             var password = passwordInput.value.trim();
 
                             if (username.length > 0 && password.length > 0)
+                            {
                                 url = url.replace("wss://", `wss://${username}:${password}@`);
+                                url = url + `?u=${username}&p=${password}`;
+                            }
 
                         }
 

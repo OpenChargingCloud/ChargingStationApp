@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-import * as OCPPv1_6   from './IOCPPv1_6';
-import * as OCPPv2_0_1 from './IOCPPv2_0_1';
-import * as OCPPv2_1   from './IOCPPv2_1';
+import * as Interfaces    from './Interfaces';
 
-interface WriteToScreenDelegate {
-    (message: string|Element): void;
-}
+import * as OCPPv1_6      from './OCPPv1.6/IOCPPv1_6';
+import * as OCPPv1_6In    from './OCPPv1.6/IncomingMessages';
+import * as OCPPv1_6Out   from './OCPPv1.6/OutgoingMessages';
+
+import * as OCPPv2_0_1    from './OCPPv2.0.1/IOCPPv2_0_1';
+
+import * as OCPPv2_1      from './OCPPv2.1/IOCPPv2_1';
+import * as OCPPv2_1In    from './OCPPv2.1/IncomingMessages';
+import * as OCPPv2_1Out   from './OCPPv2.1/OutgoingMessages';
+
 
 export class OCPPChargingStation {
 
@@ -91,16 +96,18 @@ export class OCPPChargingStation {
     private readonly sendNotifyCustomerInformationRequestButton:         HTMLButtonElement;
     private readonly sendRAWRequestButton:                               HTMLButtonElement;
 
-    private readonly WriteToScreen:                                      WriteToScreenDelegate;
+    private readonly WriteToScreen:                                      Interfaces.WriteToScreenDelegate;
 
 
-    private requestId: number = 100000;
+    private          requestId:                                          number  = 100000;
+
+    private readonly settings_v1_6:                                      Map<string, OCPPv1_6.IConfigurationValue> = new Map();
 
     //#endregion
 
     //#region Constructor
 
-    constructor(WriteToScreen: WriteToScreenDelegate)
+    constructor(WriteToScreen: Interfaces.WriteToScreenDelegate)
     {
 
         this.WriteToScreen = WriteToScreen;
@@ -190,6 +197,7 @@ export class OCPPChargingStation {
         this.sendNotifyCustomerInformationRequestButton              = this.notifyCustomerInformationRequestDiv.    querySelector("#NotifyCustomerInformationRequestButton")     as HTMLButtonElement;
         this.sendRAWRequestButton                                    = this.rawRequestDiv.                          querySelector("#RAWRequestButton")                           as HTMLButtonElement;
 
+
         this.sendBootNotificationRequestButton.onclick               = () => this.SendBootNotificationRequest();
         this.sendHeartbeatRequestButton.onclick                      = () => this.SendHeartbeatRequest();
         this.sendAuthorizeRequestButton.onclick                      = () => this.SendAuthorizeRequest();
@@ -272,6 +280,7 @@ export class OCPPChargingStation {
 
                         this.csmsURL.readOnly                = true;
                         this.csmsOCPPVersion.disabled        = true;
+                        this.controlDiv.style.display        = 'flex';
                         this.controlDiv.style.pointerEvents  = 'auto';
                         this.buttonsDiv.style.pointerEvents  = 'auto';
                         this.csmsConnectButton.textContent   = "Disconnect";
@@ -372,6 +381,7 @@ export class OCPPChargingStation {
 
                         this.csmsURL.readOnly                = false;
                         this.csmsOCPPVersion.disabled        = false;
+                        this.controlDiv.style.display        = 'none';
                         this.buttonsDiv.style.pointerEvents  = 'none';
                         this.csmsConnectButton.textContent   = "Connect";
 
@@ -397,6 +407,38 @@ export class OCPPChargingStation {
 
                                     switch (message[2])
                                     {
+
+                                        //#region OCPP v1.6
+
+                                        //#region Certificates
+
+                                        // DeleteCertificate
+                                        // GetInstalledCertificateIds
+                                        // InstallCertificate
+                                        // CertificateSigned
+
+                                        //#endregion
+
+                                        //#region Charging
+
+                                        // CancelReservation
+                                        // ClearChargingProfile
+                                        // GetCompositeSchedule
+                                        // RemoteStartTransaction
+                                        // RemoteStopTransaction
+                                        // ReserveNow
+                                        // SetChargingProfile
+                                        // UnlockConnector
+
+                                        //#endregion
+
+                                        //#region Common
+
+                                        // DataTransfer
+
+                                        //#endregion
+
+                                        //#region Firmware
 
                                         case "Reset": {
 
@@ -452,74 +494,76 @@ export class OCPPChargingStation {
                                             }
                                             break;
 
-                                        case "ChangeAvailability": {
+                                        // SignedUpdateFirmware
+                                        // UpdateFirmware
 
-                                            //#region Change Availability variants
+                                        //#endregion
 
-                                            const textView = document.createElement('div');
-                                            textView.className = "description";
+                                        //#region LocalList
 
-                                            textView.innerHTML = "Set connector " + message[3]["connectorId"] + " ";
+                                        // ClearCache
+                                        // GetLocalListVersion
+                                        // SendLocalList
 
-                                            switch (message[3]["type"])
-                                            {
+                                        //#endregion
 
-                                                case "Inoperative":
-                                                    textView.innerHTML += "inoperative";
-                                                    break;
+                                        //#region Monitoring
 
-                                                case "Operative":
-                                                    textView.innerHTML += "operative";
-                                                    break;
-
-                                            }
-
-                                            commandView.appendChild(textView);
-
-                                            //#endregion
-
-                                            //#region Accept, Reject or Schedule
-
-                                            const buttonsDiv           = document.createElement('div');
-                                            buttonsDiv.className       = "buttons";
-
-                                            const buttonAccept         = document.createElement("button");
-                                            buttonAccept.innerHTML     = "Accept";
-                                            buttonAccept.onclick       = () => {
-                                                buttonAccept.disabled    = true;
-                                                buttonReject.disabled    = true;
-                                                buttonScheduled.disabled = true;
-                                                this.sendResponse(message[1], { "status": "Accepted" });
-                                            }
-                                            buttonsDiv.appendChild(buttonAccept);
-
-                                            const buttonReject         = document.createElement("button");
-                                            buttonReject.innerHTML     = "Reject";
-                                            buttonReject.onclick       = () => {
-                                                buttonAccept.disabled    = true;
-                                                buttonReject.disabled    = true;
-                                                buttonScheduled.disabled = true;
-                                                this.sendResponse(message[1], { "status": "Rejected" });
-                                            }
-                                            buttonsDiv.appendChild(buttonReject);
-
-                                            const buttonScheduled      = document.createElement("button");
-                                            buttonScheduled.innerHTML  = "Schedule";
-                                            buttonScheduled.onclick    = () => {
-                                                buttonAccept.disabled    = true;
-                                                buttonReject.disabled    = true;
-                                                buttonScheduled.disabled = true;
-                                                this.sendResponse(message[1], { "status": "Scheduled" });
-                                            }
-                                            buttonsDiv.appendChild(buttonScheduled);
-
-                                            commandView.appendChild(buttonsDiv);
-
-                                            //#endregion
-
-                                            }
+                                        case "ChangeAvailability":
+                                            OCPPv1_6In.IncomingMessages.ChangeAvailability(
+                                                message[1],
+                                                message[3],
+                                                commandView,
+                                                this.sendResponse
+                                            );
                                             break;
 
+                                        case "ChangeConfiguration": 
+                                            OCPPv1_6In.IncomingMessages.ChangeConfiguration(
+                                                message[1],
+                                                message[3],
+                                                this.settings_v1_6,
+                                                commandView,
+                                                this.sendResponse
+                                            );
+                                            break;
+
+                                        // ExtendedTriggerMessage
+
+                                        case "GetConfiguration":
+                                            OCPPv1_6In.IncomingMessages.GetConfiguration(
+                                                message[1],
+                                                message[3],
+                                                this.settings_v1_6,
+                                                commandView,
+                                                this.sendResponse
+                                            );
+                                        break;
+
+                                        // GetDiagnostics
+                                        // GetLog
+                                        // Trigger
+
+                                        //#endregion
+
+                                        //#endregion
+
+
+                                        //#region OCPP v2.1
+
+
+
+                                        //#endregion
+
+                                        default: {
+                                            this.sendRequestError(
+                                                message[1],
+                                                "0",
+                                                "Unknown command!",
+                                                { }
+                                            );
+                                            }
+                                            break;
 
                                     }
 
@@ -874,6 +918,24 @@ export class OCPPChargingStation {
 
     }
 
+
+    private OCPPv1_6:        string = "OCPP v1.6";
+    private OCPPv2_0_1:      string = "OCPP v2.0.1";
+    private OCPPv2_0_1__2_1: string = "OCPP v2.0.1/2.1";
+    private OCPPv2_1:        string = "OCPP v2.1";
+
+    private showException(ex:          any,
+                          Caller:      string,
+                          OCPPVersion: string)
+    {
+
+        this.WriteToScreen("<span class=error>Exception in " + Caller + "(" + OCPPVersion + "): " + ex + "</span>");
+
+        if (ex.stack !== undefined)
+            this.WriteToScreen(ex.stack);
+
+    }
+
     //#endregion
 
 
@@ -917,57 +979,99 @@ export class OCPPChargingStation {
 
     }
 
+    public sendRequestError(responseId:        string,
+                            ErrorCode:         string,
+                            ErrorDescription:  string,
+                            ErrorDetails:      any) {
+
+        if (this.websocket &&
+            this.websocket.readyState === WebSocket.OPEN)
+        {
+
+            const message = JSON.stringify([ 4,
+                                             responseId,
+                                             ErrorCode,
+                                             ErrorDescription,
+                                             ErrorDetails
+                                           ]);
+
+            this.WriteToScreen("Request Error: " + ErrorCode + " - " + ErrorDescription);
+
+            if (ErrorDetails != null)
+                this.WriteToScreen(ErrorDetails);
+
+            this.websocket.send(message);
+
+        }
+
+    }
+
+    public sendResposeError(responseId: string,
+                            response:   any) {
+
+        if (this.websocket &&
+            this.websocket.readyState === WebSocket.OPEN)
+        {
+
+            const message = JSON.stringify([ 3,
+                                             responseId,
+                                             response
+                                           ]);
+
+            this.WriteToScreen("REPLY: " + message);
+            this.websocket.send(message);
+
+        }
+
+    }
+
 
     public SendBootNotificationRequest(RequestDivElement?: HTMLDivElement)
     {
         switch (this.csmsOCPPVersion.value)
         {
 
-            case "OCPPv1_6": {
-
-                const properties = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement;
-
-                const bootNotificationRequest: OCPPv1_6.BootNotificationRequest = {
-                    chargePointVendor:        (properties?.querySelector('input[name="ChargePointVendor"]')        as HTMLInputElement). value,
-                    chargePointModel:         (properties?.querySelector('input[name="ChargePointModel"]')         as HTMLInputElement). value,
-                    chargePointSerialNumber:  (properties?.querySelector('input[name="ChargePointSerialNumber"]')  as HTMLInputElement)?.value || undefined,
-                    chargeBoxSerialNumber:    (properties?.querySelector('input[name="ChargeBoxSerialNumber"]')    as HTMLInputElement)?.value || undefined,
-                    firmwareVersion:          (properties?.querySelector('input[name="FirmwareVersion"]')          as HTMLInputElement)?.value || undefined,
-                    iccid:                    (properties?.querySelector('input[name="ICCId"]')                    as HTMLInputElement)?.value || undefined,
-                    imsi:                     (properties?.querySelector('input[name="IMSI"]')                     as HTMLInputElement)?.value || undefined,
-                    meterType:                (properties?.querySelector('input[name="MeterType"]')                as HTMLInputElement)?.value || undefined,
-                    meterSerialNumber:        (properties?.querySelector('input[name="MeterSerialNumber"]')        as HTMLInputElement)?.value || undefined
-                }
-
-                this.sendRequest("BootNotification", bootNotificationRequest);
-
-            }
-            break;
+            case "OCPPv1_6":
+                OCPPv1_6Out.OutgoingMessages.SendBootNotificationRequest(
+                    RequestDivElement!,
+                    this.commandsDiv,
+                    this.sendRequest,
+                    this.showException
+                );
+                break;
 
             default: {
 
-                const properties       = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')      as HTMLDivElement;
-                const ChargingStation  = (properties?.                    querySelector('div[name="chargingStation"]')  as HTMLDivElement);
-                const Modem            = (ChargingStation?.               querySelector('div[name="modem"]')            as HTMLDivElement);
+                try
+                {
 
-                const bootNotificationRequest: OCPPv2_0_1.BootNotificationRequest = {
-                    chargingStation: {
-                        model:             (ChargingStation?.                      querySelector('input[name="model"]')            as HTMLInputElement). value,
-                        vendorName:        (ChargingStation?.                      querySelector('input[name="vendorName"]')       as HTMLInputElement). value,
-                        serialNumber:      (ChargingStation?.                      querySelector('input[name="serialNumber"]')     as HTMLInputElement)?.value || undefined,
-                        modem: {
-                            iccid:         (Modem?.                                querySelector('input[name="ICCID"]')            as HTMLInputElement)?.value || undefined,
-                            imsi:          (Modem?.                                querySelector('input[name="ISMI"]')             as HTMLInputElement)?.value || undefined,
-                            customData:     this.ParseCustomData((Modem?.          querySelector('input[name="customData"]')       as HTMLInputElement). value),
+                    const properties       = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')      as HTMLDivElement;
+                    const ChargingStation  = (properties?.                    querySelector('div[name="chargingStation"]')  as HTMLDivElement);
+                    const Modem            = (ChargingStation?.               querySelector('div[name="modem"]')            as HTMLDivElement);
+
+                    const bootNotificationRequest: OCPPv2_0_1.BootNotificationRequest = {
+                        chargingStation: {
+                            model:             (ChargingStation?.                      querySelector('input[name="model"]')            as HTMLInputElement). value,
+                            vendorName:        (ChargingStation?.                      querySelector('input[name="vendorName"]')       as HTMLInputElement). value,
+                            serialNumber:      (ChargingStation?.                      querySelector('input[name="serialNumber"]')     as HTMLInputElement)?.value || undefined,
+                            modem: {
+                                iccid:         (Modem?.                                querySelector('input[name="ICCID"]')            as HTMLInputElement)?.value || undefined,
+                                imsi:          (Modem?.                                querySelector('input[name="ISMI"]')             as HTMLInputElement)?.value || undefined,
+                                customData:     this.ParseCustomData((Modem?.          querySelector('input[name="customData"]')       as HTMLInputElement). value),
+                            },
+                            firmwareVersion:   (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?.value || undefined,
+                            customData:         this.ParseCustomData((ChargingStation?.querySelector('input[name="customData"]')       as HTMLInputElement). value),
                         },
-                        firmwareVersion:   (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?.value || undefined,
-                        customData:         this.ParseCustomData((ChargingStation?.querySelector('input[name="customData"]')       as HTMLInputElement). value),
-                    },
-                    reason:                (properties?.                           querySelector('select[name="reason"]')          as HTMLInputElement). value,
-                    customData:             this.ParseCustomData((properties?.     querySelector('input[name="customData"]')       as HTMLInputElement). value),
-                }
+                        reason:                (properties?.                           querySelector('select[name="reason"]')          as HTMLInputElement). value,
+                        customData:             this.ParseCustomData((properties?.     querySelector('input[name="customData"]')       as HTMLInputElement). value),
+                    }
 
-                this.sendRequest("BootNotification", bootNotificationRequest);
+                    this.sendRequest("BootNotification", bootNotificationRequest);
+
+                }
+                catch (ex) {
+                    this.showException(ex, "SendBootNotificationRequest", this.OCPPv2_0_1__2_1);
+                }
 
             }
             break;

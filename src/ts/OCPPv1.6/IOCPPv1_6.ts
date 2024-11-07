@@ -306,3 +306,25 @@ type StopReason             = "EmergencyStop"  |
                                string;
 
 //#endregion
+
+//#region Internal Data Structures
+
+export enum ConfigurationKeyAccessRights
+{
+    ReadWrite,
+    ReadOnly,
+    WriteOnly
+}
+
+export interface IConfigurationKey {
+    key:            string
+    value:          string
+    readonly:       boolean
+}
+
+export interface IConfigurationValue {
+    Value:          string
+    AccessRights:   ConfigurationKeyAccessRights
+}
+
+//#endregion

@@ -316,6 +316,28 @@ export enum ConfigurationKeyAccessRights
     WriteOnly
 }
 
+export enum ConfigurationKeyRequired
+{
+    Required,
+    Optional
+}
+
+export enum ConfigurationKeyTypes
+{
+    Boolean,
+    Integer,
+    String,
+    CSL
+}
+
+export enum ConfigurationKeyUnits
+{
+    Times,
+    Seconds,
+    Percentage,
+    Wh
+}
+
 export interface IConfigurationKey {
     key:            string
     value:          string
@@ -323,8 +345,15 @@ export interface IConfigurationKey {
 }
 
 export interface IConfigurationValue {
+
     Value:          string
+    Type:           ConfigurationKeyTypes
+    Required:       ConfigurationKeyRequired
     AccessRights:   ConfigurationKeyAccessRights
+    Description:    string
+
+    updateValue(newValue: string): void;
+
 }
 
 //#endregion

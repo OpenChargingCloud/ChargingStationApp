@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import * as Interfaces  from '../Interfaces';
-import * as OCPPv1_6    from './IOCPPv1_6';
+import * as Interfaces     from '../Interfaces';
+import * as OCPPv1_6       from './IOCPPv1_6';
+import * as Configuration  from './Configuration';
 
 
 export class IncomingMessages {
@@ -96,38 +97,37 @@ export class IncomingMessages {
 
     }
 
-    static ChangeConfiguration(requestId:     string,
-                               request:       { key: string, value: string },
-                               settings:      Map<string, OCPPv1_6.IConfigurationValue>,
-                               commandView:   HTMLDivElement,
-                               sendResponse:  Interfaces.SendResponseDelegate)
+    static ChangeConfiguration(requestId:      string,
+                               request:        { key: string, value: string },
+                               configuration:  Configuration.Configuration,
+                               commandView:    HTMLDivElement,
+                               sendResponse:   Interfaces.SendResponseDelegate)
     {
 
         if (request.key && request.value)
         {
 
-            var setting = settings.get(request.key);
+            var entry = configuration.get(request.key);
 
-            if (setting === undefined)
+            if (entry === undefined)
             {
 
-                settings.set(request.key, {
-                    AccessRights:  OCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
-                    Value:         request.value
-                });
+                configuration.set(
+                    request.key,
+                    Configuration.ConfigurationValue.Create(request.value)
+                );
 
                 sendResponse(requestId, { "status": "Accepted" });
 
             }
 
-            else if (setting.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.ReadWrite ||
-                     setting.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
+            else if (entry.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.ReadWrite ||
+                     entry.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
             {
 
-                settings.set(request.key, {
-                    AccessRights:  setting.AccessRights,
-                    Value:         request.value
-                });
+                entry.updateValue(
+                    request.value
+                );
 
                 sendResponse(requestId, { "status": "Accepted" });
 
@@ -143,11 +143,11 @@ export class IncomingMessages {
 
     }
 
-    static GetConfiguration(requestId:     string,
-                            request:       { key?: string[] },
-                            settings:      Map<string, OCPPv1_6.IConfigurationValue>,
-                            commandView:   HTMLDivElement,
-                            sendResponse:  Interfaces.SendResponseDelegate)
+    static GetConfiguration(requestId:      string,
+                            request:        { key?: string[] },
+                            configuration:  Configuration.Configuration,
+                            commandView:    HTMLDivElement,
+                            sendResponse:   Interfaces.SendResponseDelegate)
     {
 
         const keys = request.key ?? [];
@@ -157,7 +157,7 @@ export class IncomingMessages {
 
         if (!keys || keys.length === 0)
         {
-            for (const kvp of settings)
+            for (const kvp of configuration.all())
             {
                 if (kvp[1].AccessRights !== OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
                     configurationKeys.push({
@@ -171,7 +171,7 @@ export class IncomingMessages {
         else {
             for (const key of keys) {
 
-                const configurationValue = settings.get(key);
+                const configurationValue = configuration.get(key);
 
                 if (configurationValue === undefined ||
                     configurationValue.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)

@@ -20,6 +20,7 @@ import * as Interfaces    from './Interfaces';
 import * as OCPPv1_6      from './OCPPv1.6/IOCPPv1_6';
 import * as OCPPv1_6In    from './OCPPv1.6/IncomingMessages';
 import * as OCPPv1_6Out   from './OCPPv1.6/OutgoingMessages';
+import * as SettingsV1_6  from './OCPPv1.6/Configuration';
 
 import * as OCPPv2_0_1    from './OCPPv2.0.1/IOCPPv2_0_1';
 
@@ -101,7 +102,7 @@ export class OCPPChargingStation {
 
     private          requestId:                                          number  = 100000;
 
-    private readonly settings_v1_6:                                      Map<string, OCPPv1_6.IConfigurationValue> = new Map();
+    private readonly settings_v1_6:                                      SettingsV1_6.Configuration = new SettingsV1_6.Configuration();
 
     //#endregion
 
@@ -110,7 +111,11 @@ export class OCPPChargingStation {
     constructor(WriteToScreen: Interfaces.WriteToScreenDelegate)
     {
 
-        this.WriteToScreen = WriteToScreen;
+        this.WriteToScreen  = WriteToScreen;
+
+        this.sendRequest    = this.sendRequest.  bind(this);
+        this.sendResponse   = this.sendResponse. bind(this);
+        this.showException  = this.showException.bind(this);
 
         //#region Data
 

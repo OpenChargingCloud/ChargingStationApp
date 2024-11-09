@@ -15,54 +15,77 @@
  * limitations under the License.
  */
 
-import * as Interfaces  from '../Interfaces';
-import * as IOCPPv1_6   from './IOCPPv1_6';
+import * as interfaces  from '../Interfaces';
+import * as messages    from './Messages';
 
 
 export class OutgoingMessages {
 
-    private static ocppVersion: string = "OCPP v1.6";
+    private static readonly ocppVersion:    string = "OCPP v1.6";
 
-    //#region Monitoring
 
-    static SendBootNotificationRequest(RequestDivElement:  HTMLDivElement,
-                                       commandsDiv:        HTMLDivElement,
-                                       sendRequest:        Interfaces.SendRequestDelegate,
-                                       showException:      Interfaces.ShowExceptionDelegate
-                                    )
+    //#region Certificates
+
+    // SignCertificate
+
+    //#endregion
+
+    //#region Charging
+
+    // Authorize
+    // SendMeterValues
+    // SendStartTransactionNotification
+    // SendStatusNotification
+    // SendStopTransactionNotification
+
+    //#endregion
+
+    //region Common
+
+    // TransferData
+
+    //#endregion
+
+    //#region Firmware
+
+    public static SendBootNotification(properties: HTMLDivElement) : messages.BootNotificationRequest
     {
 
-        const bootNotificationRequestDiv = commandsDiv.querySelector("#BootNotificationRequest") as HTMLDivElement;
-
-        try
-        {
-
-            const properties = bootNotificationRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement;
-
-            const bootNotificationRequest: IOCPPv1_6.BootNotificationRequest = {
-                chargePointVendor:        (properties?.querySelector('input[name="chargePointVendor"]')        as HTMLInputElement). value,
-                chargePointModel:         (properties?.querySelector('input[name="chargePointModel"]')         as HTMLInputElement). value,
-                chargePointSerialNumber:  (properties?.querySelector('input[name="chargePointSerialNumber"]')  as HTMLInputElement)?.value || undefined,
-                chargeBoxSerialNumber:    (properties?.querySelector('input[name="chargeBoxSerialNumber"]')    as HTMLInputElement)?.value || undefined,
-                firmwareVersion:          (properties?.querySelector('input[name="firmwareVersion"]')          as HTMLInputElement)?.value || undefined,
-                iccid:                    (properties?.querySelector('input[name="ICCId"]')                    as HTMLInputElement)?.value || undefined,
-                imsi:                     (properties?.querySelector('input[name="IMSI"]')                     as HTMLInputElement)?.value || undefined,
-                meterType:                (properties?.querySelector('input[name="meterType"]')                as HTMLInputElement)?.value || undefined,
-                meterSerialNumber:        (properties?.querySelector('input[name="meterSerialNumber"]')        as HTMLInputElement)?.value || undefined
-            }
-
-            sendRequest("BootNotification", bootNotificationRequest);
-
+        const bootNotificationRequest: messages.BootNotificationRequest = {
+            chargePointVendor:        (properties?.querySelector('input[name="chargePointVendor"]')        as HTMLInputElement). value,
+            chargePointModel:         (properties?.querySelector('input[name="chargePointModel"]')         as HTMLInputElement). value,
+            chargePointSerialNumber:  (properties?.querySelector('input[name="chargePointSerialNumber"]')  as HTMLInputElement)?.value || undefined,
+            chargeBoxSerialNumber:    (properties?.querySelector('input[name="chargeBoxSerialNumber"]')    as HTMLInputElement)?.value || undefined,
+            firmwareVersion:          (properties?.querySelector('input[name="firmwareVersion"]')          as HTMLInputElement)?.value || undefined,
+            iccid:                    (properties?.querySelector('input[name="ICCId"]')                    as HTMLInputElement)?.value || undefined,
+            imsi:                     (properties?.querySelector('input[name="IMSI"]')                     as HTMLInputElement)?.value || undefined,
+            meterType:                (properties?.querySelector('input[name="meterType"]')                as HTMLInputElement)?.value || undefined,
+            meterSerialNumber:        (properties?.querySelector('input[name="meterSerialNumber"]')        as HTMLInputElement)?.value || undefined
         }
-        catch (ex) {
-            showException(ex, "SendBootNotificationRequest", this.ocppVersion);
-        }
+
+        return bootNotificationRequest;
 
     }
+
+    public static SendHeartbeat(properties: HTMLDivElement) : messages.HeartBeatRequest
+    {
+
+        const heartBeatRequest: messages.HeartBeatRequest = { }
+
+        return heartBeatRequest;
+
+    }
+
+    // SendFirewareStatusNotification
+    // SendSignedFirmwareStatusNotification
 
     //#endregion
 
     //#region Monitoring
+
+    // SendDiagnosticsStatusNotification
+    // SendLogStatusNotification
+    // SendSecurityEventNotification
 
     //#endregion
 

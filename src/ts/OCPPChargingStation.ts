@@ -15,19 +15,20 @@
  * limitations under the License.
  */
 
-import * as Interfaces    from './Interfaces';
+import * as interfaces    from './Interfaces';
 
-import * as OCPPv1_6      from './OCPPv1.6/IOCPPv1_6';
+import * as OCPPv1_6      from './OCPPv1.6/Internal';
 import * as OCPPv1_6In    from './OCPPv1.6/IncomingMessages';
 import * as OCPPv1_6Out   from './OCPPv1.6/OutgoingMessages';
 import * as SettingsV1_6  from './OCPPv1.6/Configuration';
 
 import * as OCPPv2_0_1    from './OCPPv2.0.1/IOCPPv2_0_1';
 
-import * as OCPPv2_1      from './OCPPv2.1/IOCPPv2_1';
+import * as OCPPv2_1      from './OCPPv2.1/Complex';
 import * as OCPPv2_1In    from './OCPPv2.1/IncomingMessages';
 import * as OCPPv2_1Out   from './OCPPv2.1/OutgoingMessages';
 
+import * as logger        from './Logger';
 
 export class OCPPChargingStation {
 
@@ -97,18 +98,30 @@ export class OCPPChargingStation {
     private readonly sendNotifyCustomerInformationRequestButton:         HTMLButtonElement;
     private readonly sendRAWRequestButton:                               HTMLButtonElement;
 
-    private readonly WriteToScreen:                                      Interfaces.WriteToScreenDelegate;
+    private readonly WriteToScreen:                                      interfaces.WriteToScreenDelegate;
 
 
     private          requestId:                                          number  = 100000;
 
-    private readonly settings_v1_6:                                      SettingsV1_6.Configuration = new SettingsV1_6.Configuration();
+    private readonly ocpp_v1_6_settings:                                 SettingsV1_6.Configuration    = new SettingsV1_6.Configuration();
+    // private readonly ocpp_v1_6_messagesOut:                              OCPPv1_6Out.OutgoingMessages  = new OCPPv1_6Out.OutgoingMessages(
+    //                                                                                                          this.sendRequest,
+    //                                                                                                          this.showException
+    //                                                                                                      );
+
+    // private readonly ocpp_v2_1_messagesOut:                              OCPPv2_1Out.OutgoingMessages  = new OCPPv2_1Out.OutgoingMessages(
+    //                                                                                                          this.sendRequest,
+    //                                                                                                          this.showException
+    //                                                                                                      );
+
+    private readonly diagnosticsLog:                                     logger.Logger                 = new logger.Logger(1000);
+    private readonly securityLog:                                        logger.Logger                 = new logger.Logger(1000);
 
     //#endregion
 
     //#region Constructor
 
-    constructor(WriteToScreen: Interfaces.WriteToScreenDelegate)
+    constructor(WriteToScreen: interfaces.WriteToScreenDelegate)
     {
 
         this.WriteToScreen  = WriteToScreen;
@@ -276,7 +289,7 @@ export class OCPPChargingStation {
 
                     this.websocket = new WebSocket(
                                          url,
-                                         this.csmsOCPPVersion.value.toLowerCase().replace(/v/g, "").replace(/_/g, "."),
+                                         this.csmsOCPPVersion.value.toLowerCase().replace(/ /g, "").replace(/v/g, "").replace(/_/g, "."),
                                      );
 
                     this.websocket.onopen = (e) => {
@@ -413,8 +426,6 @@ export class OCPPChargingStation {
                                     switch (message[2])
                                     {
 
-                                        //#region OCPP v1.6
-
                                         //#region Certificates
 
                                         // DeleteCertificate
@@ -515,48 +526,42 @@ export class OCPPChargingStation {
                                         //#region Monitoring
 
                                         case "ChangeAvailability":
-                                            OCPPv1_6In.IncomingMessages.ChangeAvailability(
-                                                message[1],
-                                                message[3],
-                                                commandView,
-                                                this.sendResponse
-                                            );
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.ChangeAvailability(
+                                                    message[1],
+                                                    message[3],
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
                                             break;
 
                                         case "ChangeConfiguration": 
-                                            OCPPv1_6In.IncomingMessages.ChangeConfiguration(
-                                                message[1],
-                                                message[3],
-                                                this.settings_v1_6,
-                                                commandView,
-                                                this.sendResponse
-                                            );
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.ChangeConfiguration(
+                                                    message[1],
+                                                    message[3],
+                                                    this.ocpp_v1_6_settings,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
                                             break;
 
                                         // ExtendedTriggerMessage
 
                                         case "GetConfiguration":
-                                            OCPPv1_6In.IncomingMessages.GetConfiguration(
-                                                message[1],
-                                                message[3],
-                                                this.settings_v1_6,
-                                                commandView,
-                                                this.sendResponse
-                                            );
-                                        break;
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.GetConfiguration(
+                                                    message[1],
+                                                    message[3],
+                                                    this.ocpp_v1_6_settings,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            break;
 
                                         // GetDiagnostics
                                         // GetLog
                                         // Trigger
-
-                                        //#endregion
-
-                                        //#endregion
-
-
-                                        //#region OCPP v2.1
-
-
 
                                         //#endregion
 
@@ -812,13 +817,12 @@ export class OCPPChargingStation {
     private handleOCPPVersionChange()
     {
 
-        for (const child of this.buttonsDiv.children as any as HTMLElement[]) {
+        const ocppVersion = this.csmsOCPPVersion.value.replace(/ /g, "").replace(/\./g, "_");
 
-            child.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+        for (const child of this.buttonsDiv.children as any as HTMLElement[])
+            child.style.display = child.classList.contains(ocppVersion)
                                       ? 'block'
                                       : 'none';
-
-        }
 
         for (const child of Array.from(this.commandsDiv.querySelectorAll('div.command, div.properties, div.row')))
         {
@@ -829,7 +833,7 @@ export class OCPPChargingStation {
 
                 let divElement = child as HTMLDivElement;
 
-                divElement.style.display = child.classList.contains(this.csmsOCPPVersion.value)
+                divElement.style.display = child.classList.contains(ocppVersion)
                                                ? 'table'
                                                : 'none';
 
@@ -841,7 +845,7 @@ export class OCPPChargingStation {
 
                 let divElement = child as HTMLDivElement;
 
-                if (child.classList.contains(this.csmsOCPPVersion.value))
+                if (child.classList.contains(ocppVersion))
                     divElement.style.display = 'block';
 
                 else
@@ -959,6 +963,7 @@ export class OCPPChargingStation {
                                            ]);
 
             this.WriteToScreen("SENT: " + message);
+            this.diagnosticsLog.Log("INFO", "request", message);
             this.websocket.send(message);
 
         }
@@ -978,6 +983,7 @@ export class OCPPChargingStation {
                                            ]);
 
             this.WriteToScreen("REPLY: " + message);
+            this.diagnosticsLog.Log("INFO", "response", message);
             this.websocket.send(message);
 
         }
@@ -1005,6 +1011,7 @@ export class OCPPChargingStation {
             if (ErrorDetails != null)
                 this.WriteToScreen(ErrorDetails);
 
+            this.diagnosticsLog.Log("INFO", "requestError", message);
             this.websocket.send(message);
 
         }
@@ -1024,6 +1031,7 @@ export class OCPPChargingStation {
                                            ]);
 
             this.WriteToScreen("REPLY: " + message);
+            this.diagnosticsLog.Log("INFO", "responseError", message);
             this.websocket.send(message);
 
         }
@@ -1031,85 +1039,62 @@ export class OCPPChargingStation {
     }
 
 
-    public SendBootNotificationRequest(RequestDivElement?: HTMLDivElement)
+    public SendBootNotificationRequest()
     {
+
+        let request;
+
         switch (this.csmsOCPPVersion.value)
         {
 
-            case "OCPPv1_6":
-                OCPPv1_6Out.OutgoingMessages.SendBootNotificationRequest(
-                    RequestDivElement!,
-                    this.commandsDiv,
-                    this.sendRequest,
-                    this.showException
-                );
+            case this.OCPPv1_6:
+                request = OCPPv1_6Out.OutgoingMessages.SendBootNotification(
+                              this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement
+                          );
                 break;
 
-            default: {
-
-                try
-                {
-
-                    const properties       = this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1')      as HTMLDivElement;
-                    const ChargingStation  = (properties?.                    querySelector('div[name="chargingStation"]')  as HTMLDivElement);
-                    const Modem            = (ChargingStation?.               querySelector('div[name="modem"]')            as HTMLDivElement);
-
-                    const bootNotificationRequest: OCPPv2_0_1.BootNotificationRequest = {
-                        chargingStation: {
-                            model:             (ChargingStation?.                      querySelector('input[name="model"]')            as HTMLInputElement). value,
-                            vendorName:        (ChargingStation?.                      querySelector('input[name="vendorName"]')       as HTMLInputElement). value,
-                            serialNumber:      (ChargingStation?.                      querySelector('input[name="serialNumber"]')     as HTMLInputElement)?.value || undefined,
-                            modem: {
-                                iccid:         (Modem?.                                querySelector('input[name="ICCID"]')            as HTMLInputElement)?.value || undefined,
-                                imsi:          (Modem?.                                querySelector('input[name="ISMI"]')             as HTMLInputElement)?.value || undefined,
-                                customData:     this.ParseCustomData((Modem?.          querySelector('input[name="customData"]')       as HTMLInputElement). value),
-                            },
-                            firmwareVersion:   (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?.value || undefined,
-                            customData:         this.ParseCustomData((ChargingStation?.querySelector('input[name="customData"]')       as HTMLInputElement). value),
-                        },
-                        reason:                (properties?.                           querySelector('select[name="reason"]')          as HTMLInputElement). value,
-                        customData:             this.ParseCustomData((properties?.     querySelector('input[name="customData"]')       as HTMLInputElement). value),
-                    }
-
-                    this.sendRequest("BootNotification", bootNotificationRequest);
-
-                }
-                catch (ex) {
-                    this.showException(ex, "SendBootNotificationRequest", this.OCPPv2_0_1__2_1);
-                }
-
-            }
-            break;
+            default:
+                request = OCPPv2_1Out.OutgoingMessages.SendBootNotification(
+                              this.bootNotificationRequestDiv?.querySelector('div.properties.OCPPv2_1') as HTMLDivElement
+                          );
+                break;
 
         }
+
+        this.sendRequest(
+            "BootNotification",
+             request
+        );
+
     }
 
     public SendHeartbeatRequest(RequestDivElement?: HTMLDivElement)
     {
+
+        let request;
+
         switch (this.csmsOCPPVersion.value)
         {
 
-            case "OCPPv1_6": {
+            case this.OCPPv1_6:
+                request = OCPPv1_6Out.OutgoingMessages.SendHeartbeat(
+                              this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement
+                          );
+                break;
 
-                this.sendRequest("Heartbeat", null);
-
-            }
-            break;
-
-            default: {
-
-                const properties  = this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1')  as HTMLDivElement;
-
-                const heartBeatRequest: OCPPv2_0_1.HeartBeatRequest = {
-                    customData:  this.ParseCustomData((properties?.querySelector('input[name="customData"]')  as HTMLInputElement).value),
-                }
-
-                this.sendRequest("Heartbeat", heartBeatRequest);
-
-            }
-            break;
+            default:
+                request = OCPPv2_1Out.OutgoingMessages.SendHeartbeat(
+                              this.heartbeatRequestDiv?.querySelector('div.properties.OCPPv2_1') as HTMLDivElement
+                          );
+                break;
 
         }
+
+        this.sendRequest(
+            "Heartbeat",
+             request
+        );
+
     }
 
     public SendAuthorizeRequest(RequestDivElement?: HTMLDivElement)

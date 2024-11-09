@@ -15,48 +15,77 @@
  * limitations under the License.
  */
 
-import * as Interfaces  from '../Interfaces';
-import * as IOCPPv2_1   from './IOCPPv2_1';
+import * as interfaces  from '../Interfaces';
+import * as messages    from './Messages';
+import * as complex     from './Complex';
 
 
 export class OutgoingMessages {
 
-    private static ocppVersion: string = "OCPP v2.1";
+    private static readonly ocppVersion:    string = "OCPP v2.1";
 
-    //#region Monitoring
 
-    static SendBootNotificationRequest(RequestDivElement:  HTMLDivElement,
-                                       commandsDiv:        HTMLDivElement,
-                                       sendRequest:        Interfaces.SendRequestDelegate,
-                                       showException:      Interfaces.ShowExceptionDelegate
-                                    )
+    private static ParseCustomData(CustomData?: string | null): complex.ICustomData|undefined
     {
 
-        const bootNotificationRequestDiv = commandsDiv.querySelector("#BootNotificationRequest") as HTMLDivElement;
+        if (CustomData == null)
+            return undefined;
+
+        let customData = null;
 
         try
         {
 
-            const properties = bootNotificationRequestDiv?.querySelector('div.properties.OCPPv1_6') as HTMLDivElement;
+            const json = JSON.parse(CustomData);
 
-            // const bootNotificationRequest: IOCPPv2_1.BootNotificationRequest = {
-            //     chargePointVendor:        (properties?.querySelector('input[name="chargePointVendor"]')        as HTMLInputElement). value,
-            //     chargePointModel:         (properties?.querySelector('input[name="chargePointModel"]')         as HTMLInputElement). value,
-            //     chargePointSerialNumber:  (properties?.querySelector('input[name="chargePointSerialNumber"]')  as HTMLInputElement)?.value || undefined,
-            //     chargeBoxSerialNumber:    (properties?.querySelector('input[name="chargeBoxSerialNumber"]')    as HTMLInputElement)?.value || undefined,
-            //     firmwareVersion:          (properties?.querySelector('input[name="firmwareVersion"]')          as HTMLInputElement)?.value || undefined,
-            //     iccid:                    (properties?.querySelector('input[name="ICCId"]')                    as HTMLInputElement)?.value || undefined,
-            //     imsi:                     (properties?.querySelector('input[name="IMSI"]')                     as HTMLInputElement)?.value || undefined,
-            //     meterType:                (properties?.querySelector('input[name="meterType"]')                as HTMLInputElement)?.value || undefined,
-            //     meterSerialNumber:        (properties?.querySelector('input[name="meterSerialNumber"]')        as HTMLInputElement)?.value || undefined
-            // }
+            if (json.hasOwnProperty('vendorId'))
+                return json;
 
-            // sendRequest("BootNotification", bootNotificationRequest);
+        } catch { }
 
+        return undefined;
+
+    }
+
+
+
+    //#region Firmware
+
+    public static SendBootNotification(properties: HTMLDivElement) : messages.BootNotificationRequest
+    {
+
+        const ChargingStation  = (properties?.     querySelector('div[name="chargingStation"]')  as HTMLDivElement);
+        const Modem            = (ChargingStation?.querySelector('div[name="modem"]')            as HTMLDivElement);
+
+        const bootNotificationRequest: messages.BootNotificationRequest = {
+            chargingStation: {
+                model:            (ChargingStation?.                      querySelector('input[name="model"]')            as HTMLInputElement). value,
+                vendorName:       (ChargingStation?.                      querySelector('input[name="vendorName"]')       as HTMLInputElement). value,
+                serialNumber:     (ChargingStation?.                      querySelector('input[name="serialNumber"]')     as HTMLInputElement)?.value || undefined,
+                modem: {
+                    iccid:        (Modem?.                                querySelector('input[name="ICCID"]')            as HTMLInputElement)?.value || undefined,
+                    imsi:         (Modem?.                                querySelector('input[name="ISMI"]')             as HTMLInputElement)?.value || undefined,
+                    customData:    this.ParseCustomData((Modem?.          querySelector('input[name="customData"]')       as HTMLInputElement). value),
+                },
+                firmwareVersion:  (ChargingStation?.                      querySelector('input[name="firmwareVersion"]')  as HTMLInputElement)?.value || undefined,
+                customData:        this.ParseCustomData((ChargingStation?.querySelector('input[name="customData"]')       as HTMLInputElement). value),
+            },
+            reason:               (properties?.                           querySelector('select[name="reason"]')          as HTMLInputElement). value,
+            customData:            this.ParseCustomData((properties?.     querySelector('input[name="customData"]')       as HTMLInputElement). value),
         }
-        catch (ex) {
-            showException(ex, "SendBootNotificationRequest", this.ocppVersion);
+
+        return bootNotificationRequest;
+
+    }
+
+    public static SendHeartbeat(properties: HTMLDivElement) : messages.HeartBeatRequest
+    {
+
+        const heartBeatRequest: messages.HeartBeatRequest = {
+            customData:  this.ParseCustomData((properties?.querySelector('input[name="customData"]') as HTMLInputElement).value),
         }
+
+        return heartBeatRequest;
 
     }
 

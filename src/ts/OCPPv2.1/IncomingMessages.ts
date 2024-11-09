@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-import * as Interfaces  from '../Interfaces';
-import * as OCPPv2_1    from './IOCPPv2_1';
+import * as interfaces     from '../Interfaces';
+//import * as internal       from './Internal';
+import * as complex        from './Complex';
+import * as messages       from './Messages';
 
 
 export class IncomingMessages {
@@ -28,7 +30,7 @@ export class IncomingMessages {
     static ChangeAvailability(requestId:     string,
                               request:       { connectorId: number, type: string },
                               commandView:   HTMLDivElement,
-                              sendResponse:  Interfaces.SendResponseDelegate)
+                              sendResponse:  interfaces.SendResponseDelegate)
     {
 
         //#region Change Availability variants

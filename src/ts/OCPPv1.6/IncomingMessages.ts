@@ -15,21 +15,65 @@
  * limitations under the License.
  */
 
-import * as Interfaces     from '../Interfaces';
-import * as OCPPv1_6       from './IOCPPv1_6';
+import * as interfaces     from '../Interfaces';
+import * as internal       from './Internal';
+import * as complex        from './Complex';
+import * as messages       from './Messages';
 import * as Configuration  from './Configuration';
-
 
 export class IncomingMessages {
 
 
+    //#region Certificates
+
+    // DeleteCertificate
+    // GetInstalledCertificates
+    // InstallCertificate
+    // SendSignedCertificate
+
+    //#endregion
+
+    //#region Charging
+
+    // CancelReservation
+    // ClearChargingProfile
+    // GetCompositeSchedule
+    // RemoteStartTransaction
+    // RemoteStopTransaction
+    // ReserveNow
+    // SetChargingProfile
+    // UnlockConnector
+
+    //#endregion
+
+    //#region Common
+
+    //TransferData
+
+    //#endregion
+
+    //#region Firmware
+
+    // Reset
+    // UpdateSignedFirmware
+    // UpdateFirmware
+
+    //#endregion
+
+    //#region LocalList
+
+    // ClearCache
+    // GetLocalListVersion
+    // SendLocalList
+
+    //#endregion
 
     //#region Monitoring
 
     static ChangeAvailability(requestId:     string,
                               request:       { connectorId: number, type: string },
                               commandView:   HTMLDivElement,
-                              sendResponse:  Interfaces.SendResponseDelegate)
+                              sendResponse:  interfaces.SendResponseDelegate)
     {
 
         //#region Change Availability variants
@@ -98,10 +142,10 @@ export class IncomingMessages {
     }
 
     static ChangeConfiguration(requestId:      string,
-                               request:        { key: string, value: string },
+                               request:        messages.ChangeConfigurationRequest,
                                configuration:  Configuration.Configuration,
                                commandView:    HTMLDivElement,
-                               sendResponse:   Interfaces.SendResponseDelegate)
+                               sendResponse:   interfaces.SendResponseDelegate)
     {
 
         if (request.key && request.value)
@@ -117,53 +161,75 @@ export class IncomingMessages {
                     Configuration.ConfigurationValue.Create(request.value)
                 );
 
-                sendResponse(requestId, { "status": "Accepted" });
+                sendResponse(
+                    requestId,
+                    {
+                        status:  "Accepted"
+                    } satisfies messages.ChangeConfigurationResponse
+                );
 
             }
 
-            else if (entry.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.ReadWrite ||
-                     entry.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
+            else if (entry.AccessRights === internal.ConfigurationKeyAccessRights.ReadWrite ||
+                     entry.AccessRights === internal.ConfigurationKeyAccessRights.WriteOnly)
             {
 
                 entry.updateValue(
                     request.value
                 );
 
-                sendResponse(requestId, { "status": "Accepted" });
+                sendResponse(
+                    requestId,
+                    {
+                        status:  "Accepted"
+                    } satisfies messages.ChangeConfigurationResponse
+                );
 
             }
 
             else
-                sendResponse(requestId, { "status": "Rejected" });
+                sendResponse(
+                    requestId,
+                    {
+                        status:  "Rejected"
+                    } satisfies messages.ChangeConfigurationResponse
+                );
 
         }
 
         else
-            sendResponse(requestId, { "status": "Rejected" });
+            sendResponse(
+                requestId,
+                {
+                    status:  "Rejected"
+                } satisfies messages.ChangeConfigurationResponse
+            );
 
     }
 
+    // ExtenedTrigger
+
     static GetConfiguration(requestId:      string,
-                            request:        { key?: string[] },
+                            request:        messages.GetConfigurationRequest,
                             configuration:  Configuration.Configuration,
                             commandView:    HTMLDivElement,
-                            sendResponse:   Interfaces.SendResponseDelegate)
+                            sendResponse:   interfaces.SendResponseDelegate)
     {
 
         const keys = request.key ?? [];
 
-        const configurationKeys: Array<OCPPv1_6.IConfigurationKey>  = [];
-        const unknownKeys:       Array<string>                      = [];
+        const configurationKeys: Array<complex.KeyValue>  = [];
+        const unknownKeys:       Array<string>          = [];
 
         if (!keys || keys.length === 0)
         {
             for (const kvp of configuration.all())
             {
-                if (kvp[1].AccessRights !== OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
+                if (kvp[1].AccessRights !== internal.ConfigurationKeyAccessRights.WriteOnly)
                     configurationKeys.push({
                         key:       kvp[0],
                         value:     kvp[1].Value,
-                        readonly:  kvp[1].AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.ReadOnly
+                        readonly:  kvp[1].AccessRights === internal.ConfigurationKeyAccessRights.ReadOnly
                     });
             }
         }
@@ -174,7 +240,7 @@ export class IncomingMessages {
                 const configurationValue = configuration.get(key);
 
                 if (configurationValue === undefined ||
-                    configurationValue.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.WriteOnly)
+                    configurationValue.AccessRights === internal.ConfigurationKeyAccessRights.WriteOnly)
                 {
                     unknownKeys.push(key);
                 }
@@ -183,7 +249,7 @@ export class IncomingMessages {
                     configurationKeys.push({
                         key:       key,
                         value:     configurationValue.Value,
-                        readonly:  configurationValue.AccessRights === OCPPv1_6.ConfigurationKeyAccessRights.ReadOnly
+                        readonly:  configurationValue.AccessRights === internal.ConfigurationKeyAccessRights.ReadOnly
                     });
 
             }
@@ -192,12 +258,16 @@ export class IncomingMessages {
         sendResponse(
             requestId,
             {
-                "configurationKey":  configurationKeys,
-                "unknownKey":        unknownKeys
-            }
+                configurationKey:  configurationKeys,
+                unknownKey:        unknownKeys
+            } satisfies messages.GetConfigurationResponse
         );
 
     }
+
+    // GetDiagnostics
+    // GetLog
+    // Trigger
 
     //#endregion
 

@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import * as IOCPPv1_6   from './IOCPPv1_6';
+import * as IOCPPv1_6   from './Internal';
 
 export class ConfigurationValue implements IOCPPv1_6.IConfigurationValue {
 
     Value:         string;
     Type:          IOCPPv1_6.ConfigurationKeyTypes;
-    Required:      IOCPPv1_6.ConfigurationKeyRequired;
+    Required:      IOCPPv1_6.ConfigurationKeyRequirement;
     ReadOnly:      boolean;
     AccessRights:  IOCPPv1_6.ConfigurationKeyAccessRights;
     Unit?:         IOCPPv1_6.ConfigurationKeyUnits;
@@ -29,7 +29,7 @@ export class ConfigurationValue implements IOCPPv1_6.IConfigurationValue {
 
     constructor(Value:         string,
                 Type:          IOCPPv1_6.ConfigurationKeyTypes,
-                Required:      IOCPPv1_6.ConfigurationKeyRequired,
+                Required:      IOCPPv1_6.ConfigurationKeyRequirement,
                 AccessRights:  IOCPPv1_6.ConfigurationKeyAccessRights,
                 Unit?:         IOCPPv1_6.ConfigurationKeyUnits,
                 Description:   string = "") {
@@ -39,16 +39,17 @@ export class ConfigurationValue implements IOCPPv1_6.IConfigurationValue {
         this.Required      = Required;
         this.ReadOnly      = AccessRights === IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly;
         this.AccessRights  = AccessRights;
+        this.Unit          = Unit;
         this.Description   = Description;
 
     }
 
-    static Create(Value:  string) : ConfigurationValue {
+    static Create(Value: string) : ConfigurationValue {
 
         return new ConfigurationValue(
                    Value,
                    IOCPPv1_6.ConfigurationKeyTypes.String,
-                   IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                   IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                    IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                    undefined,
                    ""
@@ -112,6 +113,8 @@ export class ConfigurationKey {
     static readonly UnlockConnectorOnEVSideDisconnect        = "UnlockConnectorOnEVSideDisconnect";
     static readonly WebSocketPingInterval                    = "WebSocketPingInterval";
 
+    static readonly SupportedFileTransferProtocols           = "SupportedFileTransferProtocols";
+
     //#endregion
 
     //#region Local Auth List Management Profile
@@ -138,6 +141,19 @@ export class ConfigurationKey {
 
     //#endregion
 
+    //#region Security Extensions
+
+    static readonly AdditionalRootCertificateCheck           = "AdditionalRootCertificateCheck";
+    static readonly AuthorizationKey                         = "AuthorizationKey";
+    static readonly CertificateSignedMaxChainSize            = "CertificateSignedMaxChainSize";
+    static readonly CertificateStoreMaxLength                = "CertificateStoreMaxLength";
+    static readonly CpoName                                  = "CpoName";
+    static readonly SecurityProfile                          = "SecurityProfile";
+
+    //#endregion
+
+    // SupportedFileTransferProtocols (Not defined under 9.!!!)
+
 }
 
 
@@ -161,7 +177,7 @@ export class Configuration {
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "If this key exists, the Charge Point supports Unknown Offline Authorization. If this key reports a value of true, Unknown Offline Authorization is enabled."
@@ -173,7 +189,7 @@ export class Configuration {
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "If this key exists, the Charge Point supports an Authorization Cache. If this key reports a value of true, the Authorization Cache is enabled."
@@ -185,7 +201,7 @@ export class Configuration {
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite, //ReadOnly
                 undefined,
                 "Whether a remote request to start a transaction in the form of a RemoteStartTransaction.req message should be authorized beforehand like a local action to start a transaction."
@@ -197,7 +213,7 @@ export class Configuration {
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Times,
                 "Number of times to blink Charge Point lighting when signalling."
@@ -209,7 +225,7 @@ export class Configuration {
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 `Size (in seconds) of the clock-aligned data interval. This is the size (in seconds) of the set of evenly spaced aggregation intervals 
@@ -229,7 +245,7 @@ A value of "0" (numeric zero), by convention, is to be interpreted to mean that 
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 `Interval *from beginning of status: 'Preparing' until incipient Transaction is automatically canceled, due to failure of EV driver to
@@ -243,7 +259,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 `The phase rotation per connector in respect to the connector’s electrical meter (or if absent, the grid connection). Possible 
@@ -268,7 +284,7 @@ Values are reported in CSL, formatted: 0.RST, 1.RST, 2.RTS`
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 `Interval *from beginning of status: 'Preparing' until incipient Transaction is automatically canceled, due to failure of EV driver to
@@ -282,7 +298,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "false",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of items in a ConnectorPhaseRotation Configuration Key."
@@ -294,7 +310,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "1024",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of requested configuration keys in a GetConfiguration.req PDU."
@@ -306,7 +322,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 "Interval of inactivity (no OCPP exchanges) with central system after which the Charge Point should send a Heartbeat.req PDU."
@@ -318,7 +334,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Percentage,
                 "Percentage of maximum intensity at which to illuminate Charge Point lighting."
@@ -330,7 +346,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "Whether the Charge Point, when offline, will start a transaction for locally-authorized identifiers."
@@ -342,7 +358,7 @@ state, probably: 'Available'.`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 `Whether the Charge Point, when online, will start a transaction for locally-authorized identifiers without waiting for or
@@ -355,7 +371,7 @@ requesting an Authorize.conf from the Central System`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Wh,
                 "Maximum energy in Wh delivered when an identifier is invalidated by the Central System after start of a transaction."
@@ -367,7 +383,7 @@ requesting an Authorize.conf from the Central System`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "Clock-aligned measurand(s) to be included in a MeterValues.req PDU, every ClockAlignedDataInterval seconds."
@@ -379,7 +395,7 @@ requesting an Authorize.conf from the Central System`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of items in a MeterValuesAlignedData Configuration Key."
@@ -391,7 +407,7 @@ requesting an Authorize.conf from the Central System`
             new ConfigurationValue(
                 "300",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 `Interval between sampling of metering (or other) data, intended to be transmitted by "MeterValues" PDUs. For charging
@@ -406,7 +422,7 @@ A value of "0" (numeric zero), by convention, is to be interpreted to mean that 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "The number of physical charging connectors of this Charge Point."
@@ -418,7 +434,7 @@ A value of "0" (numeric zero), by convention, is to be interpreted to mean that 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Times,
                 "Number of times to retry an unsuccessful reset of the Charge Point."
@@ -430,7 +446,7 @@ A value of "0" (numeric zero), by convention, is to be interpreted to mean that 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "When set to true, the Charge Point SHALL administratively stop the transaction when the cable is unplugged from the EV."
@@ -442,7 +458,7 @@ A value of "0" (numeric zero), by convention, is to be interpreted to mean that 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 `Whether the Charge Point will stop an ongoing transaction when it receives
@@ -455,7 +471,7 @@ a non- Accepted authorization status in a StartTransaction.conf for this transac
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 `Clock-aligned periodic measurand(s) to be included in the TransactionData element of StopTransaction.req MeterValues.req
@@ -468,7 +484,7 @@ PDU for every ClockAlignedDataInterval of the Transaction.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of items in a StopTxnAlignedData Configuration Key."
@@ -480,7 +496,7 @@ PDU for every ClockAlignedDataInterval of the Transaction.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 `Sampled measurands to be included in the TransactionData element of StopTransaction.req PDU, every
@@ -493,7 +509,7 @@ MeterValueSampleInterval seconds from the start of the charging session.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of items in a StopTxnSampledData Configuration Key."
@@ -505,7 +521,7 @@ MeterValueSampleInterval seconds from the start of the charging session.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 `A list of supported Feature Profiles. Possible profile identifiers:
@@ -518,7 +534,7 @@ Core, FirmwareManagement, LocalAuthListManagement, Reservation, SmartCharging an
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of items in a SupportedFeatureProfiles Configuration Key."
@@ -530,7 +546,7 @@ Core, FirmwareManagement, LocalAuthListManagement, Reservation, SmartCharging an
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Times,
                 "How often the Charge Point should try to submit a transaction-related message when the Central System fails to process it."
@@ -542,7 +558,7 @@ Core, FirmwareManagement, LocalAuthListManagement, Reservation, SmartCharging an
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 "How long the Charge Point should wait before resubmitting a transaction-related message that the Central System failed to process."
@@ -554,7 +570,7 @@ Core, FirmwareManagement, LocalAuthListManagement, Reservation, SmartCharging an
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "When set to true, the Charge Point SHALL unlock the cable on Charge Point side when the cable is unplugged at the EV."
@@ -566,12 +582,25 @@ Core, FirmwareManagement, LocalAuthListManagement, Reservation, SmartCharging an
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 IOCPPv1_6.ConfigurationKeyUnits.Seconds,
                 `Only relevant for websocket implementations. 0 disables client side websocket Ping/Pong. In this case there is either no 
 ping/pong or the server initiates the ping and client responds with Pong. Positive values are interpreted as number of seconds 
 between pings. Negative values are not allowed. ChangeConfiguration is expected to return a REJECTED result.`
+            )
+        );
+
+
+        this.configuration.set(
+            ConfigurationKey.SupportedFileTransferProtocols,
+            new ConfigurationValue(
+                "HTTP, HTTPS",
+                IOCPPv1_6.ConfigurationKeyTypes.CSL,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
+                undefined,
+                "The list of supported File Transfer Protocols."
             )
         );
 
@@ -584,7 +613,7 @@ between pings. Negative values are not allowed. ChangeConfiguration is expected 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "Whether the Local Authorization List is enabled."
@@ -596,7 +625,7 @@ between pings. Negative values are not allowed. ChangeConfiguration is expected 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of identifications that can be stored in the Local Authorization List."
@@ -608,7 +637,7 @@ between pings. Negative values are not allowed. ChangeConfiguration is expected 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of identifications that can be send in a single SendLocalList.req."
@@ -624,7 +653,7 @@ between pings. Negative values are not allowed. ChangeConfiguration is expected 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
                 undefined,
                 "Whether the Local Authorization List is enabled."
@@ -640,7 +669,7 @@ between pings. Negative values are not allowed. ChangeConfiguration is expected 
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 `Max StackLevel of a ChargingProfile. The number defined also indicates the max allowed
@@ -653,7 +682,7 @@ number of installed charging schedules per Charging Profile Purposes.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.CSL,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "A list of supported quantities for use in a ChargingSchedule. Allowed values: 'Current' and 'Power'."
@@ -665,7 +694,7 @@ number of installed charging schedules per Charging Profile Purposes.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Required,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of periods that may be defined per ChargingSchedule."
@@ -677,7 +706,7 @@ number of installed charging schedules per Charging Profile Purposes.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Boolean,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "If defined and true, this Charge Point support switching from 3 to 1 phase during a Transaction."
@@ -689,10 +718,109 @@ number of installed charging schedules per Charging Profile Purposes.`
             new ConfigurationValue(
                 "1",
                 IOCPPv1_6.ConfigurationKeyTypes.Integer,
-                IOCPPv1_6.ConfigurationKeyRequired.Optional,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
                 IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
                 undefined,
                 "Maximum number of Charging profiles installed at a time."
+            )
+        );
+
+        //#endregion
+
+        //#region Security Extensions
+
+        this.configuration.set(
+            ConfigurationKey.AdditionalRootCertificateCheck,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.Boolean,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
+                undefined,
+                `When set to true, only one certificate (plus a temporarily fallback certificate) of certificateType CentralSystemRootCertificate is
+allowed to be installed at a time. When installing a new Central System Root certificate, the new certificate SHALL replace the
+old one AND the new Central System Root Certificate MUST be signed by the old Central System Root Certificate it is replacing.
+This configuration key is required unless only "security profile 1 - Unsecured Transport with Basic Authentication" is
+implemented. Please note that security profile 1 SHOULD only be used in trusted networks.
+Note: When using this additional security mechanism please be aware that the Charge Point needs to perform a full certificate chain
+verification when the new Central System Root certificate is being installed. However, once the old Central System Root certificate is set
+as the fallback certificate, the Charge Point needs to perform a partial certificate chain verification when verifying the server certificate
+during the TLS handshake. Otherwise the verification will fail once the old Central System Root (fallback) certificate is either expired or
+removed.`
+            )
+        );
+
+        this.configuration.set(
+            ConfigurationKey.AuthorizationKey,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.String,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.WriteOnly,
+                undefined,
+                `The basic authentication password is used for HTTP Basic Authentication, minimal length: 16 bytes.
+It is strongly advised to be randomly generated binary to get maximal entropy. Hexadecimal represented (20 bytes maximum,
+represented as a string of up to 40 hexadecimal digits).
+This configuration key is write-only, so that it cannot be accidentally stored in plaintext by the Central System when it reads out
+all configuration keys.
+This configuration key is required unless only "security profile 3 - TLS with client side certificates" is implemented.`
+            )
+        );
+
+        this.configuration.set(
+            ConfigurationKey.CertificateSignedMaxChainSize,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.Integer,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
+                undefined,
+                `This configuration key can be used to limit the size of the 'certificateChain' field from the CertificateSigned.req PDU. The value
+of this configuration key has a maximum limit of 10.000 characters.`
+            )
+        );
+
+        this.configuration.set(
+            ConfigurationKey.CertificateStoreMaxLength,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.Integer,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadOnly,
+                undefined,
+                "Maximum number of Root/CA certificates that can be installed in the Charge Point."
+            )
+        );
+
+        this.configuration.set(
+            ConfigurationKey.CpoName,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.String,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
+                undefined,
+                `This configuration key contains CPO name (or an organization trusted by the CPO) as used in the Charge Point Certificate. This
+is the CPO name that is to be used in a CSR send via: SignCertificate.req.`
+            )
+        );
+
+        this.configuration.set(
+            ConfigurationKey.SecurityProfile,
+            new ConfigurationValue(
+                "1",
+                IOCPPv1_6.ConfigurationKeyTypes.Integer,
+                IOCPPv1_6.ConfigurationKeyRequirement.Optional,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
+                undefined,
+                `This configuration key is used to set the security profile used by the Charge Point.
+The value of this configuration key can only be increased to a higher level, not decreased to a lower level, if the Charge Point
+receives a lower value then currently configured,the Charge Point SHALL Rejected the ChangeConfiguration.req
+Before accepting the new value, the Charge Point SHALL check if all the prerequisites for the new Security Profile are met, if
+not, the Charge Point SHALL Rejected the ChangeConfiguration.req.
+After the security profile was successfully changed, the Charge Point disconnects from the Central System and SHALL
+reconnect using the new configured Security Profile.
+Default, when no security profile is yet configured: 0.`
             )
         );
 

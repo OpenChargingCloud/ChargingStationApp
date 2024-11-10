@@ -29,6 +29,8 @@ import * as OCPPv2_1In    from './OCPPv2.1/IncomingMessages';
 import * as OCPPv2_1Out   from './OCPPv2.1/OutgoingMessages';
 
 import * as logger        from './Logger';
+import * as jobQueue      from './JobQueue';
+
 
 export class OCPPChargingStation {
 
@@ -114,8 +116,9 @@ export class OCPPChargingStation {
     //                                                                                                          this.showException
     //                                                                                                      );
 
-    private readonly diagnosticsLog:                                     logger.Logger                 = new logger.Logger(1000);
-    private readonly securityLog:                                        logger.Logger                 = new logger.Logger(1000);
+    private readonly jobQueue:                                           jobQueue.JobQueue             = new jobQueue.JobQueue(100);
+    private readonly diagnosticsLog:                                     logger.Logger                 = new logger.  Logger  (1000);
+    private readonly securityLog:                                        logger.Logger                 = new logger.  Logger  (1000);
 
     //#endregion
 
@@ -546,7 +549,16 @@ export class OCPPChargingStation {
                                                 );
                                             break;
 
-                                        // ExtendedTriggerMessage
+                                        case "ExtendedTriggerMessage": 
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.ExtendedTrigger(
+                                                    message[1],
+                                                    message[3],
+                                                    this.jobQueue,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            break;
 
                                         case "GetConfiguration":
                                             if (this.csmsOCPPVersion.value === this.OCPPv1_6)
@@ -561,7 +573,17 @@ export class OCPPChargingStation {
 
                                         // GetDiagnostics
                                         // GetLog
-                                        // Trigger
+
+                                        case "TriggerMessage": 
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.Trigger(
+                                                    message[1],
+                                                    message[3],
+                                                    this.jobQueue,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            break;
 
                                         //#endregion
 

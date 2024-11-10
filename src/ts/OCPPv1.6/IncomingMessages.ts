@@ -20,6 +20,8 @@ import * as internal       from './Internal';
 import * as complex        from './Complex';
 import * as messages       from './Messages';
 import * as Configuration  from './Configuration';
+import * as JobQueue       from '../JobQueue';
+import { stringify } from 'querystring';
 
 export class IncomingMessages {
 
@@ -71,7 +73,7 @@ export class IncomingMessages {
     //#region Monitoring
 
     static ChangeAvailability(requestId:     string,
-                              request:       { connectorId: number, type: string },
+                              request:       messages.ChangeAvailabilityRequest,
                               commandView:   HTMLDivElement,
                               sendResponse:  interfaces.SendResponseDelegate)
     {
@@ -207,7 +209,27 @@ export class IncomingMessages {
 
     }
 
-    // ExtenedTrigger
+    static ExtendedTrigger(requestId:     string,
+                           request:       messages.ExtendedTriggerMessageRequest,
+                           jobQueue:      JobQueue.JobQueue,
+                           commandView:   HTMLDivElement,
+                           sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = jobQueue.Add(
+                          requestId,
+                          "trigger",
+                          JSON.stringify(request)
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Accepted" : "Rejected"
+            } satisfies messages.ExtendedTriggerMessageResponse
+        );
+
+    }
 
     static GetConfiguration(requestId:      string,
                             request:        messages.GetConfigurationRequest,
@@ -267,7 +289,28 @@ export class IncomingMessages {
 
     // GetDiagnostics
     // GetLog
-    // Trigger
+
+    static Trigger(requestId:     string,
+                   request:       messages.TriggerMessageRequest,
+                   jobQueue:      JobQueue.JobQueue,
+                   commandView:   HTMLDivElement,
+                   sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = jobQueue.Add(
+                          requestId,
+                          "trigger",
+                          JSON.stringify(request)
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Accepted" : "Rejected"
+            } satisfies messages.TriggerMessageResponse
+        );
+
+    }
 
     //#endregion
 

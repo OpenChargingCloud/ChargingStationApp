@@ -15,14 +15,28 @@
  * limitations under the License.
  */
 
-export type JobType = "trigger" | "background";
+export type JobType     = "reset"                |
+                          "trigger"              |
+                          "changeAvailability"   |
+                          "getSecurityLog"       |
+                          "getDiagnosticsLog"    |
+                          "getDiagnostics"       |
+                          "updateFirmware"       |
+                          "updateSignedFirmware" |
+                          "background";
+
+export type JobSuccess  = "success"   |
+                          "cancelled" |
+                          "failed";
 
 interface Job {
-    id:         string;
-    timestamp:  Date;
-    type:       JobType,
-    todo:       string;
-    done:       Date|null;
+    id:           string;
+    timestamp:    Date;
+    type:         JobType,
+    request:      any;
+    context?:     any;
+    success?:     JobSuccess;
+    finishedAt?:  Date|null;
 }
 
 export class JobQueue {
@@ -40,19 +54,24 @@ export class JobQueue {
      * Adds a new job to the queue.
      *
      * @param type - The type of job.
-     * @param todo - The job to do.
+     * @param request - The request that created this job.
+     * @param context - Optional context for this job.
+     * 
+     * @returns Whether the job was added.
      */
-    public Add(id:    string,
-               type:  JobType,
-               todo:  string) : boolean
+    public Add(id:        string,
+               type:      JobType,
+               request:   any,
+               context?:  any) : boolean
     {
 
         this.logs[this.currentIndex] = {
             id,
             timestamp: new Date(),
             type,
-            todo,
-            done: null
+            request: request,
+            context,
+            finishedAt: null
         };
 
         // All jobs are stored until the queue reaches its max size.
@@ -67,6 +86,7 @@ export class JobQueue {
      * Marks a job as done.
      *
      * @param id - The id of the job to mark as done.
+     * 
      * @returns Whether the job was found and marked as done.
      */
     public Done(id: string) : boolean
@@ -77,7 +97,7 @@ export class JobQueue {
         if (job === undefined || job === null)
             return false;
 
-        job.done = new Date();
+        job.finishedAt = new Date();
 
         return true;
 
@@ -87,24 +107,34 @@ export class JobQueue {
      * Filters jobs based on optional criteria.
      * Any combination of parameters can be used for filtering.
      *
-     * @param doone - Whether they are done or not.
+     * @param finished - Whether they are done or not.
      * @param start - Filter jobs with timestamp on or after this date.
      * @param end - Filter jobs with timestamp on or before this date.
+     * @param filter - Additional filter function.
+     * 
      * @returns Filtered array of jobs that match the criteria.
      */
-    public Filter(done?:   boolean,
-                  start?:  Date,
-                  end?:    Date) : Job[]
+    public Filter(finished?:  boolean,
+                  start?:     Date,
+                  end?:       Date,
+                  filter?:    (job: Job) => boolean) : Job[]
     {
 
-        return this.logs.slice(this.currentIndex).concat(this.logs.slice(0, this.currentIndex))
-            .filter((log): log is Job => log !== null)
-            .filter(log => {
-                const matchesDone   = done  ? log.done      !== null  : true;
-                const matchesStart  = start ? log.timestamp  >= start : true;
-                const matchesEnd    = end   ? log.timestamp  <= end   : true;
-                return matchesDone && matchesStart && matchesEnd;
-            });
+        return this.logs.slice (this.currentIndex).concat(this.logs.slice(0, this.currentIndex))
+                        .filter((log): log is Job => log !== null)
+                        .filter(log => {
+
+                            const matchesDone    = finished ? log.finishedAt !== null  : true;
+                            const matchesStart   = start    ? log.timestamp   >= start : true;
+                            const matchesEnd     = end      ? log.timestamp   <= end   : true;
+                            const matchesFilter  = filter   ? filter(log)              : true;
+
+                            return matchesDone  &&
+                                   matchesStart &&
+                                   matchesEnd   &&
+                                   matchesFilter;
+
+                        });
 
     }
 

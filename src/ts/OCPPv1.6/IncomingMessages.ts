@@ -17,11 +17,14 @@
 
 import * as interfaces     from '../Interfaces';
 import * as internal       from './Internal';
+import * as types          from './Types';
 import * as complex        from './Complex';
 import * as messages       from './Messages';
 import * as Configuration  from './Configuration';
 import * as JobQueue       from '../JobQueue';
-import { stringify } from 'querystring';
+import * as AuthCache      from './AuthCache';
+import * as LocalList      from './LocalList';
+
 
 export class IncomingMessages {
 
@@ -56,17 +59,205 @@ export class IncomingMessages {
 
     //#region Firmware
 
-    // Reset
-    // UpdateSignedFirmware
-    // UpdateFirmware
+    static Reset(requestId:     string,
+                 request:       messages.ResetRequest,
+                 jobQueue:      JobQueue.JobQueue,
+                 commandView:   HTMLDivElement,
+                 sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = jobQueue.Add(
+                          requestId,
+                          "reset",
+                          request
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Accepted" : "Rejected"
+            } satisfies messages.ResetResponse
+        );
+
+        return;
+
+        //#region Accept or Reject
+
+        const buttonsDiv        = document.createElement('div');
+        buttonsDiv.className    = "buttons";
+
+        const buttonAccept      = document.createElement("button");
+        buttonAccept.innerHTML  = "Accept";
+        buttonAccept.onclick    = () => {
+            buttonAccept.disabled = true;
+            buttonReject.disabled = true;
+            sendResponse(requestId, { "status": "Accepted" });
+        }
+        buttonsDiv.appendChild(buttonAccept);
+
+        const buttonReject      = document.createElement("button");
+        buttonReject.innerHTML  = "Reject";
+        buttonReject.onclick    = () => {
+            buttonAccept.disabled = true;
+            buttonReject.disabled = true;
+            sendResponse(requestId, { "status": "Rejected" });
+        }
+        buttonsDiv.appendChild(buttonReject);
+
+        commandView.appendChild(buttonsDiv);
+
+        //#endregion
+
+    }
+
+    static UpdateSignedFirmware(requestId:      string,
+                                request:        messages.SignedUpdateFirmwareRequest,
+                                configuration:  Configuration.Configuration,
+                                jobQueue:       JobQueue.JobQueue,
+                                commandView:    HTMLDivElement,
+                                sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        //ToDo: "InvalidCertificate"
+        //      "RevokedCertificate"
+
+        var existingJobs = jobQueue.Filter(
+                               false,
+                               undefined,
+                               undefined,
+                               job => job.type === "updateSignedFirmware"
+                           );
+
+        for (const existingJob of existingJobs)
+        {
+            existingJob.success    = "cancelled";
+            existingJob.finishedAt = new Date();
+        }
+
+        const success = jobQueue.Add(
+                            requestId,
+                            "updateSignedFirmware",
+                            request
+                        );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? (existingJobs.length > 0 ? "AcceptedCanceled" : "Accepted") : "Rejected",
+             } satisfies messages.SignedUpdateFirmwareResponse
+        );
+
+    }
+
+    static UpdateFirmware(requestId:      string,
+                          request:        messages.UpdateFirmwareRequest,
+                          configuration:  Configuration.Configuration,
+                          jobQueue:       JobQueue.JobQueue,
+                          commandView:    HTMLDivElement,
+                          sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        const success = jobQueue.Add(
+                            requestId,
+                            "updateFirmware",
+                            request
+                        );
+
+        sendResponse(
+            requestId,
+            { } satisfies messages.UpdateFirmwareResponse
+        );
+
+    }
 
     //#endregion
 
     //#region LocalList
 
-    // ClearCache
-    // GetLocalListVersion
-    // SendLocalList
+    static ClearCache(requestId:      string,
+                      request:        messages.ClearCacheRequest,
+                      configuration:  Configuration.Configuration,
+                      authCache:      AuthCache.AuthCache,
+                      commandView:    HTMLDivElement,
+                      sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        if (configuration.get("LocalAuthListEnabled")?.Value === "true")
+        {
+
+            authCache.Clear();
+
+            sendResponse(
+                requestId,
+                {
+                    status: "Accepted"
+                } satisfies messages.ClearCacheResponse
+            );
+
+        }
+
+        sendResponse(
+            requestId,
+            {
+                status: "Rejected"
+            } satisfies messages.ClearCacheResponse
+        );
+
+    }
+
+    static GetLocalListVersion(requestId:      string,
+                               request:        messages.GetLocalListVersionRequest,
+                               configuration:  Configuration.Configuration,
+                               localList:      LocalList.LocalList,
+                               commandView:    HTMLDivElement,
+                               sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        sendResponse(
+            requestId,
+            {
+                listVersion: localList.Version()
+            } satisfies messages.GetLocalListVersionResponse
+        );
+
+    }
+
+    static SendLocalList(requestId:      string,
+                         request:        messages.SendLocalListRequest,
+                         configuration:  Configuration.Configuration,
+                         localList:      LocalList.LocalList,
+                         commandView:    HTMLDivElement,
+                         sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        //ToDo: "VersionMismatch" => Version number in the request for a differential update is less or equal then version number of current list.
+
+        if (configuration.get("LocalAuthListEnabled")?.Value === "true")
+        {
+
+            const success = localList.ProcessAuthorizationData(
+                                request.listVersion,
+                                request.localAuthorisationList,
+                                request.updateType
+                            );
+
+            sendResponse(
+                requestId,
+                {
+                    status: success ? "Accepted" : "Failed"
+                } satisfies messages.SendLocalListResponse
+            );
+
+        }
+
+        sendResponse(
+            requestId,
+            {
+                status: "NotSupported"
+            } satisfies messages.SendLocalListResponse
+        );
+
+    }
 
     //#endregion
 
@@ -74,33 +265,29 @@ export class IncomingMessages {
 
     static ChangeAvailability(requestId:     string,
                               request:       messages.ChangeAvailabilityRequest,
+                              delegate:      internal.ChangeAvailabilityDelegate,
+                              connectors:    Array<types.AvailabilityType>,
                               commandView:   HTMLDivElement,
                               sendResponse:  interfaces.SendResponseDelegate)
     {
 
-        //#region Change Availability variants
-
         const textView = document.createElement('div');
         textView.className = "description";
 
-        textView.innerHTML = `Set connector ${request.connectorId} `;
-
-        switch (request.type)
+        if (request.connectorId > 0)
         {
-
-            case "Inoperative":
-                textView.innerHTML += "inoperative";
-                break;
-
-            case "Operative":
-                textView.innerHTML += "operative";
-                break;
-
+            textView.innerHTML = `Change connector '${request.connectorId}' availability: ${request.type}`;
+            connectors[request.connectorId - 1] = request.type;
+        }
+        else
+        {
+            textView.innerHTML = `Change charging station availability: ${request.type}`;
+            delegate(request.type);
         }
 
         commandView.appendChild(textView);
 
-        //#endregion
+        return;
 
         //#region Accept, Reject or Schedule
 
@@ -219,7 +406,7 @@ export class IncomingMessages {
         var success = jobQueue.Add(
                           requestId,
                           "trigger",
-                          JSON.stringify(request)
+                          request
                       );
 
         sendResponse(
@@ -287,8 +474,73 @@ export class IncomingMessages {
 
     }
 
-    // GetDiagnostics
-    // GetLog
+    static GetDiagnostics(requestId:      string,
+                          request:        messages.GetDiagnosticsRequest,
+                          configuration:  Configuration.Configuration,
+                          jobQueue:       JobQueue.JobQueue,
+                          filename:       string,
+                          commandView:    HTMLDivElement,
+                          sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        const success = jobQueue.Add(
+                            requestId,
+                            "getDiagnostics",
+                            request,
+                            { filename: filename }
+                        );
+
+        sendResponse(
+            requestId,
+            {
+                fileName:  success ? filename : undefined
+            } satisfies messages.GetDiagnosticsResponse
+        );
+
+    }
+
+    static GetLog(requestId:      string,
+                  request:        messages.GetLogRequest,
+                  configuration:  Configuration.Configuration,
+                  jobQueue:       JobQueue.JobQueue,
+                  filename:       string,
+                  commandView:    HTMLDivElement,
+                  sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        var existingJobs = jobQueue.Filter(
+                               false,
+                               undefined,
+                               undefined,
+                               job => job.type === (request.logType === "SecurityLog"
+                                                        ? "getSecurityLog"
+                                                        : "getDiagnosticsLog")
+                           );
+
+        for (const existingJob of existingJobs)
+        {
+            existingJob.success    = "cancelled";
+            existingJob.finishedAt = new Date();
+        }
+
+        const success = jobQueue.Add(
+                            requestId,
+                            request.logType === "SecurityLog"
+                                ? "getSecurityLog"
+                                : "getDiagnosticsLog",
+                            request,
+                            { filename: filename }
+                        );
+
+        sendResponse(
+            requestId,
+            {
+                status:    success ? (existingJobs.length > 0 ? "AcceptedCanceled" : "Accepted") : "Rejected",
+                filename:  success ? filename : undefined
+            } satisfies messages.GetLogResponse
+        );
+
+    }
 
     static Trigger(requestId:     string,
                    request:       messages.TriggerMessageRequest,
@@ -300,7 +552,7 @@ export class IncomingMessages {
         var success = jobQueue.Add(
                           requestId,
                           "trigger",
-                          JSON.stringify(request)
+                          request
                       );
 
         sendResponse(

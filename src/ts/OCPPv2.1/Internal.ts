@@ -18,49 +18,6 @@
 import * as types from './Types';
 
 
-export enum ConfigurationKeyAccessRights
-{
-    ReadWrite,
-    ReadOnly,
-    WriteOnly
-}
-
-export enum ConfigurationKeyRequirement
-{
-    Required,
-    Optional
-}
-
-export enum ConfigurationKeyTypes
-{
-    Boolean,
-    Integer,
-    String,
-    CSL
-}
-
-export enum ConfigurationKeyUnits
-{
-    Times,
-    Seconds,
-    Percentage,
-    Wh
-}
-
-export interface IConfigurationValue {
-
-    Value:          string
-    Type:           ConfigurationKeyTypes
-    Required:       ConfigurationKeyRequirement
-    AccessRights:   ConfigurationKeyAccessRights
-    Description:    string
-
-    updateValue(newValue: string): void;
-
-}
-
-
-
-export interface ChangeAvailabilityDelegate {
-    (newAvailability: types.AvailabilityType): void;
+export interface ChangeOperationalStatusDelegate {
+    (newOperationalStatus: types.OperationalStatus): void;
 }

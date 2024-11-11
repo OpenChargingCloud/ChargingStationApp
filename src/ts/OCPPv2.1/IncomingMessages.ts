@@ -16,46 +16,100 @@
  */
 
 import * as interfaces     from '../Interfaces';
-//import * as internal       from './Internal';
+import * as internal       from './Internal';
+import * as types          from './Types';
 import * as complex        from './Complex';
 import * as messages       from './Messages';
+//import * as Configuration  from './Configuration';
+import * as JobQueue       from '../JobQueue';
 
 
 export class IncomingMessages {
 
 
+    //#region Firmware
+
+    static Reset(requestId:     string,
+                 request:       messages.ResetRequest,
+                 jobQueue:      JobQueue.JobQueue,
+                 commandView:   HTMLDivElement,
+                 sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = jobQueue.Add(
+                          requestId,
+                          "reset",
+                          JSON.stringify(request)
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Scheduled" : "Rejected"
+            } satisfies messages.ResetResponse
+        );
+
+        return;
+
+        //#region Accept or Reject
+
+        const buttonsDiv        = document.createElement('div');
+        buttonsDiv.className    = "buttons";
+
+        const buttonAccept      = document.createElement("button");
+        buttonAccept.innerHTML  = "Accept";
+        buttonAccept.onclick    = () => {
+            buttonAccept.disabled = true;
+            buttonReject.disabled = true;
+            sendResponse(requestId, { "status": "Accepted" });
+        }
+        buttonsDiv.appendChild(buttonAccept);
+
+        const buttonReject      = document.createElement("button");
+        buttonReject.innerHTML  = "Reject";
+        buttonReject.onclick    = () => {
+            buttonAccept.disabled = true;
+            buttonReject.disabled = true;
+            sendResponse(requestId, { "status": "Rejected" });
+        }
+        buttonsDiv.appendChild(buttonReject);
+
+        commandView.appendChild(buttonsDiv);
+
+        //#endregion
+
+    }
+
+    //#endregion
 
     //#region Monitoring
 
     static ChangeAvailability(requestId:     string,
-                              request:       { connectorId: number, type: string },
+                              request:       messages.ChangeAvailabilityRequest,
+                              delegate:      internal.ChangeOperationalStatusDelegate,
+                              connectors:    Array<types.OperationalStatus>,
                               commandView:   HTMLDivElement,
                               sendResponse:  interfaces.SendResponseDelegate)
     {
 
-        //#region Change Availability variants
-
         const textView = document.createElement('div');
         textView.className = "description";
 
-        textView.innerHTML = `Set connector ${request.connectorId} `;
-
-        switch (request.type)
+        if (request.evse)
         {
-
-            case "Inoperative":
-                textView.innerHTML += "inoperative";
-                break;
-
-            case "Operative":
-                textView.innerHTML += "operative";
-                break;
-
+            textView.innerHTML = `Change EVSE '${request.evse.id}' availability: ${request.operationalStatus}`;
+            connectors[request.evse.id - 1] = request.operationalStatus;
+        }
+        else
+        {
+            textView.innerHTML = `Change charging station availability: ${request.operationalStatus}`;
+            delegate(request.operationalStatus);
         }
 
         commandView.appendChild(textView);
 
-        //#endregion
+
+        return;
 
         //#region Accept, Reject or Schedule
 

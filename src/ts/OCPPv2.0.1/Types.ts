@@ -383,10 +383,7 @@ export type ChangeAvailabilityStatus       = "Accepted" |                       
 
 
 export type ResetStatus                    = "Accepted" |                              // Command will be executed.
-                                             "Rejected" |                              // Command will not be executed.
-                                             "Scheduled";                              // Reset command is scheduled, Charging Station is busy with a process that cannot be
-                                                                                       // interrupted at the moment. Reset will be executed when process is finished.
+                                             "Rejected";                               // Command will not be executed.
 
 export type ResetType                      = "Immediate" |                             // Immediate reset of the Charging Station or EVSE.
-                                             "OnIdle"   |                              // Delay reset until no more transactions are active.
-                                             "ImmediateAndResume";                     // Immediate reset and resume transaction(s) afterwards.
+                                             "OnIdle";                                 // Delay reset until no more transactions are active.

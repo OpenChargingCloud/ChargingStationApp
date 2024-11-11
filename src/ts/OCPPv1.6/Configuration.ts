@@ -154,6 +154,10 @@ export class ConfigurationKey {
 
     // SupportedFileTransferProtocols (Not defined under 9.!!!)
 
+
+    static readonly ChargingStationId                        = "ChargingStationId";
+
+
 }
 
 
@@ -827,6 +831,20 @@ Default, when no security profile is yet configured: 0.`
         //#endregion
 
         //#endregion
+
+
+        this.configuration.set(
+            ConfigurationKey.ChargingStationId,
+            new ConfigurationValue(
+                "test",
+                IOCPPv1_6.ConfigurationKeyTypes.String,
+                IOCPPv1_6.ConfigurationKeyRequirement.Required,
+                IOCPPv1_6.ConfigurationKeyAccessRights.ReadWrite,
+                undefined,
+                "The name of the charging station."
+            )
+        );
+
 
     }
 

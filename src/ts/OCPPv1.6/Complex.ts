@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-import * as exp from 'constants';
 import * as types from './Types';
 
 

@@ -229,3 +229,32 @@ export interface TransactionEventRequest {
     meterValue?:                        complex.MeterValue[],
     customData?:                        complex.ICustomData
 }
+
+
+
+
+
+
+
+export interface ChangeAvailabilityRequest {
+    operationalStatus:          types.OperationalStatus,
+    evse?:                      complex.EVSE
+}
+
+export interface ChangeAvailabilityResponse {
+    status:                     types.ChangeAvailabilityStatus,
+    statusInfo?:                complex.StatusInfo
+}
+
+
+
+export interface ResetRequest {
+    type:                       types.ResetType
+    evseId?:                    types.EVSEId
+}
+
+export interface ResetResponse {
+    status:                     types.ResetStatus
+    statusInfo?:                complex.StatusInfo
+}
+

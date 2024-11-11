@@ -15,21 +15,24 @@
  * limitations under the License.
  */
 
-import * as interfaces    from './Interfaces';
+import * as interfaces        from './Interfaces';
 
-import * as OCPPv1_6      from './OCPPv1.6/Internal';
-import * as OCPPv1_6In    from './OCPPv1.6/IncomingMessages';
-import * as OCPPv1_6Out   from './OCPPv1.6/OutgoingMessages';
-import * as SettingsV1_6  from './OCPPv1.6/Configuration';
+import * as OCPPv1_6Types     from './OCPPv1.6/Types';
+import * as OCPPv1_6Complex   from './OCPPv1.6/Complex';
+import * as OCPPv1_6In        from './OCPPv1.6/IncomingMessages';
+import * as OCPPv1_6Out       from './OCPPv1.6/OutgoingMessages';
+import * as SettingsV1_6      from './OCPPv1.6/Configuration';
 
-import * as OCPPv2_0_1    from './OCPPv2.0.1/IOCPPv2_0_1';
+import * as OCPPv2_0_1Types   from './OCPPv2.0.1/Types';
+import * as OCPPv2_0_1Complex from './OCPPv2.0.1/Complex';
 
-import * as OCPPv2_1      from './OCPPv2.1/Complex';
-import * as OCPPv2_1In    from './OCPPv2.1/IncomingMessages';
-import * as OCPPv2_1Out   from './OCPPv2.1/OutgoingMessages';
+import * as OCPPv2_1Types     from './OCPPv2.1/Types';
+import * as OCPPv2_1Complex   from './OCPPv2.1/Complex';
+import * as OCPPv2_1In        from './OCPPv2.1/IncomingMessages';
+import * as OCPPv2_1Out       from './OCPPv2.1/OutgoingMessages';
 
-import * as logger        from './Logger';
-import * as jobQueue      from './JobQueue';
+import * as logger            from './Logger';
+import * as jobQueue          from './JobQueue';
 
 
 export class OCPPChargingStation {
@@ -103,22 +106,29 @@ export class OCPPChargingStation {
     private readonly WriteToScreen:                                      interfaces.WriteToScreenDelegate;
 
 
-    private          requestId:                                          number  = 100000;
+    private          requestId:                                          number                              = 100000;
 
-    private readonly ocpp_v1_6_settings:                                 SettingsV1_6.Configuration    = new SettingsV1_6.Configuration();
-    // private readonly ocpp_v1_6_messagesOut:                              OCPPv1_6Out.OutgoingMessages  = new OCPPv1_6Out.OutgoingMessages(
-    //                                                                                                          this.sendRequest,
-    //                                                                                                          this.showException
-    //                                                                                                      );
+    private readonly ocpp_v1_6_settings:                                 SettingsV1_6.Configuration          = new SettingsV1_6.Configuration();
+    // private readonly ocpp_v1_6_messagesOut:                              OCPPv1_6Out.OutgoingMessages        = new OCPPv1_6Out.OutgoingMessages(
+    //                                                                                                                this.sendRequest,
+    //                                                                                                                this.showException
+    //                                                                                                            );
 
-    // private readonly ocpp_v2_1_messagesOut:                              OCPPv2_1Out.OutgoingMessages  = new OCPPv2_1Out.OutgoingMessages(
-    //                                                                                                          this.sendRequest,
-    //                                                                                                          this.showException
-    //                                                                                                      );
+    // private readonly ocpp_v2_1_messagesOut:                              OCPPv2_1Out.OutgoingMessages        = new OCPPv2_1Out.OutgoingMessages(
+    //                                                                                                                this.sendRequest,
+    //                                                                                                                this.showException
+    //                                                                                                            );
 
-    private readonly jobQueue:                                           jobQueue.JobQueue             = new jobQueue.JobQueue(100);
-    private readonly diagnosticsLog:                                     logger.Logger                 = new logger.  Logger  (1000);
-    private readonly securityLog:                                        logger.Logger                 = new logger.  Logger  (1000);
+    private readonly jobQueue:                                           jobQueue.JobQueue                   = new jobQueue.JobQueue(100);
+    private readonly diagnosticsLog:                                     logger.Logger                       = new logger.  Logger  (1000);
+    private readonly securityLog:                                        logger.Logger                       = new logger.  Logger  (1000);
+
+
+    private          ocpp_v1_6_availability:                             OCPPv1_6Types.AvailabilityType      = "Inoperative";
+    private          ocpp_v1_6_connectorAvailabilities:                  OCPPv1_6Types.AvailabilityType[]    = [ "Inoperative" ];
+
+    private          ocpp_v2_x_operationalStatus:                        OCPPv2_1Types.OperationalStatus     = "Inoperative";
+    private          ocpp_v2_x_evseOperationalStatus:                    OCPPv2_1Types.OperationalStatus[]   = [ "Inoperative" ];
 
     //#endregion
 
@@ -459,58 +469,23 @@ export class OCPPChargingStation {
 
                                         //#region Firmware
 
-                                        case "Reset": {
-
-                                            //#region Reset variants
-
-                                            const textView = document.createElement('div');
-                                            textView.className = "description";
-
-                                            switch (message[3]["type"])
-                                            {
-
-                                                case "Soft":
-                                                    textView.innerHTML = "Soft Reset Request";
-                                                    break;
-
-                                                case "Hard":
-                                                    textView.innerHTML = "Hard Reset Request";
-                                                    break;
-
-                                            }
-
-                                            commandView.appendChild(textView);
-
-                                            //#endregion
-
-                                            //#region Accept or Reject
-
-                                            const buttonsDiv        = document.createElement('div');
-                                            buttonsDiv.className    = "buttons";
-
-                                            const buttonAccept      = document.createElement("button");
-                                            buttonAccept.innerHTML  = "Accept";
-                                            buttonAccept.onclick    = () => {
-                                                buttonAccept.disabled = true;
-                                                buttonReject.disabled = true;
-                                                this.sendResponse(message[1], { "status": "Accepted" });
-                                            }
-                                            buttonsDiv.appendChild(buttonAccept);
-
-                                            const buttonReject      = document.createElement("button");
-                                            buttonReject.innerHTML  = "Reject";
-                                            buttonReject.onclick    = () => {
-                                                buttonAccept.disabled = true;
-                                                buttonReject.disabled = true;
-                                                this.sendResponse(message[1], { "status": "Rejected" });
-                                            }
-                                            buttonsDiv.appendChild(buttonReject);
-
-                                            commandView.appendChild(buttonsDiv);
-
-                                            //#endregion
-
-                                            }
+                                        case "Reset":
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.Reset(
+                                                    message[1],
+                                                    message[3],
+                                                    this.jobQueue,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            else if (this.csmsOCPPVersion.value === this.OCPPv2_1)
+                                                OCPPv2_1In.IncomingMessages.Reset(
+                                                    message[1],
+                                                    message[3],
+                                                    this.jobQueue,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
                                             break;
 
                                         // SignedUpdateFirmware
@@ -533,6 +508,17 @@ export class OCPPChargingStation {
                                                 OCPPv1_6In.IncomingMessages.ChangeAvailability(
                                                     message[1],
                                                     message[3],
+                                                    (newAvailability) => { this.ocpp_v1_6_availability = newAvailability; },
+                                                    this.ocpp_v1_6_connectorAvailabilities,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            else if (this.csmsOCPPVersion.value === this.OCPPv2_1)
+                                                OCPPv2_1In.IncomingMessages.ChangeAvailability(
+                                                    message[1],
+                                                    message[3],
+                                                    (newOperationalStatus) => { this.ocpp_v2_x_operationalStatus = newOperationalStatus; },
+                                                    this.ocpp_v2_x_evseOperationalStatus,
                                                     commandView,
                                                     this.sendResponse
                                                 );
@@ -571,8 +557,37 @@ export class OCPPChargingStation {
                                                 );
                                             break;
 
-                                        // GetDiagnostics
-                                        // GetLog
+                                        case "GetDiagnostics": {
+                                            const chargingStationId  = this.ocpp_v1_6_settings.get("ChargingStationId")?.Value ?? "Unknown";
+                                            const filename           = `${chargingStationId}_${this.currenteTimestamp()}_${this.randomString(16)}.log`;
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.GetDiagnostics(
+                                                    message[1],
+                                                    message[3],
+                                                    this.ocpp_v1_6_settings,
+                                                    this.jobQueue,
+                                                    filename,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            }
+                                            break;
+
+                                        case "GetLog": {
+                                            const chargingStationId  = this.ocpp_v1_6_settings.get("ChargingStationId")?.Value ?? "Unknown";
+                                            const filename           = `${chargingStationId}_${this.currenteTimestamp()}_${this.randomString(16)}.log`;
+                                            if (this.csmsOCPPVersion.value === this.OCPPv1_6)
+                                                OCPPv1_6In.IncomingMessages.GetLog(
+                                                    message[1],
+                                                    message[3],
+                                                    this.ocpp_v1_6_settings,
+                                                    this.jobQueue,
+                                                    filename,
+                                                    commandView,
+                                                    this.sendResponse
+                                                );
+                                            }
+                                            break;
 
                                         case "TriggerMessage": 
                                             if (this.csmsOCPPVersion.value === this.OCPPv1_6)
@@ -898,7 +913,7 @@ export class OCPPChargingStation {
 
     }
 
-    private ParseCustomData(CustomData?: string | null): OCPPv2_0_1.ICustomData|undefined
+    private ParseCustomData(CustomData?: string | null): OCPPv2_1Complex.ICustomData|undefined
     {
 
         if (CustomData == null)
@@ -964,6 +979,32 @@ export class OCPPChargingStation {
 
         if (ex.stack !== undefined)
             this.WriteToScreen(ex.stack);
+
+    }
+
+    public randomString(length = 12) : string {
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let   filename   = '';
+
+        for (let i = 0; i < length; i++)
+            filename += characters.charAt(Math.floor(Math.random() * characters.length));
+
+        return filename;
+
+    };
+
+    public currenteTimestamp(): string {
+
+        const now     = new Date();
+        const year    = now.getFullYear();
+        const month   = String(now.getMonth() + 1).padStart(2, '0');  // Months are zero-based
+        const day     = String(now.getDate()).     padStart(2, '0');
+        const hour    = String(now.getHours()).    padStart(2, '0');
+        const minute  = String(now.getMinutes()).  padStart(2, '0');
+        const second  = String(now.getSeconds()).  padStart(2, '0');
+
+        return `${year}${month}${day}_${hour}${minute}${second}`;
 
     }
 

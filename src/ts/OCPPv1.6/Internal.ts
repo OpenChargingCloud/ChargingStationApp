@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import * as types from './Types';
+import * as types   from './Types';
+import * as complex from './Complex';
 
 
 export enum ConfigurationKeyAccessRights
@@ -61,6 +62,71 @@ export interface IConfigurationValue {
 
 
 
-export interface ChangeAvailabilityDelegate {
-    (newAvailability: types.AvailabilityType): void;
+export interface ChangeChargingStationAvailabilityDelegate {
+    (newAvailability:  types.AvailabilityType): void;
+}
+
+export interface ChangeConnectorsAvailabilityDelegate {
+    (connectorId:      types.ConnectorId,
+     newAvailability:  types.AvailabilityType): void;
+}
+
+export interface ReservationDelegate {
+    (connectorId:      types.ConnectorId,
+     reservationId:    types.ReservationId,
+     expiryDate:       types.Timestamp,
+     idTag:            types.IdToken,
+     parentIdTag?:     types.IdToken): types.ReservationStatus;
+}
+
+export interface ChargingSession {
+    Id:                number;
+    IdTag:             types.IdToken;
+    ChargingProfile?:  complex.ChargingProfile;
+}
+
+
+export class OCPPConnector {
+
+    constructor(Id: number) {
+        this.Id = Id;
+    }
+
+    Id:                number;
+    Availability:      types.AvailabilityType     = "Inoperative";
+    Status:            types.ChargePointStatus    = "Unavailable";
+    Session?:          ChargingSession;
+    Reservation?:      OCPPReservation;
+    ChargingProfiles:  Map<types.ChargingProfileId, complex.ChargingProfile>  = new Map;
+
+    public StartSession(idTag:             types.IdToken,
+                        chargingProfile?:  complex.ChargingProfile) : types.RemoteStartStopStatus
+    {
+
+        if (this.Status === "Available" ||
+            this.Status === "Reserved")
+        {
+
+            this.Status   = "Occupied";
+            this.Session  = {
+                                Id:               1,
+                                IdTag:            idTag,
+                                ChargingProfile:  chargingProfile
+                            };
+
+            return "Accepted";
+
+        }
+
+        return "Rejected";
+
+    }
+
+}
+
+export interface OCPPReservation {
+    id:             types.ReservationId,
+    expiryDate:     types.Timestamp,
+    idTag:          types.IdToken,
+    parentIdTag?:   types.IdToken
 }

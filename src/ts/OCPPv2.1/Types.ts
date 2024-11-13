@@ -390,3 +390,33 @@ export type ResetStatus                    = "Accepted" |                       
 export type ResetType                      = "Immediate" |                             // Immediate reset of the Charging Station or EVSE.
                                              "OnIdle"   |                              // Delay reset until no more transactions are active.
                                              "ImmediateAndResume";                     // Immediate reset and resume transaction(s) afterwards.
+
+
+
+
+export type DeleteCertificateStatus        = "Accepted" |                              // Normal successful completion (no errors).
+                                             "Failed" |                                // Processing failure.
+                                             "NotFound";                               // Requested resource not found.
+
+export type GetCertificateIdUse            = "V2GRootCertificate" |                    // Use for certificate of the ISO 15118 V2G Root.
+                                             "MORootCertificate" |                     // Use for certificate from an eMobility Service provider. To support PnC charging with contracts from service providers that not derived their certificates from the V2G root.
+                                             "CSMSRootCertificate" |                   // Root certificate for verification of the CSMS certificate.
+                                             "V2GCertificateChain" |                   // ISO 15118 V2G certificate chain (excluding the V2GRootCertificate).
+                                             "ManufacturerRootCertificate" |           // Root certificate for verification of the Manufacturer certificate.
+                                             "OEMRootCertificate" |                    // v2.1 OEM root certificate for 2-way TLS with EV.
+                                             string;
+
+export type GetInstalledCertificateStatus  = "Accepted" |                              // Normal successful completion (no errors).
+                                             "NotFound";                               // Requested certificate not found.
+
+export type InstallCertificateUse          = "V2GRootCertificate" |                    // Use for certificate of the ISO 15118 V2G Root. A V2G Charging Station Certificate MUST be derived from one of the installed V2GRootCertificate certificates.
+                                             "MORootCertificate" |                     // Use for certificate from an eMobility Service provider. To support PnC charging with contracts from service providers that not derived their certificates from the V2G root.
+                                             "ManufacturerRootCertificate" |           // Root certificate for verification of the Manufacturer certificate.
+                                             "CSMSRootCertificate" |                   // Root certificate, used by the CA to sign the CSMS and Charging Station certificate.
+                                             "OEMRootCertificate" |                    // v2.1 OEM root certificate for 2-way TLS with EV.
+                                             string;
+
+export type InstallCertificateStatus       = "Accepted" |                              // The installation of the certificate succeeded.
+                                             "Rejected" |                              // The certificate is invalid and/or incorrect OR the CSO tries to install more certificates than allowed.
+                                             "Failed";                                 // The certificate is valid and correct, but there is another reason the installation did not succeed.
+

@@ -22,6 +22,7 @@ import * as complex        from './Complex';
 import * as messages       from './Messages';
 import * as Configuration  from './Configuration';
 import * as JobQueue       from '../JobQueue';
+import * as Certificates   from '../CertificateStore';
 import * as AuthCache      from './AuthCache';
 import * as LocalList      from './LocalList';
 
@@ -31,29 +32,287 @@ export class IncomingMessages {
 
     //#region Certificates
 
-    // DeleteCertificate
-    // GetInstalledCertificates
-    // InstallCertificate
+    static DeleteCertificate(requestId:     string,
+                             request:       messages.DeleteCertificateRequest,
+                             certificates:  Certificates.Certificates,
+                             commandView:   HTMLDivElement,
+                             sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = certificates.Remove(
+                          request.certificateHashData.serialNumber
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Accepted" : "NotFound"
+            } satisfies messages.DeleteCertificateResponse
+        );
+
+    }
+
+    static GetInstalledCertificateIds(requestId:     string,
+                                      request:       messages.GetInstalledCertificateIdsRequest,
+                                      certificates:  Certificates.Certificates,
+                                      commandView:   HTMLDivElement,
+                                      sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var installedCertificates = certificates.Filter(
+                                        request.certificateType
+                                    );
+
+        sendResponse(
+            requestId,
+            {
+                status:  installedCertificates.length > 0 ? "Accepted" : "NotFound"
+            } satisfies messages.GetInstalledCertificateIdsResponse
+        );
+
+    }
+
+    static InstallCertificate(requestId:     string,
+                              request:       messages.InstallCertificateRequest,
+                              certificates:  Certificates.Certificates,
+                              commandView:   HTMLDivElement,
+                              sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = certificates.Add(
+                          request.certificate,
+                          request.certificateType
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success
+            } satisfies messages.InstallCertificateResponse
+        );
+
+    }
+
     // SendSignedCertificate
 
     //#endregion
 
     //#region Charging
 
-    // CancelReservation
-    // ClearChargingProfile
+    static CancelReservation(requestId:     string,
+                             request:       messages.CancelReservationRequest,
+                             connector:     internal.OCPPConnector,
+                             commandView:   HTMLDivElement,
+                             sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        connector.Reservation = undefined;
+
+        sendResponse(
+            requestId,
+            {
+                status:  "Accepted"
+            } satisfies messages.CancelReservationResponse
+        );
+
+    }
+
+    static ClearChargingProfile(requestId:     string,
+                                request:       messages.ClearChargingProfileRequest,
+                                connectors:    internal.OCPPConnector[],
+                                commandView:   HTMLDivElement,
+                                sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        for (const connector of connectors)
+        {
+            for (const chargingProfile of connector.ChargingProfiles.values())
+            {
+
+                if (request.id                     && chargingProfile.chargingProfileId      === request.id)
+                    connector.ChargingProfiles.delete(chargingProfile.chargingProfileId);
+
+                if (request.chargingProfilePurpose && chargingProfile.chargingProfilePurpose === request.chargingProfilePurpose)
+                    connector.ChargingProfiles.delete(chargingProfile.chargingProfileId);
+
+                if (request.stackLevel             && chargingProfile.stackLevel             === request.stackLevel)
+                    connector.ChargingProfiles.delete(chargingProfile.chargingProfileId);
+
+            }
+        }
+
+        sendResponse(
+            requestId,
+            {
+                status:  "Accepted"
+            } satisfies messages.ClearChargingProfileResponse
+        );
+
+    }
+
     // GetCompositeSchedule
-    // RemoteStartTransaction
-    // RemoteStopTransaction
-    // ReserveNow
-    // SetChargingProfile
+
+    static RemoteStartTransaction(requestId:     string,
+                                  request:       messages.RemoteStartTransactionRequest,
+                                  connector:     internal.OCPPConnector,
+                                  commandView:   HTMLDivElement,
+                                  sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        const status = connector.StartSession(
+                           request.idTag,
+                           request.chargingProfile
+                       );
+
+        sendResponse(
+            requestId,
+            {
+                status:  status
+            } satisfies messages.RemoteStartTransactionResponse
+        );
+
+    }
+
+    static RemoteStopTransaction(requestId:     string,
+                                 request:       messages.RemoteStopTransactionRequest,
+                                 connector:     internal.OCPPConnector,
+                                 commandView:   HTMLDivElement,
+                                 sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        let status: types.RemoteStartStopStatus = "Rejected";
+
+        if (connector.Status === "Available" ||
+            connector.Status === "Reserved")
+        {
+
+            // connector.Reservation = {
+            //                             id:           request.reservationId,
+            //                             expiryDate:   request.expiryDate,
+            //                             idTag:        request.idTag,
+            //                             parentIdTag:  request.parentIdTag
+            //                         };
+
+            status = "Accepted";
+
+        }
+
+        else
+            status = "Rejected";
+
+
+        sendResponse(
+            requestId,
+            {
+                status:  status
+            } satisfies messages.RemoteStopTransactionResponse
+        );
+
+    }
+
+    static ReserveNow(requestId:     string,
+                      request:       messages.ReserveNowRequest,
+                      connector:     internal.OCPPConnector,
+                      commandView:   HTMLDivElement,
+                      sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        let status: types.ReservationStatus = "Rejected";
+
+        if      (connector.Status === "Unavailable")
+            status = "Unavailable";
+
+        else if (connector.Status === "Faulted")
+            status = "Faulted";
+
+        else if (connector.Status === "Occupied")
+            status = "Occupied";
+
+        else if (!connector.Reservation)
+        {
+
+            connector.Reservation = {
+                                        id:           request.reservationId,
+                                        expiryDate:   request.expiryDate,
+                                        idTag:        request.idTag,
+                                        parentIdTag:  request.parentIdTag
+                                    };
+
+            status = "Accepted";
+
+        }
+
+        else
+            status = "Rejected";
+
+
+        sendResponse(
+            requestId,
+            {
+                status:  status
+            } satisfies messages.ReserveNowResponse
+        );
+
+    }
+
+    static SetChargingProfile(requestId:     string,
+                              request:       messages.SetChargingProfileRequest,
+                              connector:     internal.OCPPConnector,
+                              commandView:   HTMLDivElement,
+                              sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        for (const chargingProfile of request.csChargingProfiles)
+        {
+            connector.ChargingProfiles.set(
+                chargingProfile.chargingProfileId,
+                chargingProfile
+            );
+        }
+
+        sendResponse(
+            requestId,
+            {
+                status:  "Accepted"
+            } satisfies messages.SetChargingProfileResponse
+        );
+
+    }
+
     // UnlockConnector
 
     //#endregion
 
     //#region Common
 
-    //TransferData
+    static TransferData(requestId:      string,
+                        request:        messages.DataTransferRequest,
+                        transferData:  (vendorId:    string,
+                                        messageId?:  string | undefined,
+                                        data?:       string | any[] | { [key: string]: any; } | undefined)
+                                             => [
+                                                    types.DataTransferStatus,
+                                                    string | { [key: string]: any } | any[]
+                                                ],
+                        commandView:    HTMLDivElement,
+                        sendResponse:   interfaces.SendResponseDelegate)
+    {
+
+        const [status, data] = transferData(
+                                   request.vendorId,
+                                   request.messageId,
+                                   request.data
+                               );
+
+        sendResponse(
+            requestId,
+            {
+                status:  status,
+                data:    data
+            } satisfies messages.DataTransferResponse
+        );
+
+    }
 
     //#endregion
 
@@ -263,12 +522,12 @@ export class IncomingMessages {
 
     //#region Monitoring
 
-    static ChangeAvailability(requestId:     string,
-                              request:       messages.ChangeAvailabilityRequest,
-                              delegate:      internal.ChangeAvailabilityDelegate,
-                              connectors:    Array<types.AvailabilityType>,
-                              commandView:   HTMLDivElement,
-                              sendResponse:  interfaces.SendResponseDelegate)
+    static ChangeAvailability(requestId:                string,
+                              request:                  messages.ChangeAvailabilityRequest,
+                              chargingStationDelegate:  internal.ChangeChargingStationAvailabilityDelegate,
+                              connectorsDelegate:       internal.ChangeConnectorsAvailabilityDelegate,
+                              commandView:              HTMLDivElement,
+                              sendResponse:             interfaces.SendResponseDelegate)
     {
 
         const textView = document.createElement('div');
@@ -277,12 +536,15 @@ export class IncomingMessages {
         if (request.connectorId > 0)
         {
             textView.innerHTML = `Change connector '${request.connectorId}' availability: ${request.type}`;
-            connectors[request.connectorId - 1] = request.type;
+            connectorsDelegate(
+                request.connectorId,
+                request.type
+            )
         }
         else
         {
             textView.innerHTML = `Change charging station availability: ${request.type}`;
-            delegate(request.type);
+            chargingStationDelegate(request.type);
         }
 
         commandView.appendChild(textView);

@@ -22,10 +22,77 @@ import * as complex        from './Complex';
 import * as messages       from './Messages';
 //import * as Configuration  from './Configuration';
 import * as JobQueue       from '../JobQueue';
+import * as Certificates   from '../CertificateStore';
 
 
 export class IncomingMessages {
 
+    //#region Certificates
+
+    static DeleteCertificate(requestId:     string,
+                             request:       messages.DeleteCertificateRequest,
+                             certificates:  Certificates.Certificates,
+                             commandView:   HTMLDivElement,
+                             sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = certificates.Remove(
+                          request.certificateHashData.serialNumber
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success ? "Accepted" : "NotFound"
+            } satisfies messages.DeleteCertificateResponse
+        );
+
+    }
+
+    static GetInstalledCertificateIds(requestId:     string,
+                                      request:       messages.GetInstalledCertificateIdsRequest,
+                                      certificates:  Certificates.Certificates,
+                                      commandView:   HTMLDivElement,
+                                      sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var installedCertificates = certificates.Filter(
+                                        request.certificateType
+                                    );
+
+        sendResponse(
+            requestId,
+            {
+                status:  installedCertificates.length > 0 ? "Accepted" : "NotFound"
+            } satisfies messages.GetInstalledCertificateIdsResponse
+        );
+
+    }
+
+    static InstallCertificate(requestId:     string,
+                              request:       messages.InstallCertificateRequest,
+                              certificates:  Certificates.Certificates,
+                              commandView:   HTMLDivElement,
+                              sendResponse:  interfaces.SendResponseDelegate)
+    {
+
+        var success = certificates.Add(
+                          request.certificate,
+                          request.certificateType
+                      );
+
+        sendResponse(
+            requestId,
+            {
+                status:  success
+            } satisfies messages.InstallCertificateResponse
+        );
+
+    }
+
+    // SendSignedCertificate
+
+    //#endregion
 
     //#region Firmware
 
@@ -84,12 +151,12 @@ export class IncomingMessages {
 
     //#region Monitoring
 
-    static ChangeAvailability(requestId:     string,
-                              request:       messages.ChangeAvailabilityRequest,
-                              delegate:      internal.ChangeOperationalStatusDelegate,
-                              connectors:    Array<types.OperationalStatus>,
-                              commandView:   HTMLDivElement,
-                              sendResponse:  interfaces.SendResponseDelegate)
+    static ChangeAvailability(requestId:                string,
+                              request:                  messages.ChangeAvailabilityRequest,
+                              chargingStationDelegate:  internal.ChangeChargingStationOperationalStatusDelegate,
+                              evseDelegate:             internal.ChangeEVSEOperationalStatusDelegate,
+                              commandView:              HTMLDivElement,
+                              sendResponse:             interfaces.SendResponseDelegate)
     {
 
         const textView = document.createElement('div');
@@ -98,12 +165,15 @@ export class IncomingMessages {
         if (request.evse)
         {
             textView.innerHTML = `Change EVSE '${request.evse.id}' availability: ${request.operationalStatus}`;
-            connectors[request.evse.id - 1] = request.operationalStatus;
+            evseDelegate(
+                request.evse,
+                request.operationalStatus
+            );
         }
         else
         {
             textView.innerHTML = `Change charging station availability: ${request.operationalStatus}`;
-            delegate(request.operationalStatus);
+            chargingStationDelegate(request.operationalStatus);
         }
 
         commandView.appendChild(textView);

@@ -15,9 +15,15 @@
  * limitations under the License.
  */
 
-import * as types from './Types';
+import * as types   from './Types';
+import * as complex from './Complex';
 
 
-export interface ChangeOperationalStatusDelegate {
+export interface ChangeChargingStationOperationalStatusDelegate {
     (newOperationalStatus: types.OperationalStatus): void;
+}
+
+export interface ChangeEVSEOperationalStatusDelegate {
+    (EVSE:                  complex.EVSE,
+     newOperationalStatus:  types.OperationalStatus): void;
 }

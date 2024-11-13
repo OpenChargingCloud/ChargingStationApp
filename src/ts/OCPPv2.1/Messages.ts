@@ -19,6 +19,41 @@ import * as types   from './Types';
 import * as complex from './Complex';
 
 
+
+
+
+export interface DeleteCertificateRequest {
+    certificateHashData:        complex.CertificateHashData             // Indicates the certificate of which deletion is requested.
+}
+
+export interface DeleteCertificateResponse {
+    status:                     types.DeleteCertificateStatus           // Charge Point indicates if it can process the request.
+    statusInfo?:                complex.StatusInfo                      // Detailed status information.
+}
+
+export interface GetInstalledCertificateIdsRequest {
+    certificateType?:           types.GetCertificateIdUse               // Indicates the type of certificates requested. When omitted, all certificate types are requested.
+}
+
+export interface GetInstalledCertificateIdsResponse {
+    status:                     types.GetInstalledCertificateStatus,    // Charge Point indicates if it can process the request.
+    certificateHashData?:       complex.CertificateHashData[]           // The Charge Point includes the Certificate information for each available certificate.
+    statusInfo?:                complex.StatusInfo                      // Detailed status information.
+}
+
+export interface InstallCertificateRequest {
+    certificateType:            types.InstallCertificateUse,            // Indicates the certificate type that is sent.
+    certificate:                string                                  // An PEM encoded X.509 certificate.
+}
+
+export interface InstallCertificateResponse {
+    status:                     types.InstallCertificateStatus,         // Charge Point indicates if installation was successful.
+    statusInfo?:                complex.StatusInfo                      // Detailed status information.
+}
+
+
+
+
 export interface AuthorizeRequest {
     idToken:                            complex.IdToken,
     certificate?:                       types.  Certificate,

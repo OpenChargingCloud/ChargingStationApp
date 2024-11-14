@@ -538,8 +538,74 @@ export interface AuthorizationData {
                                                                         // (Required when UpdateType is Full)
 }
 
+export interface NetworkConnectionProfile {
+    ocppVersion:                        types.  OCPPVersion,            // (2.1) This field is ignored, since the OCPP version to use is determined during the websocket
+                                                                        // handshake.
+    ocppInterface:                      types.  OCPPInterface,          // Applicable Network Interface. Charging Station is allowed to use a different network interface
+                                                                        // to connect if the given one does not work.
+    ocppTransport:                      types.  OCPPTransport,          // Defines the transport protocol (e.g. SOAP or JSON). Note: SOAP is not supported in OCPP 2.x,
+                                                                        // but is supported by earlier versions of OCPP.
+    messageTimeout:                     types.  Seconds,                // Duration in seconds before a message send by the Charging Station via this network connection
+                                                                        // timesout. The best setting depends on the underlying network and response times of the CSMS.
+                                                                        // If you are looking for a some guideline: use 30 seconds as a starting point.
+    ocppCsmsUrl:                        types.  URL,                    // URL of the CSMS(s) that this Charging Station communicates with, without the Charging Station
+                                                                        // identity part. The SecurityCtrlr.Identity field is appended to ocppCsmsUrl to provide the full
+                                                                        // websocket URL
+    securityProfile:                    types.  Integer,                // This field specifies the security profile used when connecting to the CSMS with this NetworkConnectionProfile.
+    identity?:                          string,                         // (2.1) Charging Station identity to be used as the basic authentication username.
+    basicAuthPassword?:                 string,                         // (2.1) BasicAuthPassword to use for security profile 1 or 2.
+    vpn?:                               VPN,                            // Settings to be used to set up the VPN connection.
+    apn?:                               APN,                            // Collection of configuration data needed to make a data-connection over a cellular network.
+}
 
+export interface VPN {
+    server:                             string,                         // VPN Server Address
+    user:                               string,                         // VPN User
+    group?:                             string,                         // VPN group
+    password:                           string,                         // VPN Password
+    key:                                string,                         // VPN shared secret
+    type:                               types.VPNType                   // VPN type.
+}
 
+export interface APN {
+    apn:                                string,                         // The Access Point Name as an URL.
+    apnUserName?:                       string,                         // APN username.
+    apnPassword?:                       string,                         // APN Password.
+    simPin?:                            types.Integer,                  // SIM card pin code.
+    preferredNetwork?:                  string,                         // Preferred network, written as MCC and MNC concatenated.
+    useOnlyPreferredNetwork?:           boolean,                        // Default: false. Use only the preferred Network, do not dial in when not available.
+    apnAuthentication:                  types.APNAuthentication         // Authentication method.
+}
+
+export interface SetMonitoringData {
+    id?:                                types.MonitoringId,             // An id SHALL only be given to replace an existing monitor. The Charging Station handles
+                                                                        // the generation of id’s for new monitors.
+    transaction?:                       boolean,                        // Monitor only active when a transaction is ongoing on a component relevant to this
+                                                                        // transaction. Default = false.
+    value:                              types.Decimal,                  // Value for threshold or delta monitoring. For Periodic or PeriodicClockAligned this is
+                                                                        // the interval in seconds.
+    type:                               types.MonitorType,              // The type of this monitor, e.g. a threshold, delta or periodic monitor.
+    serverity:                          types.SeverityLevel,            // The severity that will be assigned to an event that is triggered by this monitor.
+                                                                        // The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    component:                          Component                       // Component for which the monitor is set.
+    variable:                           Variable                        // Variable for which the monitor is set.
+    periodicEventStream?:               PeriodicEventStreamParams       // (2.1) When present, events from periodic monitor will be sent via a periodic event
+                                                                        // stream. Only used for monitors of type Periodic or PeriodicClockAligned
+}
+
+export interface SetMonitoringResult {
+    id:                                 types.MonitoringId,             // Id given to the VariableMonitor by the Charging Station. The Id is only returned when
+                                                                        // status is accepted. Installed VariableMonitors should have unique id’s but the id’s
+                                                                        // of removed Installed monitors should have unique id’s but the id’s of removed monitors
+                                                                        // MAY be reused.
+    status:                             types.SetMonitoringStatus,      // Status is OK if a value could be returned. Otherwise this will indicate the reason why
+                                                                        // a value could not be returned.
+    type:                               types.MonitorType,              // The type of this monitor, e.g. a threshold, delta or periodic monitor.
+    severity:                           types.SeverityLevel,            // The severity that will be assigned to an event that is triggered by this monitor.
+                                                                        // The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    
+    statusInfo?:                        StatusInfo                      // Additional status information.
+}
 
 
 
@@ -845,7 +911,7 @@ export interface EventData {
     trigger:                            types.EventTrigger,
     actualValue:                        string,
     eventNotificationType:              types.EventNotificationType,
-    severity:                           types.Serverity,
+    severity:                           types.SeverityLevel,
     component:                          Component,
     variable:                           Variable,
     cause?:                             types.EventId,
@@ -875,7 +941,7 @@ export interface VariableMonitoring {
     transaction:                        boolean,
     value:                              number,
     type:                               types.MonitorType,
-    severity:                           types.Severity,
+    severity:                           types.SeverityLevel,
     customData?:                        ICustomData
 }
 

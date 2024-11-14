@@ -53,9 +53,8 @@ export type ReceiptId                      = string;
 export type DisplayMessageId               = number;
 export type LanguageId                     = string;
 export type EventId                        = number;
-export type Serverity                      = number;
+//export type Serverity                      = number;
 export type VariableMonitoringId           = number;
-export type Severity                       = number;
 export type ListVersion                    = number;
 export type ReservationId                  = number;
 export type RemoteStartId                  = number;
@@ -367,11 +366,69 @@ export type SendLocalListStatus
       "Failed"   |                             // Failed to update the Local Authorization List.
       "VersionMismatch";                       // Version number in the request for a differential update is less or equal then version number of current list.
 
+export type DisplayMessageStatus
+    = "Accepted" |                             // Request to display message accepted.
+      "NotSupportedMessageFormat" |            // None of the formats in the given message are supported.
+      "Rejected" |                             // Request cannot be handled.
+      "NotSupportedPriority" |                 // The given MessagePriority not supported for displaying messages by Charging Station.
+      "NotSupportedState" |                    // The given MessageState not supported for displaying messages by Charging Station.
+      "UnknownTransaction" |                   // Given Transaction not known/ongoing.
+      "LanguageNotSupported";                  // (2.1) Message contains one or more languages that are not supported by Charging Station.
 
+export type MonitoringBase
+    = "All" |                                  // Activate all pre-configured monitors.
+      "FactoryDefault" |                       // Activate the default monitoring settings as recommended by the manufacturer.
+                                               // This is a subset of all preconfigured monitors.
+      "HardWiredOnly";                         // Clears all custom monitors and disables all pre-configured monitors.
 
+export type OCPPVersion
+    = "OCPP12"  |                              // OCPP v1.2
+      "OCPP15"  |                              // OCPP v1.5
+      "OCPP16"  |                              // OCPP v1.6,   websocket subprotocol: ocpp1.6
+    //"OCPP20"  |                              // No longer in use. The OCPP 2.0 release of OCPP has been withdrawn. The value OCPP20 is treated as OCPP2.0.1.
+      "OCPP201" |                              // OCPP v2.0.1, websocket subprotocol: ocpp2.0.1
+      "OCPP21"  |                              // OCPP v2.1,   websocket subprotocol: ocpp2.1
+       string;
 
+export type OCPPTransport
+    = "SOAP" |                                 // Use HTTP-SOAP for transport of OCPP PDU’s.
+      "JSON";                                  // Use JSON over HTTP WebSockets for transport of OCPP PDU’s.
 
+export type OCPPInterface
+    = "Wired0" |                               // Use wired connection 0
+      "Wired1" |                               // Use wired connection 1
+      "Wired2" |                               // Use wired connection 2
+      "Wired3" |                               // Use wired connection 3
+      "Wireless0" |                            // Use wireless connection 0
+      "Wireless1" |                            // Use wireless connection 1
+      "Wireless2" |                            // Use wireless connection 2
+      "Wireless3" |                            // Use wireless connection 3
+      "Any";                                   // (2.1) Use any interface.
 
+export type VPNType
+    = "IKEv2" |                                // IKEv2 VPN
+      "IPSec" |                                // IPSec VPN
+      "L2TP"  |                                // L2TP VPN
+      "PPTP";                                  // PPTP VPN
+
+export type APNAuthentication
+    = "PAP" |                                  // Password Authentication Protocol
+      "CHAP" |                                 // Challenge Handshake Authentication Protocol
+      "NONE" |                                 // No authentication
+      "AUTO";                                  // Sequentially try CHAP, PAP, NONE.
+
+export type SetNetworkProfileStatus
+    = "Accepted" |                             // Setting new data successful.
+      "Rejected" |                             // Setting new data rejected.
+      "Failed";                                // Setting new data failed.
+
+export type SetMonitoringStatus
+    = "Accepted" |                             // Monitor successfully set.
+      "UnknownComponent" |                     // Component is not known.
+      "UnknownVariable" |                      // Variable is not known.
+      "UnsupportedMonitorType" |               // Requested monitor type is not supported.
+      "Rejected" |                             // Request is rejected.
+      "Duplicate";                             // A monitor already exists for the given type/severity combination.
 
 
 
@@ -751,3 +808,74 @@ export type InstallCertificateStatus       = "Accepted" |                       
                                              "Rejected" |                              // The certificate is invalid and/or incorrect OR the CSO tries to install more certificates than allowed.
                                              "Failed";                                 // The certificate is valid and correct, but there is another reason the installation did not succeed.
 
+export enum SeverityLevel {
+    Danger          = 0,
+    HardwareFailure = 1,
+    SystemFailure   = 2,
+    Critical        = 3,
+    Error           = 4,
+    Alert           = 5,
+    Warning         = 6,
+    Notice          = 7,
+    Informational   = 8,
+    Debug           = 9
+}
+
+export interface SeverityData {
+    severity:        SeverityLevel;
+    description:     string;
+    actionRequired:  boolean;
+}
+
+export const severityDescriptions: Record<SeverityLevel, SeverityData> = {
+    [SeverityLevel.Danger]: {
+        severity: SeverityLevel.Danger,
+        description: "Indicates lives are potentially in danger. Urgent attention is needed and action should be taken immediately.",
+        actionRequired: true
+    },
+    [SeverityLevel.HardwareFailure]: {
+        severity: SeverityLevel.HardwareFailure,
+        description: "Indicates that the Charging Station is unable to continue regular operations due to Hardware issues. Action is required.",
+        actionRequired: true
+    },
+    [SeverityLevel.SystemFailure]: {
+        severity: SeverityLevel.SystemFailure,
+        description: "Indicates that the Charging Station is unable to continue regular operations due to software or minor hardware issues. Action is required.",
+        actionRequired: true
+    },
+    [SeverityLevel.Critical]: {
+        severity: SeverityLevel.Critical,
+        description: "Indicates a critical error. Action is required.",
+        actionRequired: true
+    },
+    [SeverityLevel.Error]: {
+        severity: SeverityLevel.Error,
+        description: "Indicates a non-urgent error. Action is required.",
+        actionRequired: true
+    },
+    [SeverityLevel.Alert]: {
+        severity: SeverityLevel.Alert,
+        description: "Indicates an alert event. Default severity for any type of monitoring event.",
+        actionRequired: true
+    },
+    [SeverityLevel.Warning]: {
+        severity: SeverityLevel.Warning,
+        description: "Indicates a warning event. Action may be required.",
+        actionRequired: false
+    },
+    [SeverityLevel.Notice]: {
+        severity: SeverityLevel.Notice,
+        description: "Indicates an unusual event. No immediate action is required.",
+        actionRequired: false
+    },
+    [SeverityLevel.Informational]: {
+        severity: SeverityLevel.Informational,
+        description: "Indicates a regular operational event. May be used for reporting, measuring throughput, etc. No action is required.",
+        actionRequired: false
+    },
+    [SeverityLevel.Debug]: {
+        severity: SeverityLevel.Debug,
+        description: "Indicates information useful to developers for debugging, not useful during operations.",
+        actionRequired: false
+    }
+};

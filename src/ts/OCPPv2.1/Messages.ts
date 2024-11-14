@@ -858,17 +858,17 @@ export interface RequestBatterySwapResponse {
 }
 
 export interface RequestStartTransactionRequest {
-    evseId?:                           types.  EMAId,                               // Number of the EVSE on which to start the transaction. EvseId SHALL be > 0
-    remoteStartId:                     types.  RemoteStartId,                       // Id given by the server to this start request. The Charging Station will return this in the
+    evseId?:                            types.  EMAId,                              // Number of the EVSE on which to start the transaction. EvseId SHALL be > 0
+    remoteStartId:                      types.  RemoteStartId,                      // Id given by the server to this start request. The Charging Station will return this in the
                                                                                     // TransactionEventRequest, letting the server know which transaction was started for this
                                                                                     // request. Use to start a transaction.
-    idToken:                           complex.IdToken,                             // The identifier that the Charging Station must use to start a transaction.
-    chargingProfile?:                  complex.ChargingProfile,                     // Charging Profile to be used by the Charging Station for the requested transaction.
+    idToken:                            complex.IdToken,                            // The identifier that the Charging Station must use to start a transaction.
+    chargingProfile?:                   complex.ChargingProfile,                    // Charging Profile to be used by the Charging Station for the requested transaction.
                                                                                     // ChargingProfilePurpose MUST be set to TxProfile.
-    groupIdToken?:                     complex.IdToken,                             // The groupIdToken is only relevant when the transaction is to be started on an EVSE for
+    groupIdToken?:                      complex.IdToken,                            // The groupIdToken is only relevant when the transaction is to be started on an EVSE for
                                                                                     // which a reservation for groupIdToken is active, and the configuration variable
                                                                                     // AuthorizeRemoteStart = false (otherwise the AuthorizeResponse could return the groupIdToken).
-    transactionLimit?:                 complex.TransactionLimit,                    // (2.1) Maximum cost/energy/time allowed for this transaction.
+    transactionLimit?:                  complex.TransactionLimit,                   // (2.1) Maximum cost/energy/time allowed for this transaction.
     customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
@@ -919,14 +919,14 @@ export interface ReserveNowResponse {
 }
 
 export interface ResetRequest {
-    type:                               types.ResetType,                            // This contains the type of reset that the Charging Station or EVSE should perform.
-    evseId?:                            types.EVSEId,                               // This contains the ID of a specific EVSE that needs to be reset, instead of the
+    type:                               types.  ResetType,                          // This contains the type of reset that the Charging Station or EVSE should perform.
+    evseId?:                            types.  EVSEId,                             // This contains the ID of a specific EVSE that needs to be reset, instead of the
                                                                                     // entire Charging Station.
     customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface ResetResponse {
-    status:                             types.ResetStatus,                          // This indicates whether the Charging Station is able to perform the reset.
+    status:                             types.  ResetStatus,                        // This indicates whether the Charging Station is able to perform the reset.
     statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
     customData?:                        complex.ICustomData                         // Customer specific data.
 }
@@ -966,10 +966,98 @@ export interface SetChargingProfileRequest {
 }
 
 export interface SetChargingProfileResponse {
-    status:                             types.ChargingProfileStatus,                // Returns whether the Charging Station has been able to process the message successfully.
+    status:                             types.  ChargingProfileStatus,              // Returns whether the Charging Station has been able to process the message successfully.
                                                                                     // This does not guarantee the schedule will be followed to the letter.
                                                                                     // There might be other constraints the Charging Station may need to take into account.
     statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetDefaultTariffRequest {
+    evseId:                             types.  EVSEId,                             // EVSE that tariff applies to. When evseId = 0, then tarriff applies to all EVSEs.
+    tariff:                             complex.Tariff,                             // The default tariff to set.
+}
+
+export interface SetDefaultTariffResponse {
+    status:                             types.  TariffStatus,                       // Status of the operation.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetDERControlRequest {
+    isDefault:                          boolean,                                    // True if this is a default DER control.
+    controlId:                          types.  DERControlId,                       // Unique id of this control, e.g. UUID.
+    controlType:                        types.  DERControlType,                     // Type of control. Determines which setting field below is used.
+    curve?:                             complex.DERCurve,                           // Voltage/Frequency/Active/Reactive curve.
+    fixedPFAbsorb?:                     complex.FixedPF,                            // Fixed power factor setpoint when absorbing active power.
+    fixedPFInject?:                     complex.FixedPF,                            // Fixed power factor setpoint when injecting active power.
+    fixedVar?:                          complex.FixedVar,                           // Fixed reactive power.
+    limitMaxDischarge?:                 complex.LimitMaxDischarge,                  // Limit maximum discharge as percentage of rated capability.
+    freqDroop?:                         complex.FreqDroop,                          // Frequency-Watt parameterized mode.
+    enterService?:                      complex.EnterService,                       // Enter service after trip parameters (default control only)
+    gradient?:                          complex.Gradient,                           // Gradient (default ramp rate) settings (default control only)
+}
+
+export interface SetDERControlResponse {
+    status:                             types.  DERControlStatus,                   // Result of operation.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetDisplayMessageRequest {
+    message:                            complex.MessageInfo,                        // Message to be configured in the Charging Station, to be displayed.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetDisplayMessageResponse {
+    status:                             types.  DisplayMessageStatus,               // This indicates whether the Charging Station is able to display the message.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetMonitoringBaseRequest {
+    monitoringBase:                     types.  MonitoringBase                      // Specify which monitoring base will be set.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetMonitoringBaseResponse {
+    status:                             types.  GenericDeviceModelStatus,           // Indicates whether the Charging Station was able to accept the request.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetMonitoringLevelRequest {
+    severity:                           types.  SeverityLevel,                      // The Charging Station SHALL only report events with a severity number lower
+                                                                                    // than or equal to this severity. The severity range is 0-9, with 0 as the
+                                                                                    // highest and 9 as the lowest severity level.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetMonitoringLevelResponse {
+    status:                             types.  GenericDeviceModelStatus,           // Indicates whether the Charging Station was able to accept the request.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetNetworkProfileRequest {
+    configurationSlot:                  types.  Integer,                            // The configuration slot to be used.
+    connectionData:                     complex.NetworkConnectionProfile,           // Connection details.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetNetworkProfileResponse {
+    status:                             types.  SetNetworkProfileStatus,            // Result of operation.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetVariableMonitoringRequest {
+    setMonitoringData:                  Array<complex.SetMonitoringData>,           // List of MonitoringData containing monitoring settings.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetVariableMonitoringResponse {
+    setMonitoringResult:                Array<complex.SetMonitoringResult>,         // List of result statuses per monitor.
     customData?:                        complex.ICustomData                         // Customer specific data.
 }
 

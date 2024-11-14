@@ -17,6 +17,7 @@
 
 import * as types   from './Types';
 import * as complex from './Complex';
+import * as exp from 'constants';
 
 
 export interface AdjustPeriodicEventStreamRequest {
@@ -45,11 +46,11 @@ export interface AFRRSignalResponse {
 
 export interface AuthorizeRequest {
     idToken:                            complex.IdToken,                        // This contains the identifier that needs to be authorized.
-    certificate?:                       types.  Certificate,                    // The X.509 certificate chain presented by EV and encoded in PEM format.
+    certificate?:                       types.  PEMCertificate,                 // The X.509 certificate chain presented by EV and encoded in PEM format.
                                                                                 // Order of certificates in chain is from leaf up to (but excluding) root certificate.
                                                                                 // Only needed in case of central contract validation when Charging Station cannot validate
                                                                                 // the contract certificate.
-    iso15118CertificateHashData?:       complex.OCSPRequestData[],              // Contains the information needed to verify the EV Contract Certificate via OCSP.
+    iso15118CertificateHashData?:       Array<complex.OCSPRequestData>,         // Contains the information needed to verify the EV Contract Certificate via OCSP.
                                                                                 // Not needed if certificate is provided.
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
@@ -57,7 +58,7 @@ export interface AuthorizeRequest {
 export interface AuthorizeResponse {
     idTokenInfo:                        complex.IdTokenInfo,                    // This contains information about authorization status, expiry and group id.
     certificateStatus?:                 types.  AuthorizeCertificateStatus,     // Status of the certificate.
-    allowedEnergyTransfer?:             types.  EnergyTransferMode[],           // (2.1) List of allowed energy transfer modes the EV can choose from. If omitted this defaults to charging only.
+    allowedEnergyTransfer?:             Array<types.EnergyTransferMode>,        // (2.1) List of allowed energy transfer modes the EV can choose from. If omitted this defaults to charging only.
     transactionLimit?:                  complex.TransactionLimit,               // (2.1) Maximum cost/energy/time limit allowed for this token.
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
@@ -101,7 +102,7 @@ export interface CancelReservationResponse {
 }
 
 export interface CertificateSignedRequest {
-    certificateChain:                   string                                  // The signed PEM encoded X.509 certificate. This SHALL also contain the necessary sub CA
+    certificateChain:                   types.PEMCertificateChain               // The signed PEM encoded X.509 certificate. This SHALL also contain the necessary sub CA
                                                                                 // certificates, when applicable. The order of the bundle follows the certificate chain,
                                                                                 // starting from the leaf certificate.
                                                                                 // The Configuration Variable MaxCertificateChainSize can be used to limit the maximum size
@@ -260,7 +261,7 @@ export interface DeleteCertificateRequest {
 }
 
 export interface DeleteCertificateResponse {
-    status:                             types.DeleteCertificateStatus           // Charge Point indicates if it can process the request.
+    status:                             types.DeleteCertificateStatus           // Charging Station indicates if it can process the request.
     statusInfo?:                        complex.StatusInfo                      // Detailed status information.
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
@@ -375,164 +376,611 @@ export interface GetCRLResponse {
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
+export interface GetDERControlRequest {
+    isDefault:                          boolean,                                // True: get a default DER control. False: get a scheduled control.
+    controlType?:                       types.  DERControlType,                 // Type of control settings to retrieve. Not used when controlId is provided.
+    controlId?:                         types.  DERControlId,                   // Id of setting to get. When omitted all settings for controlType are retrieved.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
 
+export interface GetDERControlResponse {
+    status:                             types.  DERControlStatus,               // Result of operation.
+    fixedPFAbsorb?:                     Array<complex.FixedPFGet>,              // Fixed power factor setpoint when absorbing active power.
+    fixedPFInject?:                     Array<complex.FixedPFGet>,              // Fixed power factor setpoint when injecting active power.
+    fixedVar?:                          Array<complex.FixedVarGet>,             // Fixed reactive power setting.
+    limitMaxDischarge?:                 Array<complex.LimitMaxDischargeGet>,    // Limit maximum discharge as percentage of rated capability.
+    freqDroop?:                         Array<complex.FreqDroopGet>,            // Frequency-Watt parameterized mode.
+    enterService?:                      Array<complex.EnterServiceGet>,         // Enter service after trip parameters.
+    gradient?:                          Array<complex.GradientGet>,             // Gradient settings
+    curve?:                             Array<complex.DERCurveGet>,             // Voltage/Frequency/Active/Reactive curve.
+}
 
+export interface GetDisplayMessagesRequest {
+    id?:                                Array<types.MessageId>,                 // If provided the Charging Station shall return Display Messages of the given ids.
+                                                                                // This field SHALL NOT contain more ids than set in NumberOfDisplayMessages.maxLimit
+    requestId:                          types.  RequestId,                      // Unique identifier of the request.
+    priority?:                          types.  MessagePriority,                // If provided the Charging Station shall return Display Messages with the given priority only.
+    state?:                             types.  MessageState,                   // If provided the Charging Station shall return Display Messages with the given state only.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
 
-
-
-
-
-
-
+export interface GetDisplayMessagesResponse {
+    status:                             types.  GetDisplayMessageStatus,        // Indicates if the Charging Station has Display Messages that match the request criteria in the GetDisplayMessagesRequest
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
 
 export interface GetInstalledCertificateIdsRequest {
-    certificateType?:                   types.GetCertificateIdUse               // Indicates the type of certificates requested. When omitted, all certificate types are requested.
+    certificateType?:                   types.GetCertificateIdUse,              // Indicates the type of certificates requested. When omitted, all certificate types are requested.
+    customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
 export interface GetInstalledCertificateIdsResponse {
-    status:                             types.GetInstalledCertificateStatus,    // Charge Point indicates if it can process the request.
-    certificateHashData?:               complex.CertificateHashData[]           // The Charge Point includes the Certificate information for each available certificate.
+    status:                             types.GetInstalledCertificateStatus,    // Charging Station indicates if it can process the request.
+    certificateHashData?:               Array<complex.CertificateHashData>      // The Charging Station includes the Certificate information for each available certificate.
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetLocalListVersionRequest {
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetLocalListVersionResponse {
+    listVersion:                        types.  ListVersion,                    // This contains the current version number of the local authorization list in the Charging Station.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetLogRequest {
+    logType:                            types.  LogType,                        // This contains the type of log file that the Charging Station should send.
+    requestId:                          types.  RequestId,                      // The Id of this request.
+    retries?:                           types.  Integer,                        // This specifies how many times the Charging Station must try to upload the log before giving up.
+                                                                                // If this field is not present, it is left to Charging Station to decide how many times it wants to retry.
+    retryInterval?:                     types.  Seconds,                        // The interval in seconds after which a retry may be attempted. If this field is not present,
+                                                                                // it is left to Charging Station to decide how long to wait between attempts.
+    log:                                complex.LogParameters                   // This field specifies the requested log and the location to which the log should be sent.
+}
+
+export interface GetLogResponse {
+    status:                             types.LogStatus,                        // This field indicates whether the Charging Station was able to accept the request.
+    filename?:                          string                                  // This contains the name of the log file that will be uploaded.
+                                                                                // This field is not present when no logging information is available.
+}
+
+export interface GetMonitoringReportRequest {
+    requestId:                          types.  RequestId,                      // Unique identifier of the request.
+    monitoringCriteria?:                Array<types.  MonitoringCriterion>,     // This field contains criteria for components for which a monitoring report is requested.
+    componentVariable?:                 Array<complex.ComponentVariable>,       // This field specifies the components and variables for which a monitoring report is requested.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetMonitoringReportResponse {
+    status:                             types.  GenericDeviceModelStatus,       // This field indicates whether the Charging Station was able to accept the request.
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetPeriodicEventStreamRequest {
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetPeriodicEventStreamResponse {
+    constantStreamData:                 Array<complex.ConstantStreamData>,      // List of constant part of streams.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetReportRequest {
+    requestId:                          types.  RequestId,                      // Unique identifier of the request.
+    componentCriteria?:                 Array<types.  ComponentCriterion>,      // This field contains criteria for components for which a report is requested.
+    componentVariable?:                 Array<complex.ComponentVariable>,       // This field specifies the components and variables for which a report is requested.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetReportResponse {
+    status:                             types.  GenericDeviceModelStatus,       // This field indicates whether the Charging Station was able to accept the request.
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetTariffsRequest {
+    evseId?:                            types.  EVSEId,                         // EVSE id to get tariff from. When absent gets all tariffs.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetTariffsResponse {
+    status:                             types.  TariffStatus,                   // Status of the operation.
+    tariffAssignments?:                 Array<complex.TariffAssignment>         // Installed default and user-specific tariffs per EVSE.
     statusInfo?:                        complex.StatusInfo                      // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetTransactionStatusRequest {
+    transactionId:                      types.  TransactionId,                  // The identifier of the transaction for which the status is requested.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetTransactionStatusResponse {
+    ongoingIndicator?:                  boolean,                                // Whether the transaction is still ongoing.
+    messagesInQueue:                    boolean,                                // Whether there are still message to be delivered.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetVariablesRequest {
+    getVariableData:                    Array<complex.GetVariableData>,         // List of requested variables.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface GetVariablesResponse {
+    getVariableResult:                  Array<complex.GetVariableResult>,       // List of requested variables and their values.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface HeartBeatRequest {
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface HeartBeatResponse {
+    currentTime:                        types.  Timestamp,                      // This contains the current time of the CSMS.
+    customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
 export interface InstallCertificateRequest {
     certificateType:                    types.InstallCertificateUse,            // Indicates the certificate type that is sent.
-    certificate:                        string                                  // An PEM encoded X.509 certificate.
+    certificate:                        types.PEMCertificate,                   // An PEM encoded X.509 certificate.
+    customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
 export interface InstallCertificateResponse {
-    status:                             types.InstallCertificateStatus,         // Charge Point indicates if installation was successful.
-    statusInfo?:                        complex.StatusInfo                      // Detailed status information.
-}
-
-export interface HeartBeatRequest {
-    customData?:                        complex.ICustomData
+    status:                             types.InstallCertificateStatus,         // Charging Station indicates if installation was successful.
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.c
+    customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
 export interface LogStatusNotificationRequest {
-    status:                             types.  UploadLogStatus,
-    requestId:                          types.  RequestId,
-    customData?:                        complex.ICustomData
+    status:                             types.  UploadLogStatus,                // This contains the status of the log upload.
+    requestId:                          types.  RequestId,                      // The request id that was provided in GetLogRequest that started this log upload.
+                                                                                // This field is mandatory, unless the message was triggered by a TriggerMessageRequest AND
+                                                                                // there is no log upload ongoing.
+    statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface LogStatusNotificationResponse {
+    customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
 export interface MeterValuesRequest {
-    evseId:                             types.  EVSEId,
-    meterValue:                         complex.MeterValue[],
-    customData?:                        complex.ICustomData
+    evseId:                             types.  EVSEId,                         // This contains a number (>0) designating an EVSE of the Charging Station. ‘0’ (zero) is used to
+                                                                                // designate the main power meter.
+    meterValue:                         Array<complex.MeterValue>,              // The sampled meter values with timestamps. The following Configuration Variables are used to
+                                                                                // configure which measurands are sent: AlignedDataMeasurands, AlignedDataUpstreamMeasurands
+    customData?:                        complex.ICustomData                     // Customer specific data.
+}
+
+export interface MeterValuesResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyAllowedEnergyTransferRequest {
+    allowedEnergyTransfer:              Array<types.EnergyTransferMode>,            // Modes of energy transfer that are accepted by CSMS.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyAllowedEnergyTransferResponse {
+    status:                             types.  NotifyAllowedEnergyTransferStatus,  // This indicates whether the Charging Station was able to process the request.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyChargingLimitRequest {
-    chargingLimit:                      complex.ChargingLimit,
-    chargingSchedule:                   complex.ChargingSchedule[],
-    evseId?:                            types.  EVSEId,
-    customData?:                        complex.ICustomData
+    evseId?:                            types.  EVSEId,                             // The EVSE to which the charging limit is set.
+                                                                                    // If absent or when zero, it applies to the entire Charging Station.
+    chargingLimit:                      complex.ChargingLimit,                      // This contains the source of the charging limit and whether it is grid critical.
+    chargingSchedule?:                  Array<complex.ChargingSchedule>,            // Contains limits for the available power or current over time, as set by the external source.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyChargingLimitResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyCRLRequest {
+    requestId:                          types.  RequestId,                          // Id of the GetCRLRequest for which this is the notification.
+    status:                             types.  NotifyCRLStatus,                    // Status whether CRL is available or not.
+    location:                           string,                                     // Required when a CRL is available. URL to location where charging station can retrieve the CRL.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyCRLResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyCustomerInformationRequest {
-    requestId:                          types.  RequestId,
-    data:                               string,
-    seqNo:                              types.  Integer,
-    generatedAt:                        types.  Timestamp,
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    requestId:                          types.  RequestId,                          // Unique identifier of the request.
+    data:                               string,                                     // (Part of) the requested data. No format specified in which the data is returned.
+                                                                                    // Should be human readable.
+    seqNo:                              types.  Integer,                            // Sequence number of this message. First message starts at 0.
+    generatedAt:                        types.  Timestamp,                          // Timestamp of the moment this message was generated at the Charging Station.
+    tbc?:                               boolean,                                    // “to be continued” indicator. Indicates whether another part of the monitoringData follows
+                                                                                    // in an upcoming notifyMonitoringReportRequest message.
+                                                                                    // Default value when omitted is false.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
-export interface NotifyCustomerInformationRequest {
-    requestId:                          types.  RequestId,
-    messageInfo:                        complex.MessageInfo,
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+export interface NotifyCustomerInformationResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyDERAlarmRequest {
+    controlType:                        types.  DERControlType,                     // Name of DER control, e.g. FreqDroop
+    gridEventFault?:                    types.  GridEventFault,                     // Type of grid event that caused this
+    alarmEnded?:                        boolean,                                    // True when error condition has ended. Absent or false when alarm has started.
+    timestamp:                          types.Timestamp,                            // Time of start or end of alarm.
+    extraInfo:                          string,                                     // Optional info provided by EV.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyDERAlarmResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyDERStartStopRequest {
+    controlId:                          types.  DERControlId,                       // Id of DER control, e.g. FreqDroop
+    started:                            boolean,                                    // True if DER control has started. False if it has ended.
+    timestamp:                          types.  Timestamp,                          // Time of start or end of event.
+    supersededIds?:                     Array<types.DERControlId>,                  // List of controlIds that are superseded as a result of this control starting.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyDERStartStopResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyDisplayMessagesRequest {
-    requestId:                          types.  RequestId,
-    messageInfo:                        complex.MessageInfo[],
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    requestId:                          types.  RequestId,                          // The id of the GetDisplayMessagesRequest that requested this message.
+    messageInfo?:                       Array<complex.MessageInfo>,                 // The requested display message as configured in the Charging Station.
+    tbc?:                               boolean,                                    // "to be continued" indicator. Indicates whether another part of the report follows in an
+                                                                                    // upcoming NotifyDisplayMessagesRequest message. Default value when omitted is false.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyDisplayMessagesResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyEVChargingNeedsRequest {
-    timestamp?:                         types.  Timestamp,
-    evseId:                             types.  EVSEId,
-    chargingNeeds:                      complex.ChargingNeeds,
-    maxScheduleTuples?:                 types.  Integer,
-    customData?:                        complex.ICustomData
+    timestamp?:                         types.  Timestamp,                          // (2.1) Time when EV charging needs were received.
+                                                                                    // Field can be added when charging station was offline when charging needs were received.
+    evseId:                             types.  EVSEId,                             // Defines the EVSE and connector to which the EV is connected. EvseId may not be 0.
+    chargingNeeds:                      complex.ChargingNeeds,                      // The characteristics of the energy delivery required.
+    maxScheduleTuples?:                 types.  Integer,                            // Contains the maximum schedule tuples the car supports per SASchedule (both Pmax and Tariff).
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyEVChargingNeedsResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyEVChargingScheduleRequest {
-    timeBase:                           types.  Timestamp,
-    evseId:                             types.  EVSEId,
-    chargingSchedule:                   complex.ChargingSchedule,
-    selectedScheduleTupleId?:           types.  Integer,
-    powerToleranceAcceptance?:          boolean,
-    customData?:                        complex.ICustomData
+    timeBase:                           types.  Timestamp,                          // Periods contained in the charging profile are relative to this point in time.
+    evseId:                             types.  EVSEId,                             // The charging schedule contained in this notification applies to an EVSE. EvseId must be > 0.
+    chargingSchedule:                   complex.ChargingSchedule,                   // Planned energy consumption of the EV over time. Always relative to timeBase.
+    selectedScheduleTupleId?:           types.  Integer,                            // (2.1) Id of chargingSchedule that EV selected from the provided ChargingProfile.
+    powerToleranceAcceptance?:          boolean,                                    // (2.1) True when power tolerance is accepted by EV. This value is taken from
+                                                                                    // EVPowerProfile.PowerToleranceAcceptance in the ISO 15118-20 PowerDeliverReq message.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyEVChargingScheduleResponse {
+    status:                             types.  GenericStatus,                      // Returns whether the CSMS has been able to process the message successfully.
+                                                                                    // It does not imply any approval of the charging schedule.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyEventRequest {
-    generatedAt:                        types.  Timestamp,
-    seqNo:                              types.  Integer,
-    eventData:                          complex.EventData[],
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    generatedAt:                        types.  Timestamp,                          // Timestamp of the moment this message was generated at the Charging Station.
+    seqNo:                              types.  Integer,                            // Sequence number of this message. First message starts at 0.
+    eventData:                          Array<complex.EventData>,                   // List of EventData. An EventData element contains only the Component, Variable and
+                                                                                    // VariableMonitoring data that caused the event. The list of EventData will usally contain
+                                                                                    // one eventData element, but the Charging Station may decide to group multiple events
+                                                                                    // in one notification. For example, when multiple events triggered at the same time.
+    tbc?:                               boolean,                                    // “to be continued” indicator. Indicates whether another part of the report follows in an
+                                                                                    // upcoming notifyEventRequest message. Default value when omitted is false.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyEventResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyMonitoringReportRequest {
-    requestId:                          types.  RequestId,
-    seqNo:                              types.  Integer,
-    generatedAt:                        types.  Timestamp,
-    monitor:                            complex.MonitoringData[],
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    requestId:                          types.  RequestId,                          // The id of the GetMonitoringRequest that requested this report.
+    seqNo:                              types.  Integer,                            // Sequence number of this message. First message starts at 0.
+    generatedAt:                        types.  Timestamp,                          // Timestamp of the moment this message was generated at the Charging Station.
+    monitor:                            Array<complex.MonitoringData>,              // List of MonitoringData containing monitoring settings.
+    tbc?:                               boolean,                                    // “to be continued” indicator. Indicates whether another part of the monitoringData follows
+                                                                                    // in an upcoming notifyMonitoringReportRequest message. Default value when omitted is false.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyMonitoringReportResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyPeriodicEventStreamRequest {
+    id:                                 types.  StreamId,                           // Unique identifier of the event stream.
+    pending:                            number,                                     // Number of data elements still pending to be sent.
+    data:                               Array<complex.StreamDataElement>,           // Variable part of stream data.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyPeriodicEventStreamResponse {
+    status:                             types.  GenericStatus,                      // Status of operation.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyPriorityChargingRequest {
-    transactionId:                      types.  TransactionId,
-    activated:                          boolean,
-    customData?:                        complex.ICustomData
+    transactionId:                      types.  TransactionId,                      // The transaction for which priority charging is requested.
+    activated:                          boolean,                                    // True if priority charging was activated. False if it has stopped using the priority charging profile.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyPriorityChargingResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyQRCodeScannedRequest {
+    evseId:                             types.  EVSEId,                             // EVSE id for which transaction is requested.
+    timeout:                            types.  Seconds,                            // Timeout value in seconds after which no result of QR code scanning is to be expected anymore.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyQRCodeScannedResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface NotifyReportRequest {
-    requestId:                          types.  RequestId,
-    seqNo:                              types.  Integer,
-    generatedAt:                        types.  Timestamp,
-    reportData:                         complex.ReportData[],
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    requestId:                          types.  RequestId,                          // The id of the GetReportRequest or GetBaseReportRequest that requested this report.
+    seqNo:                              types.  Integer,                            // Sequence number of this message. First message starts at 0.
+    generatedAt:                        types.  Timestamp,                          // Timestamp of the moment this message was generated at the Charging Station.
+    reportData?:                        Array<complex.ReportData>,                  // List of ReportData.
+    tbc?:                               boolean,                                    // “to be continued” indicator. Indicates whether another part of the report follows in an
+                                                                                    // upcoming notifyReportRequest message. Default value when omitted is false.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifyReportResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifySettlementRequest {
+    transactionId?:                     types.  Identifier,                         // The transactionId that the settlement belongs to. Can be empty if the payment transaction is canceled prior to the start of the OCPP transaction.
+    pspRef:                             types.  Identifier,                         // The payment reference received from the payment terminal and is used as the value for idToken.
+    status:                             types.  PaymentStatus,                      // The status of the settlement attempt.
+    statusInfo?:                        string,                                     // Additional information from payment terminal/payment process.
+    settlementAmount:                   types.  Decimal,                            // The amount that was settled, or attempted to be settled (in case of failure).
+    settlementTime:                     types.  Timestamp,                          // The time when the settlement was done.
+    receiptId?:                         types.  ReceiptId,                          // The receiptId that was received from the payment terminal.
+    receiptUrl?:                        types.  URL,                                // The receipt URL, to be used if the receipt is generated by the payment terminal or the CS.
+    vatNumber?:                         types.  VATNumber,                          // VAT number for a company receipt.
+    vatCompany?:                        complex.AddressType,                        // Company address associated with VAT number.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface NotifySettlementResponse {
+    receiptURL?:                        types.  URL,                                // The receipt URL if receipt generated by CSMS. The Charging Station can QR encode it and
+                                                                                    // show it to the EV Driver.
+    receiptId?:                         types.  ReceiptId,                          // The receipt id if the receipt is generated by CSMS.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface OpenPeriodicEventStreamRequest {
+    constantStreamData:                 complex.ConstantStreamData,                // Constant part of stream data.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface OpenPeriodicEventStreamResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface PublishFirmwareRequest {
+    requestId:                          types.  RequestId,                          // The Id of the request.
+    location:                           types.  URL,                                // This contains a string containing an URL from which to retrieve the firmware.
+    retries?:                           types.  Integer,                            // This specifies how many times Charging Station must retry to download the firmware before
+                                                                                    // giving up. If this field is not present, it is left to Charging Station to decide how many
+                                                                                    // times it wants to retry. If the value is 0, it means: no retries.
+    checksum:                           string,                                     // The MD5 checksum over the entire firmware file as a hexadecimal string of length 32.
+    retryInterval?:                     types.  Seconds,                            // The interval in seconds after which a retry may be attempted. If this field is not present,
+                                                                                    // it is left to Charging Station to decide how long to wait between attempts.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface PublishFirmwareResponse {
+    status:                             types.  GenericStatus,                      // Indicates whether the request was accepted.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface PublishFirmwareStatusNotificationRequest {
-    status:                             types.  PublishFirmwareStatus,
-    requestId?:                         types.  RequestId,
-    location:                           URL[],
-    customData?:                        complex.ICustomData
+    status:                             types.  PublishFirmwareStatus,              // This contains the progress status of the publishfirmware installation.
+    location?:                          Array<types.URL>,                           // Required if status is Published. Can be multiple URI’s, if the Local Controller supports
+                                                                                    // e.g. HTTP, HTTPS, and FTP.
+    requestId?:                         types.  RequestId,                          // The request id that was provided in the PublishFirmwareRequest which triggered this action.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface PublishFirmwareStatusNotificationResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface PullDynamicScheduleUpdateRequest {
-    chargingProfileId:                  types.  ChargingProfileId,
-    customData?:                        complex.ICustomData
+    chargingProfileId:                  types.  ChargingProfileId,                  // Required. Id of charging profile to update.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface PullDynamicScheduleUpdateResponse {
+    status:                             types.  ChargingProfileStatus,              // Result of request.
+    scheduleUpdate?:                    complex.ChargingScheduleUpdate,             // Updated charging schedule period values.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface ReportChargingProfilesRequest {
-    requestId:                          types.  RequestId,
-    chargingLimitSource:                types.  ChargingLimitSource,
-    evseId:                             types.  EVSEId,
-    chargingProfile:                    complex.ChargingProfile[],
-    tbc?:                               boolean,
-    customData?:                        complex.ICustomData
+    requestId:                          types.  RequestId,                          // Id used to match the GetChargingProfilesRequest message with the resulting
+                                                                                    // ReportChargingProfilesRequest messages. When the CSMS provided a requestId in the
+                                                                                    // GetChargingProfilesRequest, this field SHALL contain the same value.
+    chargingLimitSource:                types.  ChargingLimitSource,                // Source that has installed this charging profile.
+    evseId:                             types.  EVSEId,                             // The evse to which the charging profile applies.
+                                                                                    // If evseId = 0, the message contains an overall limit for the Charging Station.
+    chargingProfile:                    Array<complex.ChargingProfile>,             // The charging profile as configured in the Charging Station.
+    tbc?:                               boolean,                                    // To Be Continued. Default value when omitted: false. false indicates that there are no
+                                                                                    // further messages as part of this report.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ReportChargingProfilesResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestBatterySwapRequest {
+    requestId:                          types.  RequestId,                          // Unique identifier of the request.
+    idToken:                            complex.IdToken,                            // Id token of EV driver.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestBatterySwapResponse {
+    status:                             types.  GenericStatus,                      // This indicates whether the request was accepted.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestStartTransactionRequest {
+    evseId?:                           types.  EMAId,                               // Number of the EVSE on which to start the transaction. EvseId SHALL be > 0
+    remoteStartId:                     types.  RemoteStartId,                       // Id given by the server to this start request. The Charging Station will return this in the
+                                                                                    // TransactionEventRequest, letting the server know which transaction was started for this
+                                                                                    // request. Use to start a transaction.
+    idToken:                           complex.IdToken,                             // The identifier that the Charging Station must use to start a transaction.
+    chargingProfile?:                  complex.ChargingProfile,                     // Charging Profile to be used by the Charging Station for the requested transaction.
+                                                                                    // ChargingProfilePurpose MUST be set to TxProfile.
+    groupIdToken?:                     complex.IdToken,                             // The groupIdToken is only relevant when the transaction is to be started on an EVSE for
+                                                                                    // which a reservation for groupIdToken is active, and the configuration variable
+                                                                                    // AuthorizeRemoteStart = false (otherwise the AuthorizeResponse could return the groupIdToken).
+    transactionLimit?:                 complex.TransactionLimit,                    // (2.1) Maximum cost/energy/time allowed for this transaction.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestStartTransactionResponse {
+    status:                             types.  RequestStartStopStatus,             // Status indicating whether the Charging Station accepts the request to start a transaction.
+    transactionId?:                     types.  TransactionId,                      // When the transaction was already started by the Charging Station before the
+                                                                                    // RequestStartTransactionRequest was received, for example: cable plugged in first.
+                                                                                    // This contains the transactionId of the already started transaction.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestStopTransactionRequest {
+    transactionId:                      types.  TransactionId,                      // The identifier of the transaction which the Charging Station is requested to stop.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface RequestStopTransactionResponse {
+    status:                             types.  RequestStartStopStatus,             //  Status indicating whether Charging Station accepts the request to stop a transaction.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface ReservationStatusUpdateRequest {
-    reservationId:                      types.  ReservationId,
-    reservationUpdateStatus:            types.  ReservationUpdateStatus,
-    customData?:                        complex.ICustomData
+    reservationId:                      types.  ReservationId,                      // The ID of the reservation.
+    reservationUpdateStatus:            types.  ReservationUpdateStatus,            // The updated reservation status.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ReservationStatusUpdateResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ReserveNowRequest {
+    id:                                 types.  ReservationId,                      // The Id of the reservation.
+    expiryDateTime:                     types.  Timestamp,                          // Date and time at which the reservation expires.
+    connectorType:                      types.  ConnectorType,                      // This field specifies the connector type.
+    evseId?:                            types.  EVSEId,                             // This contains ID of the evse to be reserved.
+    idToken:                            complex.IdToken,                            // The identifier for which the reservation is made.
+    groupIdToken?:                      complex.IdToken,                            // The group identifier for which the reservation is made.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ReserveNowResponse {
+    status:                             types.  ReserveNowStatus,                   // This indicates the success or failure of the reservation.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ResetRequest {
+    type:                               types.ResetType,                            // This contains the type of reset that the Charging Station or EVSE should perform.
+    evseId?:                            types.EVSEId,                               // This contains the ID of a specific EVSE that needs to be reset, instead of the
+                                                                                    // entire Charging Station.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface ResetResponse {
+    status:                             types.ResetStatus,                          // This indicates whether the Charging Station is able to perform the reset.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
 export interface SecurityEventNotificationRequest {
-    type:                               complex.SecurityEventType,
-    timestamp:                          types.  Timestamp,
-    techInfo?:                          string,
-    customData?:                        complex.ICustomData
+    type:                               complex.SecurityEventType,                  // Type of the security event. This value should be taken from the Security events list.
+    timestamp:                          types.  Timestamp,                          // Date and time at which the event occurred.
+    techInfo?:                          string,                                     // Additional information about the occurred security event.
+    customData?:                        complex.ICustomData                         // Customer specific data.
 }
+
+export interface SecurityEventNotificationResponse {
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SendLocalListRequest {
+    listVersion:                        types.  Integer,                            // In case of a full update this is the version number of the full list. In case of a
+                                                                                    // differential update it is the version number of the list after the update has been applied.
+    localAuthorisationList:             Array<complex.AuthorizationData>,           // This contains the Local Authorization List entries.
+    updateType:                         types.  UpdateType,                         // This contains the type of update (full or differential) of this request.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SendLocalListResponse {
+    status:                             types.  SendLocalListStatus,                // This indicates whether the Charging Station has successfully received and applied the update
+                                                                                    // of the Local Authorization List.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetChargingProfileRequest {
+    evseId:                             types.  EVSEId,                             // For TxDefaultProfile an evseId=0 applies the profile to each individual evse.
+                                                                                    // For ChargingStationMaxProfile and ChargingStationExternalConstraints an evseId=0 contains
+                                                                                    // an overal limit for the whole Charging Station.
+    chargingProfile:                    complex.ChargingProfile,                    // The charging profile to be set at the Charging Station.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+export interface SetChargingProfileResponse {
+    status:                             types.ChargingProfileStatus,                // Returns whether the Charging Station has been able to process the message successfully.
+                                                                                    // This does not guarantee the schedule will be followed to the letter.
+                                                                                    // There might be other constraints the Charging Station may need to take into account.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
+    customData?:                        complex.ICustomData                         // Customer specific data.
+}
+
+
+
+
+
+
+
+
+
 
 export interface SignCertificateRequest {
     csr:                                string,
@@ -563,14 +1011,3 @@ export interface TransactionEventRequest {
     meterValue?:                        complex.MeterValue[],
     customData?:                        complex.ICustomData
 }
-
-export interface ResetRequest {
-    type:                               types.ResetType
-    evseId?:                            types.EVSEId
-}
-
-export interface ResetResponse {
-    status:                             types.ResetStatus
-    statusInfo?:                        complex.StatusInfo
-}
-

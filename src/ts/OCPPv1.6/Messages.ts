@@ -130,12 +130,12 @@ export interface GetCompositeScheduleResponse {
 }
 
 export interface GetConfigurationRequest {
-    key?:                       string[]
+    key?:                       Array<string>
 }
 
 export interface GetConfigurationResponse {
-    configurationKey?:          complex.KeyValue[]
-    unknownKey?:                string[]
+    configurationKey?:          Array<complex.KeyValue>
+    unknownKey?:                Array<string>
 }
 
 export interface GetDiagnosticsRequest {
@@ -154,7 +154,7 @@ export interface GetLocalListVersionRequest {
 }
 
 export interface GetLocalListVersionResponse {
-    listVersion:                types.Integer
+    listVersion:                types.ListVersion
 }
 
 export interface HeartBeatRequest {
@@ -167,7 +167,7 @@ export interface HeartbeatResponse {
 export interface MeterValuesRequest {
     connectorId:                types.ConnectorId,
     transactionId:              types.TransactionId,
-    meterValue:                 complex.MeterValue[]
+    meterValue:                 Array<complex.MeterValue>
 }
 
 export interface MeterValuesResponse {
@@ -213,7 +213,7 @@ export interface ResetResponse {
 
 export interface SendLocalListRequest {
     listVersion:                types.Integer,
-    localAuthorisationList:     complex.AuthorizationData[],
+    localAuthorisationList:     Array<complex.AuthorizationData>,
     updateType:                 types.UpdateType
 }
 
@@ -223,7 +223,7 @@ export interface SendLocalListResponse {
 
 export interface SetChargingProfileRequest {
     connectorId:                types.ConnectorId,
-    csChargingProfiles:         complex.ChargingProfile[]
+    csChargingProfiles:         Array<complex.ChargingProfile>
 }
 
 export interface SetChargingProfileResponse {
@@ -262,7 +262,7 @@ export interface StopTransactionRequest {
     timestamp:                  types.Timestamp,
     transactionId:              types.TransactionId,
     reason?:                    types.StopReason,
-    transactionData?:           complex.MeterValue[]
+    transactionData?:           Array<complex.MeterValue>
 }
 
 export interface StopTransactionResponse {
@@ -301,7 +301,7 @@ export interface UpdateFirmwareResponse {
 // Security Extensions
 
 export interface CertificateSignedRequest {
-    certificateChain:           string                                  // The signed PEM encoded X.509 certificates. This can also contain the
+    certificateChain:           types.PEMCertificateChain               // The signed PEM encoded X.509 certificates. This can also contain the
                                                                         // necessary sub CA certificates. The maximum size of this field is be limited by the
                                                                         // configuration key: CertificateSignedMaxSize.
 }
@@ -333,7 +333,7 @@ export interface GetInstalledCertificateIdsRequest {
 
 export interface GetInstalledCertificateIdsResponse {
     status:                     types.GetInstalledCertificateStatus,    // Charge Point indicates if it can process the request.
-    certificateHashData?:       complex.CertificateHashData[]           // The Charge Point includes the Certificate information for each available certificate.
+    certificateHashData?:       Array<complex.CertificateHashData>      // The Charge Point includes the Certificate information for each available certificate.
 }
 
 export interface GetLogRequest {
@@ -354,7 +354,7 @@ export interface GetLogResponse {
 
 export interface InstallCertificateRequest {
     certificateType:            types.CertificateUse,                   // Indicates the certificate type that is sent.
-    certificate:                string                                  // An PEM encoded X.509 certificate.
+    certificate:                types.PEMCertificate                    // An PEM encoded X.509 certificate.
 }
 
 export interface InstallCertificateResponse {

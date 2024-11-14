@@ -287,12 +287,256 @@ export interface V2XSignalWattPoint {
     power:                              types.Watt                      // Power in W to charge (positive) or discharge (negative) at specified frequency.
 }
 
+export interface FixedPFGet {
+    id:                                 types.Identifier,               // Id of setting.
+    isDefault:                          boolean,                        // True if setting is a default control.
+    isSuperseded:                       boolean,                        // True if this setting is superseded by a lower priority setting.
+    fixedPF:                            FixedPF                         // FixedPF for AbsorbW or InjectW.
+}
 
+export interface FixedPF {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    displacement:                       types.Decimal,                  // Power factor, cos(phi), as value between 0..1.
+    excitation:                         boolean,                        // True when absorbing reactive power (underexcited), false when injecting reactive power (overexcited).
+    startTime?:                         types.Timestamp,                // Time when this setting becomes active.
+    duration?:                          types.Seconds,                  // Duration in seconds that this setting is active.
+}
 
+export interface  FixedVarGet {
+    id:                                 types.Identifier,               // Id of setting.
+    isDefault:                          boolean,                        // True if setting is a default control.
+    isSuperseded:                       boolean,                        // True if this setting is superseded by a lower priority setting.
+    fixedVar:                           FixedVar                        // Fixed Var setpoint.
+}
 
+export interface FixedVar {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    setpoint:                           types.Decimal,                  // The value specifies a target var output interpreted as a signed percentage (-100 to 100).
+                                                                        // A negative value refers to charging, whereas a positive one refers to discharging.
+                                                                        // The value type is determined by the unit field.
+    unit:                               types.DERUnit,                  // Unit of the setpoint.
+    startTime?:                         types.Timestamp,                // Time when this setting becomes active.
+    duration?:                          types.Seconds,                  // Duration in seconds that this setting is active.
+}
 
+export interface FreqDroopGet {
+    id:                                 types.Identifier,               // Id of setting.
+    isDefault:                          boolean,                        // True if setting is a default control.
+    isSuperseded:                       boolean,                        // True if this setting is superseded by a lower priority setting.
+    freqDroop:                          FreqDroop                       // FreqDroop parameters.
+}
 
+export interface FreqDroop {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    overFreq:                           types.Decimal,                  // Over-frequency start of droop.
+    underFreq:                          types.Decimal,                  // Under-frequency start of droop.
+    overDroop:                          types.Decimal,                  // Over-frequency droop per unit, oFDroop.
+    underDroop:                         types.Decimal,                  // Under-frequency droop per unit, uFDroop.
+    responseTime:                       types.Decimal,                  // Open loop response time in seconds.
+    startTime?:                         types.Timestamp,                // Time when this setting becomes active.
+    duration?:                          types.Seconds,                  // Duration in seconds that this setting is active.
+}
 
+export interface LimitMaxDischargeGet {
+    id:                                 types.Identifier,               // Id of setting.
+    isDefault:                          boolean,                        // True if setting is a default control.
+    isSuperseded:                       boolean,                        // True if this setting is superseded by a lower priority setting.
+    limitMaxDischarge:                  LimitMaxDischarge               //  Maximum discharge power as percentage or rated capability.
+}
+
+export interface LimitMaxDischarge {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    pctMaxDischargePower?:              types.Percentage,               // Only for PowerMonitoring. The value specifies a percentage (0 to 100) of the rated maximum discharge 
+                                                                        // power of EV. The PowerMonitoring curve becomes active when power exceeds this percentage.
+    startTime?:                         types.Timestamp,                // Time when this setting becomes active.
+    duration?:                          types.Seconds,                  // Duration in seconds that this setting is active.
+    powerMonitoringMustTrip?:           DERCurve                        // The curve is an interpolation of data points where the x-axis values are time in seconds and the
+                                                                        // yaxis values refer to the percentage value of the rated EVMaximumDischargePower, reported in the
+                                                                        // ChargeParameterDiscoveryRequest message. The value lies between 0 and 100. The curve is activated
+                                                                        // when the power value measured via the ExternalMeter value reported in the ChargeLoopRes is higher
+                                                                        // than the pctMaxDischargePower defined above. If the power does not stay within the defined curve
+                                                                        // for the respective time period, the EV must trip.
+}
+
+export interface DERCurve {
+    priority:                           types.Integer,                  // Priority of curve (0=highest)
+    yUnit:                              types.DERUnit,                  // Unit a Y-axis of DER curve.
+    responseTime?:                      types.Seconds,                  // Open loop response time, the time to ramp up to 90% of the new target in response to the change
+                                                                        // in voltage, in seconds. A value of 0 is used to mean no limit. When not present, the device
+                                                                        // should follow its default behavior.
+    startTime?:                         types.Timestamp,                // Point in time when this curve will become activated. Only absent when default is true.
+    duration?:                          types.Seconds,                  // Duration in seconds that this curve will be active. Only absent when default is true.
+    hysteresis?:                        Hysteresis,                     // Hysteresis parameters for curve.
+    voltageParams?:                     VoltageParams,                  // Additional parameters for voltage curves.
+    reactivePowerParams?:               ReactivePowerParams,            // Additional parameters for VoltVar curve.
+    curveData:                          Array<DERCurvePoints>           // Coordinates of the DER curve. X-axis is determined by curveType. Y-axis is determined by yUnit.
+}
+
+export interface Hysteresis {
+    hysteresisHigh?:                    types.Decimal,                  // High value for return to normal operation after a grid event, in absolute value. This value adopts
+                                                                        // the same unit as defined by yUnit.
+    hysteresisLow?:                     types.Decimal,                  // Low value for return to normal operation after a grid event, in absolute value. This value adopts
+                                                                        // the same unit as defined by yUnit.
+    hysteresisDelay?:                   types.Decimal,                  // Delay in seconds, once grid parameter within HysteresisLow and HysteresisHigh, for the EV to return
+                                                                        // to normal operation after a grid event.
+    hysteresisGradient?:                types.Decimal                   // Set default rate of change (ramp rate %/s) for the EV to return to normal operation after a grid event.
+}
+
+export interface VoltageParams {
+    hvMeanValue10Min?:                  types.Decimal,                  // EN 50549-1 chapter 4.9.3.4 Voltage threshold for the 10 min time window mean value monitoring.
+                                                                        // The 10 min mean is recalculated up to every 3 s. If the present voltage is above this threshold for
+                                                                        // more than the time defined by OverVoltage10MinMeanTripDelay, the EV must trip. This value is mandatory
+                                                                        // if OverVoltage10MinMeanTripDelay is set.
+    hv10MinMeanTripDelay?:              types.Decimal,                  // Time for which the voltage is allowed to stay above the 10 min mean value. After this time, the EV must
+                                                                        // trip. This value is mandatory if OverVoltageMeanValue10min is set.
+    powerDuringCessation?:              types.PowerDuringCessation      // Parameter is only sent, if the EV has to feed-in power or reactive power during fault-ride through (FRT)
+                                                                        // as defined by HVMomCess curve and LVMomCess curve.
+}
+
+export interface ReactivePowerParams {
+    vRef?:                              types.Percentage,               // Only for VoltVar curve: The nominal AC voltage (rms) adjustment to the voltage curve points for
+                                                                        // Volt-Var curves (percentage).
+    autonomousVRefEnable?:              boolean,                        // Only for VoltVar: Enable/disable autonomous VRef adjustment.
+    autonomousVRefTimeConstant?:        types.Seconds,                  //  Only for VoltVar: Adjustment range for VRef time constant.
+}
+
+export interface DERCurvePoints {
+    x:                                  types.Decimal,                  // The data value of the X-axis (independent) variable, depending on the curve type.
+    y:                                  types.Decimal                   // The data value of the Y-axis (dependent) variable, depending on the DERUnitEnumType of the
+                                                                        // curve. If y is power factor, then a positive value means DER is absorbing reactive power
+                                                                        // (under-excited), a negative value when DER is injecting reactive power (over-excited).
+}
+
+export interface EnterServiceGet {
+    id:                                 types.Identifier,               // Id of setting.
+    enterService:                       EnterService                    // Enter Service settings.
+}
+
+export interface EnterService {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    highVoltage:                        types.Voltage,                  // Enter service voltage high.
+    lowVoltage:                         types.Voltage,                  // Enter service voltage low.
+    highFreq:                           types.Hertz,                    // Enter service frequency high.
+    lowFreq:                            types.Hertz,                    // Enter service frequency low.
+    delay?:                             types.Seconds,                  // Enter service delay.
+    randomDelay?:                       types.Seconds,                  // Enter service randomized delay.
+    rampRate?:                          types.Seconds                   // Enter service ramp rate in seconds.
+}
+
+export interface GradientGet {
+    id:                                 types.Identifier,               // Id of setting.
+    gradient:                           Gradient                        // Gradient settings.
+}
+
+export interface Gradient {
+    priority:                           types.Integer,                  // Priority of setting (0=highest)
+    gradient:                           types.Seconds,                  // Default ramp rate in seconds (0 if not applicable)
+    softGradient:                       types.Seconds,                  // Soft-start ramp rate in seconds (0 if not applicable)
+}
+
+export interface DERCurveGet {
+    id:                                 types.Identifier,               // Id of setting.
+    curveType:                          types.DERControlType,           // Type of DER curve.
+    isSuperseded:                       boolean,                        // True if this setting is superseded by a lower priority setting.
+    curve:                              DERCurve                        // Parameters defining the DER curve.
+}
+
+export interface LogParameters {
+    remoteLocation:                     string,                         // The URL of the location at the remote system where the log should be stored.
+    oldestTimestamp?:                   types.Timestamp,                // This contains the date and time of the oldest logging information to include in the diagnostics.
+    latestTimestamp?:                   types.Timestamp                 // This contains the date and time of the latest logging information to include in the diagnostics.
+}
+
+export interface ComponentVariable {
+    component:                          Component,                      // Component for which a report of Variable is requested.
+    variable?:                          Variable,                       // Variable for which the report is requested.
+}
+
+export interface ConstantStreamData {
+    id:                                 types.StreamId,                 // Uniquely identifies the stream.
+    variableMonitoringId:               types.VariableMonitoringId,     // Id of monitor used to report his event. It can be a preconfigured or hardwired monitor.
+    params:                             PeriodicEventStreamParams       // Parameters for the stream.
+}
+
+export interface TariffAssignment {
+    tariffId:                           types.TariffId,                 // Tariff id.
+    tariffKind:                         types.TariffKind,               // Kind of tariff (user/default)
+    evseIds?:                           Array<types.EVSEId>             // List of EVSEs to which the tariff is assigned. If omitted, the tariff is assigned to all EVSEs.
+    idTokens?:                          Array<types.IdToken>            // IdTokens related to tariff.
+}
+
+export interface GetVariableData {
+    attributeType?:                     types.Attribute,                // Attribute type for which value is requested. When absent, default 'Actual' is assumed.
+    component:                          Component,                      // Component for which the Variable is requested.
+    variable:                           Variable,                       // Variable for which the attribute value is requested.
+}
+
+export interface GetVariableResult {
+    attributeStatus:                    types.GetVariableStatus,        // Status of the GetVariable operation.
+    attributeType?:                     types.Attribute,                // Attribute type for which value is requested.
+    attributeValue?:                    string,                         // Value of requested attribute type of componentvariable. This field can only be empty when the given
+                                                                        // status is NOT accepted.
+                                                                        // The Configuration Variable ReportingValueSize can be used to limit GetVariableResult.attributeValue,
+                                                                        // VariableAttribute.value and EventData.actualValue.
+                                                                        // The max size of these values will always remain equal.
+    component:                          Component,                      // Component for which the Variable is requested.
+    variable:                           Variable,                       // Variable for which the attribute value is requested.
+    attributeStatusInfo?:               StatusInfo,                     // Detailed attribute status information.
+}
+
+export interface StreamDataElement {
+    t:                                  types.Timestamp,                // Timestamp of the stream data element.
+    v:                                  string                          // Value of the stream data element.
+}
+
+export interface AddressType {
+    name?:                              string,                         // Name of person/company
+    address1?:                          string,                         // Address line 1
+    address2?:                          string,                         // Address line 2
+    city?:                              string,                         // City
+    postalCode?:                        string,                         // Postal code
+    country?:                           string                          // Country name
+}
+
+export interface ChargingScheduleUpdate {
+    limit?:                             types.Decimal,                  // Only optional when not required by the operationMode, as in CentralSetpoint, ExternalSetpoint,
+                                                                        // ExternalLimits, LocalFrequency, LocalLoadBalancing. Charging rate limit during the schedule period,
+                                                                        // in the applicable chargingRateUnit. This SHOULD be a nonnegative value; a negative value is only
+                                                                        // supported for backwards compatibility with older systems that use a negative value to specify a
+                                                                        // discharging limit. For AC this field represents the sum of all phases, unless values are provided
+                                                                        // for L2 and L3, in which case this field represents phase L1.
+    limit_L2?:                          types.Decimal,                  // Charging rate limit on phase L2 in the applicable chargingRateUnit.
+    limit_L3?:                          types.Decimal,                  // Charging rate limit on phase L3 in the applicable chargingRateUnit.
+    dischargeLimit?:                    types.Decimal,                  // Limit in chargingRateUnit that the EV is allowed to discharge with. Note, these are negative
+                                                                        // values in order to be consistent with setpoint, which can be positive and negative.
+                                                                        // For AC this field represents the sum of all phases, unless values are provided for L2 and L3,
+                                                                        // in which case this field represents phase L1.
+    dischargeLimit_L2?:                 types.Decimal,                  // Limit in chargingRateUnit on phase L2 that the EV is allowed to discharge with.
+    dischargeLimit_L3?:                 types.Decimal,                  // Limit in chargingRateUnit on phase L3 that the EV is allowed to discharge with.
+    setpoint?:                          types.Decimal,                  // Setpoint in chargingRateUnit that the EV should follow as close as possible. Use negative values
+                                                                        // for discharging. When a limit and/or dischargeLimit are given the overshoot when following setpoint
+                                                                        // must remain within these values. This field represents the sum of all phases, unless values are
+                                                                        // provided for L2 and L3, in which case this field represents phase L1.
+    setpoint_L2?:                       types.Decimal,                  // Setpoint in chargingRateUnit that the EV should follow on phase L2 as close as possible.
+    setpoint_L3?:                       types.Decimal,                  // Setpoint in chargingRateUnit that the EV should follow on phase L3 as close as possible.
+    setPointReactive?:                  types.Decimal,                  // Setpoint for reactive power (or current) in chargingRateUnit that the EV should follow as closely as
+                                                                        // possible. Positive values for inductive, negative for capacitive reactive power or current.
+                                                                        // This field represents the sum of all phases, unless values are provided for L2 and L3, in which case
+                                                                        // this field represents phase L1.
+    setpointReactive_L2?:               types.Decimal,                  // Setpoint for reactive power (or current) in chargingRateUnit that the EV should follow on phase L2
+                                                                        // as closely as possible.
+    setpointReactive_L3?:               types.Decimal,                  // Setpoint for reactive power (or current) in chargingRateUnit that the EV should follow on phase L3
+                                                                        // as closely as possible.
+}
+
+export interface AuthorizationData {
+    idToken:                            types.IdToken,                  // This contains the identifier which needs to be stored for authorization.
+    idTokenInfo?:                       IdToken                         // This contains information about authorization status, expiry and group id. For a Differential update
+                                                                        // the following applies: If this element is present, then this entry SHALL be added or updated in the
+                                                                        // Local Authorization List. If this element is absent, the entry for this IdToken in the Local
+                                                                        // Authorization List SHALL be deleted.
+                                                                        // (Required when UpdateType is Full)
+}
 
 
 
@@ -303,24 +547,24 @@ export interface V2XSignalWattPoint {
 
 
 export interface IdToken {
-    idToken:                            types.IdToken2,
-    type:                               types.IdTokenType,
+    idToken:                            types.  IdToken,
+    type:                               types.  IdTokenType,
     additionalInfo:                     AdditionalInfo[],
 }
 
 export interface AdditionalInfo {
-    additionalIdToken:                  types.IdToken2,
+    additionalIdToken:                  types.  IdToken,
     type:                               string,
     customData?:                        ICustomData,
 }
 
 export interface ICustomData {
-    vendorId:                           types.VendorId,
+    vendorId:                           types.  VendorId,
     [key: string]:                      any,
 }
 
 export interface OCSPRequestData {
-    hashAlgorithm:                      types.HashAlgorithm,
+    hashAlgorithm:                      types.  HashAlgorithm,
     issuerNameHash:                     string,
     issuerKeyHash:                      string,
     serialNumber:                       string,

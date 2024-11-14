@@ -26,6 +26,10 @@ export type ChargingProfileId              = number;
 export type MeteringValue                  = number;
 export type ReservationId                  = number;
 export type Seconds                        = number;
+export type ListVersion                    = number;
+export type PEMCertificate                 = string;
+export type PEMCertificateChain            = string;
+export type URL                            = string;
 
 
 export type AuthorizationStatus            = "Accepted" |                              // Identifier is allowed for charging.

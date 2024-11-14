@@ -16,47 +16,55 @@
  */
 
 // Currently just for clarity
-export type IdToken2                 = string;
-export type VendorId                 = string;
-export type MessageId                = string;
-export type Certificate              = string;
-export type RequestId                = number;
-export type EMAId                    = string;
-export type EVSEId                   = number;
-export type ConnectorId              = number;
-export type TransactionId            = number;
-export type ChargingProfileId        = number;
-export type TariffId                 = string;
-export type MonitoringId             = number;
-export type ISO15118SchemaVersion    = string;
-export type EXIData                  = string;
-export type Timestamp                = string;
-export type Integer                  = number;
-export type Seconds                  = number;
-export type Decimal                  = number;
-export type Amperage                 = number;
-export type Watt                     = number;
-export type Wh                       = number;
-export type Hertz                    = number;
-export type Currency                 = string;
-export type Percentage               = number;
-export type Language                 = string;
-export type ChargingScheduleId       = string;
-export type PriceScheduleId          = number;
-export type PriceAlgorithm           = string;
-export type TaxRuleId                = number;
-export type SalesTariffId            = string;
-export type DisplayMessageId         = number;
-export type LanguageId               = string;
-export type EventId                  = number;
-export type Serverity                = number;
-export type VariableMonitoringId     = number;
-export type Severity                 = number;
-export type ReservationId            = number;
-export type RemoteStartId            = number;
-export type TimeOfDay                = string;  // Local time: 23:51; 24h format with leading zeros; Regex: ([0-1][0-9]|2[0-3]):[0-5][0-9]
-export type LocalDate                = string;  // Local time: 2015-12-24; Valid from this day (inclusive); Regex: ([12][0-9]+{3}+)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])
-
+export type Identifier                     = string;
+export type IdToken                        = string;
+export type VendorId                       = string;
+export type MessageId                      = string;
+export type RequestId                      = number;
+export type EMAId                          = string;
+export type EVSEId                         = number;
+export type DERControlId                   = string;
+export type ConnectorId                    = number;
+export type TransactionId                  = number;
+export type ChargingProfileId              = number;
+export type TariffId                       = string;
+export type MonitoringId                   = number;
+export type StreamId                       = number;
+export type ISO15118SchemaVersion          = string;
+export type EXIData                        = string;
+export type Timestamp                      = string;
+export type Integer                        = number;
+export type Seconds                        = number;
+export type Decimal                        = number;
+export type Voltage                        = number;
+export type Amperage                       = number;
+export type Watt                           = number;
+export type Wh                             = number;
+export type Hertz                          = number;
+export type Currency                       = string;
+export type Percentage                     = number;
+export type Language                       = string;
+export type ChargingScheduleId             = string;
+export type PriceScheduleId                = number;
+export type PriceAlgorithm                 = string;
+export type TaxRuleId                      = number;
+export type SalesTariffId                  = string;
+export type ReceiptId                      = string;
+export type DisplayMessageId               = number;
+export type LanguageId                     = string;
+export type EventId                        = number;
+export type Serverity                      = number;
+export type VariableMonitoringId           = number;
+export type Severity                       = number;
+export type ListVersion                    = number;
+export type ReservationId                  = number;
+export type RemoteStartId                  = number;
+export type TimeOfDay                      = string;  // Local time: 23:51; 24h format with leading zeros; Regex: ([0-1][0-9]|2[0-3]):[0-5][0-9]
+export type LocalDate                      = string;  // Local time: 2015-12-24; Valid from this day (inclusive); Regex: ([12][0-9]+{3}+)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])
+export type PEMCertificate                 = string;
+export type PEMCertificateChain            = string;
+export type URL                            = string;
+export type VATNumber                      = string;
 
 
 export type GenericStatus                  = "Accepted" |                              // Request has been accepted and will be executed.
@@ -190,6 +198,178 @@ export type OperationMode                  = "Idle" |                           
                                              "CentralFrequency" |                      // Frequency support with control by CSMS or some secondary actor that relays through the CSMS.
                                              "LocalFrequency" |                        // Frequency support with control in the Charging Station.
                                              "LocalLoadBalancing";                     // Load-balancing performed by the Charging Station.
+
+export type DERControlType
+    = "EnterService" |                          // Enter Service parameters setting
+      "FreqDroop" |                             // Frequency droop settings
+      "FreqWatt" |                              // Frequency-Watt curve
+      "FixedPFAbsorb" |                         // Fixed power factor when absorbing power setting
+      "FixedPFInject" |                         // Fixed power factor when injecting power setting
+      "FixedVar" |                              // Fixed reactive power setpoint
+      "Gradients" |                             // Gradient settings
+      "HFMustTrip" |                            // High Frequency Must Trip curve
+      "HFMayTrip" |                             // High Frequency May Trip curve (ride-through)
+      "HVMustTrip" |                            // High Voltage Must Trip curve
+      "HVMomCess" |                             // High Voltage Momentary Cessation curve
+      "HVMayTrip" |                             // High Voltage May Trip curve (ride-through)
+      "LimitMaxDischarge" |                     // Limit discharge power to percentage of rated discharge power
+      "LFMustTrip" |                            // Low Frequency Must Trip curve
+      "LVMustTrip" |                            // Low Voltage Must Trip curve
+      "LVMomCess" |                             // Low Voltage Momentary Cessation curve
+      "LVMayTrip" |                             // Low Voltage May Trip curve (ride-through)
+      "PowerMonitoringMustTrip" |               // Power Monitoring curve according to VDE-AR-N 4105 section 5.5.2
+      "VoltVar" |                               // Volt-Var curve
+      "VoltWatt" |                              // Volt-Watt curve
+      "WattPF" |                                // Watt-PowerFactor curve
+      "WattVar";                                // Watt-Var curve
+
+export type DERControlStatus
+    = "Accepted" |                              // Operation successful.
+      "Rejected" |                              // Operation failed.
+      "Unsupported" |                           // Type of DER setting or curve is not supported.
+      "NotFound";                               // Type or Id in clear/get request was not found.
+
+export type DERUnit
+    = "Not_Applicable" |                        // No unit applicable (e.g. for ride-through curves)
+      "PctMaxW" |                               // Percentage of configured active power
+      "PctMaxVar" |                             // Percentage of configured reactive power
+      "PctWAvail" |                             // Percentage of available reserve active power
+      "PctVarAvail" |                           // Percentage of available reserve reactive power
+      "PctEffectiveV";                          // Percentage of effective voltage
+
+export type PowerDuringCessation
+    = "Active" |                                // Active power.
+      "Reactive";                               // Reactive power.
+
+export type GetDisplayMessageStatus
+    = "Accepted" |                              // Request accepted, there are Display Messages found that match all the requested criteria.
+                                                // The Charging Station will send NotifyDisplayMessagesRequest messages to report the
+                                                // requested Display Messages.
+      "Unknown";                                // No messages found that match the given criteria.
+
+export type LogType
+    = "DiagnosticsLog" |                        // This contains the field definition of a diagnostics log file.
+      "SecurityLog" |                           // Sent by the CSMS to the Charging Station to request that the Charging Station uploads the security log.
+      "DataCollectorLog";                       // (2.1) The log of sampled measurements from the DataCollector component.
+
+export type LogStatus
+    = "Accepted" |                              // Accepted this log upload. This does not mean the log file is uploaded is successfully,
+                                                // the Charging Station will now start the log file upload.
+      "Rejected" |                              // Log update request rejected.
+      "AcceptedCanceled";                       // Accepted this log upload, but in doing this has canceled an ongoing log file upload.
+
+export type MonitoringCriterion
+    = "ThresholdMonitoring" |                   // Report variables and components with a monitor of type UpperThreshold or LowerThreshold.
+      "DeltaMonitoring" |                       // Report variables and components with a monitor of type Delta.
+      "PeriodicMonitoring";                     // Report variables and components with a monitor of type Periodic or PeriodicClockAligned.
+
+export type ComponentCriterion
+    = "Active" |                                // Components that are active, i.e. having Active = 1
+      "Available" |                             // Components that are available, i.e. having Available = 1
+      "Enabled" |                               // Components that are enabled, i.e. having Enabled = 1
+      "Problem";                                // Components that reported a problem, i.e. having Problem = 1
+
+export type Attribute
+    = "Actual" |                                // The actual value of the variable.
+      "Target" |                                // The target value for this variable.
+      "MinSet" |                                // The minimal allowed value for this variable
+      "MaxSet";                                 // The maximum allowed value for this variable
+
+export type GetVariableStatus
+    = "Accepted" |                              // Variable successfully set.
+      "Rejected" |                              // Request is rejected.
+      "UnknownComponent" |                      // Component is not known.
+      "UnknownVariable" |                       // Variable is not known.
+      "NotSupportedAttributeType";              // The AttributeType is not supported.
+
+export type NotifyAllowedEnergyTransferStatus
+    = "Accepted" |                              // Request has been accepted.
+      "Rejected";                               // Request has been rejected. Should not occur, unless there are some technical problems.
+
+export type NotifyCRLStatus
+    = "Available" |                             // A CRL is available in given location.
+      "Unavailable";                            // No CRL is available.
+
+export type GridEventFault
+    = "CurrentImbalance" |                      // Current imbalance detected
+      "LocalEmergency" |                        // A local emergency detected
+      "LowInputPower" |                         // Low input power detected
+      "OverCurrent" |                           // Overcurrent detected
+      "OverFrequency" |                         // Over frequency detected
+      "OverVoltage" |                           // Over voltage detected
+      "PhaseRotation" |                         // Phase rotation detected
+      "RemoteEmergency" |                       // A remote emergency detected
+      "UnderFrequency" |                        // Under frequency detected
+      "UnderVoltage" |                          // Under voltage detected
+      "VoltageImbalance";                       // Voltage imbalance detected
+
+export type PaymentStatus
+    = "Settled" |                               // Settled successfully by the PSP.
+      "Canceled" |                              // No billable part of the OCPP transaction, cancelation sent to the PSP.
+      "Rejected" |                              // Rejected by the PSP.
+      "Failed";                                 // Sent after the final attempt that fails due to communication problems.
+
+export type ChargingProfileStatus
+    = "Accepted" |                              // Request has been accepted and will be executed.
+      "Rejected";                               // Request has not been accepted and will not be executed.
+
+export type RequestStartStopStatus
+    = "Accepted" |                              // Command will be executed.
+      "Rejected";                               // Command will not be executed.
+
+export type ConnectorType
+    = "cCCS1" |                                // Combined Charging System 1 (captive cabled) a.k.a. Combo 1
+      "cCCS2" |                                // Combined Charging System 2 (captive cabled) a.k.a. Combo 2
+      "cChaoJi" |                              // ChaoJi (captive cabled) a.k.a. CHAdeMO 3.0
+      "cG105" |                                // JARI G105-1993 (captive cabled) a.k.a. CHAdeMO (captive cabled)
+      "cGBT-DC" |                              // GB/T 20234.3 DC connector (captive cabled)
+      "cLECCS" |                               // Light Equipment Combined Charging System IS17017 (captive cabled)
+      "cMCS" |                                 // Megawatt Charging System (captive cabled)
+      "cNACS" |                                // North American Charging Standard (captive cabled)
+      "cNACS-CCS1" |                           // Tesla MagicDock with built-in NACS to CCS1 adapter
+      "cTesla" |                               // Tesla Connector (captive cabled)
+      "cType1" |                               // IEC62196-2 Type 1 connector (captive cabled) a.k.a. J1772
+      "cType2" |                               // IEC62196-2 Type 2 connector (captive cabled) a.k.a. Mennekes connector
+      "cUltraChaoJi" |                         // Ultra-ChaoJi for megawatt charging
+      "s309-1P-16A" |                          // 16A 1 phase IEC60309 socket
+      "s309-1P-32A" |                          // 32A 1 phase IEC60309 socket
+      "s309-3P-16A" |                          // 16A 3 phase IEC60309 socket
+      "s309-3P-32A" |                          // 32A 3 phase IEC60309 socket
+      "sBS1361" |                              // UK domestic socket a.k.a. 13Amp
+      "sCEE-7-7" |                             // CEE 7/7 16A socket. May represent 7/4 and 7/5 a.k.a Schuko
+      "sType2" |                               // IEC62196-2 Type 2 socket a.k.a. Mennekes connector
+      "sType3" |                               // IEC62196-2 Type 3 socket a.k.a. Scame
+      "wInductive" |                           // Wireless inductively coupled connection (generic)
+      "wResonant" |                            // Wireless resonant coupled connection (generic)
+      "Other1PhMax16A" |                       // Other single phase (domestic) sockets not mentioned above, rated at no more
+                                               // than 16A. CEE7/17, AS3112, NEMA 5-15, NEMA 5-20, JISC8303, TIS166, SI 32,
+                                               // CPCS-CCC, SEV1011, etc.
+      "Other1PhOver16A" |                      // Other single phase sockets not mentioned above (over 16A)
+      "Other3Ph" |                             // Other 3 phase sockets not mentioned above. NEMA14-30, NEMA14-50.
+      "Pan" |                                  // Pantograph connector
+      "Undetermined" |                         // Yet to be determined (e.g. before plugged in)
+      "Unknown" |                              // Unknown/not determinable
+       string;
+
+export type ReserveNowStatus
+    = "Accepted" |                             // Reservation has been made.
+      "Faulted" |                              // Reservation has not been made, because evse, connectors or specified connector are in a faulted state.
+      "Occupied" |                             // Reservation has not been made. The evse or the specified connector is occupied.
+      "Rejected" |                             // Reservation has not been made. Charging Station is not configured to accept reservations.
+      "Unavailable";                           // Reservation has not been made, because evse, connectors or specified connector are in an unavailable state.
+
+export type UpdateType
+    = "Differential" |                         // Indicates that the current Local Authorization List must be updated with the values in this message.
+      "Full";                                  // Indicates that the current Local Authorization List must be replaced by the values in this message.
+
+export type SendLocalListStatus
+    = "Accepted" |                             // Local Authorization List successfully updated.
+      "Failed"   |                             // Failed to update the Local Authorization List.
+      "VersionMismatch";                       // Version number in the request for a differential update is less or equal then version number of current list.
+
+
+
+
 
 
 

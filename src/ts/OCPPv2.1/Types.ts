@@ -36,10 +36,13 @@ export type Timestamp                      = string;
 export type Integer                        = number;
 export type Seconds                        = number;
 export type Decimal                        = number;
-export type Voltage                        = number;
-export type Amperage                       = number;
+export type Volt                           = number;
+export type Ampere                         = number;
+export type VoltAmpere                     = number;
+export type VoltAmpereReactive             = number;
 export type Watt                           = number;
-export type Wh                             = number;
+export type WattHour                       = number;
+export type Siemens                        = number;
 export type Hertz                          = number;
 export type Currency                       = string;
 export type Percentage                     = number;
@@ -53,7 +56,6 @@ export type ReceiptId                      = string;
 export type DisplayMessageId               = number;
 export type LanguageId                     = string;
 export type EventId                        = number;
-//export type Serverity                      = number;
 export type VariableMonitoringId           = number;
 export type ListVersion                    = number;
 export type ReservationId                  = number;
@@ -63,6 +65,7 @@ export type LocalDate                      = string;  // Local time: 2015-12-24;
 export type PEMCertificate                 = string;
 export type PEMCertificateChain            = string;
 export type URL                            = string;
+export type PostalCode                     = string;
 export type VATNumber                      = string;
 
 
@@ -268,7 +271,7 @@ export type ComponentCriterion
       "Enabled" |                               // Components that are enabled, i.e. having Enabled = 1
       "Problem";                                // Components that reported a problem, i.e. having Problem = 1
 
-export type Attribute
+export type AttributeType
     = "Actual" |                                // The actual value of the variable.
       "Target" |                                // The target value for this variable.
       "MinSet" |                                // The minimal allowed value for this variable
@@ -429,6 +432,96 @@ export type SetMonitoringStatus
       "UnsupportedMonitorType" |               // Requested monitor type is not supported.
       "Rejected" |                             // Request is rejected.
       "Duplicate";                             // A monitor already exists for the given type/severity combination.
+
+export type SetVariableStatus
+    = "Accepted" |                             // Variable successfully set.
+      "Rejected" |                             //  Request is rejected.
+      "UnknownComponent" |                     // Component is not known.
+      "UnknownVariable" |                      //  Variable is not known.
+      "NotSupportedAttributeType" |            // The AttributeType is not supported.
+      "RebootRequired";                        // A reboot is required.
+
+export type PreconditioningStatus
+    = "Unknown" |                              // No information available on the status of preconditioning.
+      "Ready" |                                // The battery is preconditioned and ready to react directly on a given setpoint for charging (and discharging when available).
+      "NotReady" |                             // Busy with preconditioning the BMS. When done will move to status Ready.
+      "Preconditioning";                       // The battery is not preconditioned and not able to directly react to given setpoint.
+
+export type  CostDimensionType
+    = "Energy" |                               // Total amount of energy (dis-)charged during this charging period, defined in Wh (kiloWatt-hours).
+                                               // When negative, more energy was feed into the grid then charged into the EV.
+      "MaxCurrent" |                           // Sum of the maximum current over all phases, reached during this charging period, defined in A (Ampere).
+      "MinCurrent" |                           // Sum of the minimum current over all phases, reached during this charging period, when negative, current has flowed from
+                                               // the EV to the grid. Defined in A (Ampere).
+      "MaxPower" |                             // Maximum power reached during this charging period: defined in W (Watt).
+      "MinPower" |                             // Minimum power reached during this charging period: defined in W (Watt), when negative, the power has flowed from the EV
+                                               // to the grid.
+      "IdleTIme" |                             // Time not charging during this charging period: defined in seconds.
+      "ChargingTime";                          // Time charging during this charging period: defined in seconds.
+
+export type MessageTrigger
+    = "BootNotification" |                     // To trigger BootNotification.
+      "LogStatusNotification" |                // To trigger LogStatusNotification.
+      "FirmwareStatusNotification" |           // To trigger FirmwareStatusNotification.
+      "Heartbeat" |                            // To trigger Heartbeat.
+      "MeterValues" |                          // To trigger MeterValues.
+      "SignChargingStationCertificate" |       // To trigger a SignCertificate with typeOfCertificate: ChargingStationCertificate.
+      "SignV2GCertificate" |                   // To trigger a SignCertificate with typeOfCertificate: V2GCertificate
+      "SignV2G20Certificate" |                 // (2.1) Same as SignV2GCertificate, but this triggers Charging Station explicitly to only sign
+                                               // V2G certificate for ISO 15118-20.
+      "StatusNotification" |                   // To trigger StatusNotification.
+      "TransactionEvent" |                     // To trigger TransactionEvent.
+      "SignCombinedCertificate" |              // To trigger a SignCertificate with typeOfCertificate: ChargingStationCertificate AND
+                                               // V2GCertificate
+      "PublishFirmwareStatusNotification" |    // To trigger PublishFirmwareStatusNotification.
+      "CustomTrigger" |                        // (2.1) To trigger the message referred to in customTrigger field
+       string;
+
+export type TriggerMessageStatus
+    = "Accepted" |                             // Requested message will be sent.
+      "Rejected" |                             // Requested message will not be sent.
+      "NotImplemented";                        // Requested message cannot be sent because it is either not implemented or unknown.
+
+export type UnlockStatus
+    = "Unlocked" |                             // Connector has successfully been unlocked.
+      "UnlockFailed";                          // Failed to unlock the connector.
+
+export type UnpublishFirmwareStatus
+    = "DownloadOngoing" |                      // Intermediate state. Firmware is being downloaded.
+      "NoFirmware" |                           // There is no published file.
+      "Unpublished";                           // Successful end state. Firmware file no longer being published.
+
+export type UpdateFirmwareStatus
+    = "Accepted" |                             // Accepted this firmware update request. This does not mean the firmware update is successful, the Charging
+      "Station" |                              // will now start the firmware update process.
+      "Rejected" |                             // Firmware update request rejected.
+      "AcceptedCanceled" |                     // Accepted this firmware update request, but in doing this has canceled an ongoing firmware update.
+      "InvalidCertificate" |                   // The certificate is invalid.
+      "RevokedCertificate";                    // Failure end state. The Firmware Signing certificate has been revoked.
+
+export type PriorityChargingStatus
+    = "Accepted" |                             // Request has been accepted.
+      "Rejected" |                             // Request has been rejected.
+      "NoProfile";                             // No priority charging profile present.
+
+export type IslandingDetection
+    = "NoAntiIslandingSupport" |               // No anti-island detection supported
+      "RoCoF" |                                // RoCoF - Rate of Change of Frequency
+      "UVP_OVP" |                              // Under/over voltage (UVP/OVP)
+      "UFP_OFP" |                              // Under/over frequency (UFP/OFP)
+      "VoltageVectorShift" |                   // Voltage Vector Shift
+      "ZeroCrossingDetection" |                // Zero Crossing Detection
+      "OtherPassive" |                         // Other passive anti-island detection method supported
+      "ImpedanceMeasurement" |                 // Impedance measurement
+      "ImpedanceAtFrequency" |                 // Impedance detection at a specific frequency
+      "SlipModeFrequencyShift" |               // Slip-mode frequency shift
+      "SandiaFrequencyShift" |                 // Frequency bias/Sandia frequency shift
+      "SandiaVoltageShift" |                   // Sandia voltage shift
+      "FrequencyJump" |                        // Frequency jump
+      "RCLQFactor" |                           // RCL Q factor
+      "OtherActive";                           // Other active anti-island detection method supported
+    
+
 
 
 
@@ -624,12 +717,6 @@ export type MonitorType                 = "UpperThreshold"       |
                                           "PeriodicClockAligned" |
                                            string;
 
-export type AttributeType               = "Actual" |
-                                          "Target" |
-                                          "MinSet" |
-                                          "MaxSet" |
-                                           string;
-
 export type MutabilityType              = "ReadOnly"  |
                                           "WriteOnly" |
                                           "ReadWrite" |
@@ -807,6 +894,7 @@ export type InstallCertificateUse          = "V2GRootCertificate" |             
 export type InstallCertificateStatus       = "Accepted" |                              // The installation of the certificate succeeded.
                                              "Rejected" |                              // The certificate is invalid and/or incorrect OR the CSO tries to install more certificates than allowed.
                                              "Failed";                                 // The certificate is valid and correct, but there is another reason the installation did not succeed.
+
 
 export enum SeverityLevel {
     Danger          = 0,

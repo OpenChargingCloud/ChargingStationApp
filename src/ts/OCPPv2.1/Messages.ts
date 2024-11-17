@@ -167,7 +167,7 @@ export interface ClearDisplayMessageRequest {
 }
 
 export interface ClearDisplayMessageResponse {
-    status:                             types.  ClearDisplayMessageStatus,      // Returns whether the Charging Station has been able to remove the message.
+    status:                             types.  ClearMessageStatus,             // Returns whether the Charging Station has been able to remove the message.
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
 
@@ -404,7 +404,8 @@ export interface GetDisplayMessagesRequest {
 }
 
 export interface GetDisplayMessagesResponse {
-    status:                             types.  GetDisplayMessageStatus,        // Indicates if the Charging Station has Display Messages that match the request criteria in the GetDisplayMessagesRequest
+    status:                             types.  GetDisplayMessagesStatus,       // Indicates if the Charging Station has Display Messages that match the request criteria in
+                                                                                // the GetDisplayMessagesRequest
     statusInfo?:                        complex.StatusInfo,                     // Detailed status information.
     customData?:                        complex.ICustomData                     // Customer specific data.
 }
@@ -657,6 +658,8 @@ export interface NotifyEVChargingNeedsRequest {
 }
 
 export interface NotifyEVChargingNeedsResponse {
+    status:                             types.  NotifyEVChargingNeedsStatus,        // Returns whether the CSMS has been able to process the message successfully.
+    statusInfo?:                        complex.StatusInfo,                         // Detailed status information.
     customData?:                        complex.ICustomData                         // Customer specific data.
 }
 
@@ -931,7 +934,7 @@ export interface ResetResponse {
 }
 
 export interface SecurityEventNotificationRequest {
-    type:                               complex.SecurityEventType,                  // Type of the security event. This value should be taken from the Security events list.
+    type:                               types.  SecurityEvent,                      // Type of the security event. This value should be taken from the Security events list.
     timestamp:                          types.  Timestamp,                          // Date and time at which the event occurred.
     techInfo?:                          string,                                     // Additional information about the occurred security event.
     customData?:                        complex.ICustomData                         // Customer specific data.
@@ -1074,7 +1077,7 @@ export interface SignCertificateRequest {
     csr:                                string,                                     // The Charging Station SHALL send the public key in form of a Certificate Signing
                                                                                     // Request (CSR) as described in RFC 2986 [22] and then PEM encoded, using the
                                                                                     // SignCertificateRequest message.
-    certificateType:                    types.  CertificateType,                    // Indicates the type of certificate that is to be signed. When omitted the
+    certificateType:                    types.  CertificateSigningUse,              // Indicates the type of certificate that is to be signed. When omitted the
                                                                                     // certificate is to be used for both the 15118 connection (if implemented) and the
                                                                                     // Charging Station to CSMS connection.
     customData?:                        complex.ICustomData                         // Customer specific data.
@@ -1134,7 +1137,7 @@ export interface TransactionEventRequest {
                                                                                     // idToken should not be present in the TransactionEventRequest when a transaction is ended
                                                                                     // by a RequestStopTransactionRequest or a ResetRequest.
     evse?:                              complex.EVSE,                               // This identifies which evse (and connector) of the Charging Station is used.
-    transactionInfo:                    complex.TransactionInfo,                    // Contains transaction specific information.
+    transactionInfo:                    complex.Transaction,                    // Contains transaction specific information.
     costDetails?:                       complex.CostDetails,                        // (2.1) Optional. Only required in TransactionEventRequest('Ended') and only if Charging
                                                                                     // Station calculated cost locally.
     customData?:                        complex.ICustomData,                        // Customer specific data.

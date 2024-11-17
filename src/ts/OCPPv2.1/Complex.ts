@@ -129,6 +129,15 @@ export interface CertificateHashData {
     customData?:                        ICustomData                         // Customer specific data.
 }
 
+export interface ChargingLimit {
+    chargingLimitSource:                types.ChargingLimitSource,          // Represents the source of the charging limit.
+                                                                            // Values defined in appendix as ChargingLimitSourceEnumStringType.
+    isLocalGeneration?:                 boolean,                            // (2.1) True when the reported limit concerns local generation that is providing extra capacity,
+                                                                            // instead of a limitation.
+    isGridCritical?:                    boolean,                            // Indicates whether the charging limit is critical for the grid.
+    customData?:                        ICustomData                         // Customer specific data.
+}
+
 export interface ChargingNeeds {
     requestedEnergyTransfer:            types.EnergyTransferMode,           // Mode of energy transfer requested by the EV.
     availableEnergyTransfer?:           Array<types.EnergyTransferMode>,    // (2.1) Modes of energy transfer that are marked as available by EV.
@@ -1270,82 +1279,224 @@ export interface TaxRate {
 }
 
 export interface TaxRule {
-    taxRuleID:                          types.TaxRuleId,
-    taxRuleName?:                       string,
-    taxIncludedInPrice?:                boolean,
-    appliesToEnergyFee:                 boolean,
-    appliesToParkingFee:                boolean,
-    appliesToOverstayFee:               boolean,
-    appliesToMinimumMaximumCost:        boolean,
-    taxRate:                            RationalNumber,
-    customData?:                        ICustomData
+    taxRuleID:                          types.TaxRuleId,                // Unique identifier for this tax rule.
+    taxRuleName?:                       string,                         // Human readable string to identify the tax rule.
+    taxIncludedInPrice?:                boolean,                        // Indicates whether the tax is included in any price or not.
+    appliesToEnergyFee:                 boolean,                        // Indicates whether this tax applies to Energy Fees.
+    appliesToParkingFee:                boolean,                        // Indicates whether this tax applies to Parking Fees.
+    appliesToOverstayFee:               boolean,                        // Indicates whether this tax applies to Overstay Fees.
+    appliesToMinimumMaximumCost:        boolean,                        // Indicates whether this tax applies to Minimum/Maximum Cost.
+    taxRate:                            RationalNumber,                 // Percentage of the total amount of applying fee (energy, parking, overstay, MinimumCost and/or MaximumCost).
+    customData?:                        ICustomData                     // Customer specific data.
 }
 
+export interface TotalCost {
+    currency:                           types.Currency                  // Currency of the costs in ISO 4217 Code.
+    fixed:                              Price,                          // Total sum of all flat fees in the specified currency, except for components with
+                                                                        // conditions.isReservation = true (counted in totalReservationCost).
+    energy:                             Price,                          // Total sum of all the cost of all the energy used, in the specified currency.
+    chargingTime:                       Price,                          // Total sum of all the cost related to duration of charging during this transaction,
+                                                                        // in the specified currency.
+    idleTime:                           Price,                          // Total sum of all the cost related to idle time of this transaction, including fixed price
+                                                                        // components, in the specified currency.
+    reservation:                        Price,                          // Total sum of all the cost related to reservation of the EVSE, including fixed price
+                                                                        // components, in the specified currency.
+    customData?:                        ICustomData                     // Customer specific data.
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// --------------------------------------------------------------------------------------------
+export interface TotalUsage {
+    energy:                             types.Decimal,                  // Total energy used during this transaction, in the specified unit.
+    chargingTime:                       types.Seconds,                  // Total duration of the charging session (including the duration of charging and not charging)
+    idleTime:                           types.Seconds                   // Total duration of the charging session where the EV was not charging (no energy was
+                                                                        // transferred between EVSE and EV), in seconds.
+    customData?:                        ICustomData                     // Customer specific data.
+}
 
 export interface TransactionLimit {
-    maxCost?:                           types.Integer,                  // Maximum allowed cost of transaction.
-    maxEnergy?:                         types.Integer,                  // Maximum allowed energy to charge in transaction.
-    maxTime?:                           types.Integer,                  // Maximum duration of transaction from start to end.
+    maxCost?:                           types.Decimal,                  // Maximum allowed cost of transaction.
+    maxEnergy?:                         types.Watt,                     // Maximum allowed energy to charge in transaction.
+    maxTime?:                           types.Seconds,                  // Maximum duration of transaction from start to end.
     maxSoC?:                            types.Percentage,               // Maximum allowed state of charge at end of the charging session.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+export interface Transaction {
+    transactionId:                      types.TransactionId,            // This contains the Id of the transaction.
+    chargingState?:                     types.ChargingState,            // Current charging state, is required when state has changed.
+                                                                        // Omitted when there is no communication between EVSE and EV, because no cable is plugged in.
+    timeSpentCharging?:                 types.Seconds,                  // Contains the total time that energy flowed from EVSE to EV during the transaction
+                                                                        // (in seconds). Note that timeSpentCharging is smaller or equal to the duration of the
+                                                                        // transaction.
+    stoppedReason?:                     types.StopTransactionReason,    // The stoppedReason is the reason/event that initiated the process of stopping the transaction.
+                                                                        // It will normally be the user stopping authorization via card (Local or MasterPass) or app
+                                                                        // (Remote), but it can also be CSMS revoking authorization (DeAuthorized), or disconnecting
+                                                                        // the EV when TxStopPoint = EVConnected (EVDisconnected). Most other reasons are related to
+                                                                        // technical faults or energy limitations. MAY only be omitted when stoppedReason is "Local"
+    remoteStartId?:                     types.RemoteStartId,            // The ID given to remote start request (RequestStartTransactionRequest. This enables to CSMS
+                                                                        // to match the started transaction to the given start request.
+    operationMode?:                     types.OperationMode,            // (2.1) The operationMode that is currently in effect for the transaction.
+    tariffId?:                          types.TariffId,                 // (2.1) Id of tariff in use for transaction.
+    transactionLimit?:                  TransactionLimit,               // (2.1) Maximum cost/energy/time allowed for this transaction.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface UnitOfMeasure {
+    unit?:                              types.UnitOfMeasure,            // Unit of the value. Default = "Wh" if the (default) measurand is an "Energy" type.
+                                                                        // This field SHALL use a value from the list Standardized Units of Measurements in Part 2
+                                                                        // Appendices. If an applicable unit is available in that list, otherwise a "custom" unit
+                                                                        // might be used.
+    multiplier:                         types.Integer,                  // Multiplier, this value represents the exponent to base 10. I.e. multiplier 3 means 10
+                                                                        // raised to the 3rd power. Default is 0.
+                                                                        // The multiplier only multiplies the value of the measurand.
+                                                                        // It does not specify a conversion between units, for example, kW and W.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface V2XChargingParameters {
+    minChargePower?:                    types.Watt,                     // Minimum charge power in W, defined by max(EV, EVSE). This field represents the sum of
+                                                                        // all phases, unless values are provided for L2 and L3, in which case this field represents
+                                                                        // phase L1.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumChargePower
+    minChargePower_L2?:                 types.Watt,                     // Minimum charge power on phase L2 in W, defined by max(EV, EVSE).
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumChargePower_L2
+    minChargePower_L3?:                 types.Watt,                     // Minimum charge power on phase L3 in W, defined by max(EV, EVSE).
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumChargePower_L3
+    maxChargePower?:                    types.Watt,                     // Maximum charge (absorbed) power in W, defined by min(EV, EVSE) at unity power factor.
+                                                                        // This field represents the sum of all phases, unless values are provided for L2 and L3, in
+                                                                        // which case this field represents phase L1. It corresponds to the ChaWMax attribute in the
+                                                                        // IEC 61850. It is usually equivalent to the rated apparent power of the EV when discharging
+                                                                        // (ChaVAMax) in IEC 61850.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumChargePower
+    maxChargePower_L2?:                 types.Watt,                     // Maximum charge power on phase L2 in W, defined by min(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumChargePower_L2
+    maxChargePower_L3?:                 types.Watt,                     // Maximum charge power on phase L3 in W, defined by min(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumChargePower_L3
+    minDischargePower?:                 types.Watt,                     // Minimum discharge (injected) power in W, defined by max(EV, EVSE) at unity power factor.
+                                                                        // Value >= 0. This field represents the sum of all phases, unless values are provided for
+                                                                        // L2 and L3, in which case this field represents phase L1.
+                                                                        // It corresponds to the WMax attribute in the IEC 61850. It is usually equivalent to the
+                                                                        // rated apparent power of the EV when discharging (VAMax attribute in the IEC 61850).
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumDischargePower
+    minDischargePower_L2?:              types.Watt,                     // Minimum discharge power on phase L2 in W, defined by max(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumDischargePower_L2
+    minDischargePower_L3?:              types.Watt,                     // Minimum discharge power on phase L3 in W, defined by max(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMinimumDischargePower_L3
+    maxDischargePower?:                 types.Watt,                     // Maximum discharge (injected) power in W, defined by min(EV, EVSE) at unity power factor.
+                                                                        // Value >= 0. This field represents the sum of all phases, unless values are provided for L2
+                                                                        // and L3, in which case this field represents phase L1.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumDischargePower
+    maxDischargePower_L2?:              types.Watt,                     // Maximum discharge power on phase L2 in W, defined by min(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumDischargePowe_L2
+    maxDischargePower_L3?:              types.Watt,                     // Maximum discharge power on phase L3 in W, defined by min(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_AC/DC_CPDReqEnergyTransferModeType: EVMaximumDischargePowe_L3
+    minChargeCurrent?:                  types.Ampere,                   // Minimum charge current in A, defined by max(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMinimumChargeCurrent
+    maxChargeCurrent?:                  types.Ampere,                   // Maximum charge current in A, defined by min(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMaximumChargeCurrent
+    minDischargeCurrent?:               types.Ampere,                   // Minimum discharge current in A, defined by max(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMinimumDischargeCurrent
+    maxDischargeCurrent?:               types.Ampere,                   // Maximum discharge current in A, defined by min(EV, EVSE). Value >= 0.
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMaximumDischargeCurrent
+    minVoltage?:                        types.Volt,                     // Minimum voltage in V, defined by max(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMinimumVoltage
+    maxVoltage?:                        types.Volt,                     // Maximum voltage in V, defined by min(EV, EVSE)
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: EVMaximumVoltage
+    evTargetEnergyRequest?:             types.WattHour,                 // Energy to requested state of charge in Wh.
+                                                                        // Related to: ISO 15118-20: Dynamic/Scheduled_SEReqControlModeType: EVTargetEnergyRequest
+    evMinEnergyRequest?:                types.WattHour,                 // Energy to minimum allowed state of charge in Wh.
+                                                                        // Related to: ISO 15118-20: Dynamic/Scheduled_SEReqControlModeType: EVMinimumEnergyRequest
+    evMaxEnergyRequest?:                types.WattHour,                 // Energy to maximum state of charge in Wh.
+                                                                        // Related to: ISO 15118-20: Dynamic/Scheduled_SEReqControlModeType: EVMaximumEnergyRequest
+    evMinV2XEnergyRequest?:             types.WattHour,                 // Energy (in Wh) to minimum state of charge for cycling (V2X) activity. Positive value means
+                                                                        // that current state of charge is below V2X range.
+                                                                        // Related to: ISO 15118-20: Dynamic_SEReqControlModeType: EVMinimumV2XEnergyRequest
+    evMaxV2XEnergyRequest?:             types.WattHour,                 // Energy (in Wh) to maximum state of charge for cycling (V2X) activity. Negative value
+                                                                        // indicates that current state of charge is above V2X range.
+                                                                        // Related to: ISO 15118-20: Dynamic_SEReqControlModeType: EVMaximumV2XEnergyRequest
+    targetSoC?:                         types.Percentage,               // Target state of charge at departure as percentage.
+                                                                        // Related to: ISO 15118-20: BPT_DC_CPDReqEnergyTransferModeType: TargetSOC
+    customData?:                        ICustomData                     // Customer specific data.
 }
 
 export interface V2XFreqWattPoint {
     frequency:                          types.Hertz,                    // Net frequency in Hz.
-    power:                              types.Watt                      // Power in W to charge (positive) or discharge (negative) at specified frequency.
+    power:                              types.Watt,                     // Power in W to charge (positive) or discharge (negative) at specified frequency.
+    customData?:                        ICustomData                     // Customer specific data.
 }
 
 export interface V2XSignalWattPoint {
     signal:                             types.Integer,                  // Signal value from an AFRRSignalRequest.
-    power:                              types.Watt                      // Power in W to charge (positive) or discharge (negative) at specified frequency.
+    power:                              types.Watt,                     // Power in W to charge (positive) or discharge (negative) at specified frequency.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface VariableAttribute {
+    type?:                              types.AttributeType,            // Attribute: Actual, MinSet, MaxSet, etc. Defaults to Actual if absent.
+    value?:                             string,                         // Value of the attribute. May only be omitted when mutability is set to 'WriteOnly'.
+                                                                        // The Configuration Variable ReportingValueSize can be used to limit
+                                                                        // GetVariableResult.attributeValue, VariableAttribute.value and EventData.actualValue.
+                                                                        // The max size of these values will always remain equal.
+    mutability?:                        types.MutabilityType,           // Defines the mutability of this attribute. Default is ReadWrite when omitted.
+    persistent?:                        boolean,                        // If true, value will be persistent across system reboots or power down.
+                                                                        // Default when omitted is false.
+    constant?:                          boolean,                        // If true, value that will never be changed by the Charging Station at runtime.
+                                                                        // Default when omitted is false.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface VariableCharacteristics {
+    unit?:                              UnitOfMeasure,                  // Unit of the variable. When the transmitted value has a unit, this field SHALL be included.
+    dataType:                           types.DataType,                 // Data type of this variable.
+    minLimit?:                          number,                         // Minimum possible value of this variable.
+    maxLimit?:                          number,                         // Maximum possible value of this variable. When the datatype of this Variable is String, OptionList,
+                                                                        // SequenceList or MemberList, this field defines the maximum length of the (CSV) string.
+    maxElements?:                       types.Integer,                  // (2.1) Maximum number of elements from valuesList that are supported as attributeValue.
+    valuesList?:                        types.CSVs,                     // Mandatory when dataType = OptionList, MemberList or SequenceList. In that case valuesList specifies
+                                                                        // the allowed values for the type.
+                                                                        // The length of this field can be limited by DeviceDataCtrlr.ConfigurationValueSize.
+                                                                        //   * OptionList:   The (Actual) Variable value must be a single value from the reported (CSV)
+                                                                        //                   enumeration list.
+                                                                        //   * MemberList:   The (Actual) Variable value may be an (unordered) (sub-)set of the reported (CSV)
+                                                                        //                   valid values list.
+                                                                        //   * SequenceList: The (Actual) Variable value may be an ordered (priority, etc) (sub-)set of the
+                                                                        //                   reported (CSV) valid values.
+                                                                        // This is a comma separated list.
+                                                                        // The Configuration Variable ConfigurationValueSize can be used to limit
+                                                                        // SetVariableData.attributeValue and VariableCharacteristics.valueList.
+                                                                        // The max size of these values will always remain equal.
+    supportsMonitoring:                 boolean,                        // Flag indicating if this variable supports monitoring.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface VariableMonitoring {
+    id:                                 types.VariableMonitoringId,     // Identifies the monitor.
+    transaction:                        boolean,                        // Monitor only active when a transaction is ongoing on a component relevant to this transaction.
+    value:                              number,                         // Value for threshold or delta monitoring.
+                                                                        // For Periodic or PeriodicClockAligned this is the interval in seconds.
+    type:                               types.MonitorType,              // The type of this monitor, e.g. a threshold, delta or periodic monitor.
+    severity:                           types.SeverityLevel,            // The severity that will be assigned to an event that is triggered by this monitor. The severity
+                                                                        // range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    eventNotificationType?:             types.EventNotificationType,    // (2.1) Type of monitor.
+    customData?:                        ICustomData                     // Customer specific data.
+}
+
+export interface Variable {
+    name:                               string,                         // Name of the variable. Name should be taken from the list of standardized variable names whenever
+                                                                        // possible. Case Insensitive. strongly advised to use Camel Case.
+    instance?:                          string,                         // Name of instance in case the variable exists as multiple instances.
+                                                                        // Case Insensitive. Strongly advised to use Camel Case.
+    customData?:                        ICustomData                     // Customer specific data.
 }
 
 export interface VoltageParams {
     hvMeanValue10Min?:                  types.Decimal,                  // EN 50549-1 chapter 4.9.3.4 Voltage threshold for the 10 min time window mean value monitoring.
                                                                         // The 10 min mean is recalculated up to every 3 s. If the present voltage is above this threshold for
-                                                                        // more than the time defined by OverVoltage10MinMeanTripDelay, the EV must trip. This value is mandatory
-                                                                        // if OverVoltage10MinMeanTripDelay is set.
-    hv10MinMeanTripDelay?:              types.Decimal,                  // Time for which the voltage is allowed to stay above the 10 min mean value. After this time, the EV must
-                                                                        // trip. This value is mandatory if OverVoltageMeanValue10min is set.
-    powerDuringCessation?:              types.PowerDuringCessation      // Parameter is only sent, if the EV has to feed-in power or reactive power during fault-ride through (FRT)
-                                                                        // as defined by HVMomCess curve and LVMomCess curve.
+                                                                        // more than the time defined by OverVoltage10MinMeanTripDelay, the EV must trip. This value is
+                                                                        // mandatory if OverVoltage10MinMeanTripDelay is set.
+    hv10MinMeanTripDelay?:              types.Decimal,                  // Time for which the voltage is allowed to stay above the 10 min mean value. After this time, the EV
+                                                                        // must trip. This value is mandatory if OverVoltageMeanValue10min is set.
+    powerDuringCessation?:              types.PowerDuringCessation,     // Parameter is only sent, if the EV has to feed-in power or reactive power during fault-ride through
+                                                                        // (FRT) as defined by HVMomCess curve and LVMomCess curve.
+    customData?:                        ICustomData                     // Customer specific data.
 }
 
 export interface VPN {
@@ -1354,136 +1505,6 @@ export interface VPN {
     group?:                             string,                         // VPN group
     password:                           string,                         // VPN Password
     key:                                string,                         // VPN shared secret
-    type:                               types.VPNType                   // VPN type.
-}
-
-export interface SetMonitoringResult {
-    id:                                 types.MonitoringId,             // Id given to the VariableMonitor by the Charging Station. The Id is only returned when
-                                                                        // status is accepted. Installed VariableMonitors should have unique id’s but the id’s
-                                                                        // of removed Installed monitors should have unique id’s but the id’s of removed monitors
-                                                                        // MAY be reused.
-    status:                             types.SetMonitoringStatus,      // Status is OK if a value could be returned. Otherwise this will indicate the reason why
-                                                                        // a value could not be returned.
-    type:                               types.MonitorType,              // The type of this monitor, e.g. a threshold, delta or periodic monitor.
-    severity:                           types.SeverityLevel,            // The severity that will be assigned to an event that is triggered by this monitor.
-                                                                        // The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
-    
-    statusInfo?:                        StatusInfo                      // Additional status information.
-}
-
-export interface UnitOfMeasure {
-    unit:                               types.UnitOfMeasure,
-    multiplier:                         types.Integer,
-    customData?:                        ICustomData
-}
-
-export interface ChargingLimit {
-    chargingLimitSource:                types.ChargingLimitSource,
-    isGridCritical?:                    boolean,
-    isLocalGeneration?:                 boolean,
-    customData?:                        ICustomData
-}
-
-export interface AbsolutePriceSchedule {
-    id:                                 string, // ???
-    timeAnchor:                         types.Timestamp,
-    priceScheduleID:                    types.PriceScheduleId,
-    priceScheduleDescription?:          string,
-    currency:                           types.Currency,
-    language:                           types.Language,
-    priceAlgorithm:                     types.PriceAlgorithm,
-    minimumCost?:                       RationalNumber,
-    maximumCost?:                       RationalNumber,
-    taxRules?:                          Array<TaxRule>,
-    priceRuleStacks:                    Array<PriceRuleStack>,
-    overstayRules?:                     OverstayRuleList,
-    additionalSelectedServices?:        Array<AdditionalSelectedService>,
-    customData?:                        ICustomData
-}
-
-export interface MessageContent {
-    content:                            string,
-    format:                             types.MessageFormat,
-    language?:                          types.LanguageId,
-    customData?:                        ICustomData
-}
-
-export interface Variable {
-    name:                               string,
-    instance?:                          string,
-    customData?:                        ICustomData
-}
-
-export interface VariableMonitoring {
-    id:                                 types.VariableMonitoringId,
-    transaction:                        boolean,
-    value:                              number,
-    type:                               types.MonitorType,
-    severity:                           types.SeverityLevel,
-    customData?:                        ICustomData
-}
-
-export interface VariableAttribute {
-    type?:                              types.AttributeType,
-    value?:                             string,
-    mutability?:                        types.MutabilityType,
-    persistent?:                        boolean,
-    constant?:                          boolean,
-    customData?:                        ICustomData
-}
-
-export interface VariableCharacteristics {
-    dataType:                           types.VariableDataType,
-    supportsMonitoring:                 boolean,
-    unit?:                              UnitOfMeasure,
-    minLimit?:                          number,
-    maxLimit?:                          number,
-    valuesList?:                        string, // Comma Separated List
-    customData?:                        ICustomData
-}
-
-export interface SecurityEventType {
-    text:                               types.SecurityEvent,
-    description?:                       string,
-    isCritical?:                        boolean
-}
-
-export interface TransactionInfo {
-    transactionId:                      types.TransactionId,                    // This contains the Id of the transaction.
-    chargingState?:                     types.ChargingState,                    // Current charging state, is required when state has changed.
-                                                                                // Omitted when there is no communication between EVSE and EV, because no cable is plugged in.
-    timeSpentCharging?:                 types.Seconds,                          // Contains the total time that energy flowed from EVSE to EV during the transaction
-                                                                                // (in seconds). Note that timeSpentCharging is smaller or equal to the duration of the
-                                                                                // transaction.
-    stoppedReason?:                     types.StopTransactionReason,            // The stoppedReason is the reason/event that initiated the process of stopping the transaction.
-                                                                                // It will normally be the user stopping authorization via card (Local or MasterPass) or app
-                                                                                // (Remote), but it can also be CSMS revoking authorization (DeAuthorized), or disconnecting
-                                                                                // the EV when TxStopPoint = EVConnected (EVDisconnected). Most other reasons are related to
-                                                                                // technical faults or energy limitations. MAY only be omitted when stoppedReason is "Local"
-    remoteStartId?:                     types.RemoteStartId,                    // The ID given to remote start request (RequestStartTransactionRequest. This enables to CSMS
-                                                                                // to match the started transaction to the given start request.
-    operationMode?:                     types.OperationMode,                    // (2.1) The operationMode that is currently in effect for the transaction.
-    tariffId?:                          types.TariffId,                         // (2.1) Id of tariff in use for transaction.
-    transactionLimit?:                  TransactionLimit,                       // (2.1) Maximum cost/energy/time allowed for this transaction.
-    customData?:                        ICustomData                             // Customer specific data.
-}
-
-export interface TotalCost {
-    currency:                           types.Currency                          // Currency of the costs in ISO 4217 Code.
-    fixed:                              Price,                                  // Total sum of all flat fees in the specified currency, except for components with
-                                                                                // conditions.isReservation = true (counted in totalReservationCost).
-    energy:                             Price,                                  // Total sum of all the cost of all the energy used, in the specified currency.
-    chargingTime:                       Price,                                  // Total sum of all the cost related to duration of charging during this transaction,
-                                                                                // in the specified currency.
-    idleTime:                           Price,                                  // Total sum of all the cost related to idle time of this transaction, including fixed price
-                                                                                // components, in the specified currency.
-    reservation:                        Price,                                  // Total sum of all the cost related to reservation of the EVSE, including fixed price
-                                                                                // components, in the specified currency.
-}
-
-export interface TotalUsage {
-    energy:                             types.Decimal,                          // Total energy used during this transaction, in the specified unit.
-    chargingTime:                       types.Seconds,                          // Total duration of the charging session (including the duration of charging and not charging)
-    idleTime:                           types.Seconds                           // Total duration of the charging session where the EV was not charging (no energy was
-                                                                                // transferred between EVSE and EV), in seconds.
+    type:                               types.VPNType,                  // VPN type.
+    customData?:                        ICustomData                     // Customer specific data.
 }

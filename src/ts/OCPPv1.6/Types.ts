@@ -30,6 +30,8 @@ export type ListVersion                    = number;
 export type PEMCertificate                 = string;
 export type PEMCertificateChain            = string;
 export type URL                            = string;
+export type TimeSpan                       = number;  // Time in seconds
+export type i18nString                     = string;
 
 
 export type AuthorizationStatus            = "Accepted" |                              // Identifier is allowed for charging.

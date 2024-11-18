@@ -62,6 +62,7 @@ export type VariableMonitoringId           = number;
 export type ListVersion                    = number;
 export type ReservationId                  = number;
 export type RemoteStartId                  = number;
+export type TimeSpan                       = number;  // Time in seconds
 export type TimeOfDay                      = string;  // Local time: 23:51; 24h format with leading zeros; Regex: ([0-1][0-9]|2[0-3]):[0-5][0-9]
 export type LocalDate                      = string;  // Local time: 2015-12-24; Valid from this day (inclusive); Regex: ([12][0-9]+{3}+)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])
 export type PEMCertificate                 = string;
@@ -70,6 +71,7 @@ export type URL                            = string;
 export type PostalCode                     = string;
 export type VATNumber                      = string;
 export type CSVs                           = string;
+export type i18nString                     = string;
 
 
 export type APNAuthentication
@@ -270,8 +272,7 @@ export type DataType
       "boolean" |                                       // This variable is of the type boolean.
       "OptionList" |                                    // Supported/allowed values for a single choice, enumerated, text variable.
       "SequenceList" |                                  // Supported/allowed values for an ordered sequence variable.
-      "MemberList" |                                    // Supported/allowed values for a mathematical set variable.
-       string;
+      "MemberList";                                     // Supported/allowed values for a mathematical set variable.
 
 export type DataTransferStatus
     = "Accepted" |                                      // Message has been accepted and the contained request is accepted.
@@ -695,8 +696,7 @@ export type MonitoringCriterion
 export type MutabilityType
     = "ReadOnly"  |                                     // This variable is read-only.
       "WriteOnly" |                                     // This variable is write-only.
-      "ReadWrite" |                                     // This variable is read-write.
-       string;
+      "ReadWrite";                                      // This variable is read-write.
 
 export type NotifyAllowedEnergyTransferStatus
     = "Accepted" |                                      // Request has been accepted.

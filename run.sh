@@ -1,5 +1,6 @@
 #!/bin/bash
 
+npm run sbom
 #tsc -p tsconfig.json
 sass src/css/chargingStation.scss src/css/chargingStation.css
 webpack -c webpack.config.cjs

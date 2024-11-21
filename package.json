@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "sbom": "cyclonedx-npm --output-format json --output-file sbom.json"
+    "sbom": "cyclonedx-npm --output-format json --output-file sbom.json",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "install-app-deps"
   },
   "repository": "https://github.com/OpenChargingCloud/ChargingStation",
   "keywords": [

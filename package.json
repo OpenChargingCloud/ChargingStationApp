@@ -30,7 +30,7 @@
     "@types/elliptic": "^6.4.18",
     "@types/node": "^24.10.1",
     "@types/ws": "^8.18.1",
-    "electron": "^39.2.3",
+    "electron": "^39.8.3",
     "electron-builder": "^26.0.12",
     "electron-localshortcut": "^3.2.1",
     "sass": "^1.94.2",
